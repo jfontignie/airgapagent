@@ -99,16 +99,12 @@ public class FileCopyTask implements Work {
             this.overwrite = overwrite;
         }
 
-        public Path getTarget() {
-            return target;
-        }
-
-        public boolean isOverwrite() {
-            return overwrite;
-        }
-
         public void copy(Path source, Path file) throws IOException {
             Path targetFile = Paths.get(target.toString(), file.toString());
+            if (Files.isDirectory(source)) {
+                //TODO COPY FOLDER
+                return;
+            }
             if (overwrite && Files.exists(targetFile)) {
                 targetFile = buildNewUniquePath(targetFile);
             }

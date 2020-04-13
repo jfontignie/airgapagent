@@ -1,5 +1,8 @@
 package com.airgap.airgapagent.files;
 
+import com.airgap.airgapagent.flows.work.WorkContext;
+import com.airgap.airgapagent.flows.work.WorkReport;
+import com.airgap.airgapagent.flows.work.WorkStatus;
 import javafx.util.Pair;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -13,7 +16,14 @@ import java.nio.file.Path;
 class FileCopyTaskTest {
 
     @Test
-    void call() {
+    void testCall() {
+        FileCopyTask task = FileCopyTask.Builder.aNewFileCopyTask()
+                .setSource(Path.of("src/test/resources/sample"))
+                .addFileToCopy(Path.of("folder"))
+                .addTarget(Path.of("target/"))
+                .build();
+        WorkReport report = task.call(new WorkContext());
+        Assertions.assertEquals(WorkStatus.COMPLETED, report.getStatus());
     }
 
     @Test
