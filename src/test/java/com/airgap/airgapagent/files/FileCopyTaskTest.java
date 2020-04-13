@@ -16,7 +16,7 @@ import java.nio.file.Path;
 class FileCopyTaskTest {
 
     @Test
-    void testCall() {
+    void testFolder() {
         FileCopyTask task = FileCopyTask.Builder.aNewFileCopyTask()
                 .setSource(Path.of("src/test/resources/sample"))
                 .addFileToCopy(Path.of("folder"))
@@ -25,6 +25,19 @@ class FileCopyTaskTest {
         WorkReport report = task.call(new WorkContext());
         Assertions.assertEquals(WorkStatus.COMPLETED, report.getStatus());
     }
+
+
+    @Test
+    void testFile() {
+        FileCopyTask task = FileCopyTask.Builder.aNewFileCopyTask()
+                .setSource(Path.of("src/test/resources/sample"))
+                .addFileToCopy(Path.of("sample.txt"))
+                .addTarget(Path.of("target/"))
+                .build();
+        WorkReport report = task.call(new WorkContext());
+        Assertions.assertEquals(WorkStatus.COMPLETED, report.getStatus());
+    }
+
 
     @Test
     public void testBuildUniquePath() {
