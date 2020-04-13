@@ -1,7 +1,6 @@
 package com.airgap.airgapagent.files;
 
 import com.airgap.airgapagent.flows.work.*;
-import javafx.util.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -9,10 +8,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -104,34 +100,18 @@ public class FileCopyTask implements Work {
         public void copy(Path source, Path file) throws IOException {
             Path targetFile = Paths.get(target.toString(), file.toString());
             if (overwrite && Files.exists(targetFile)) {
-                targetFile = buildNewUniquePath(targetFile);
+                targetFile = FileUtils.buildNewUniquePath(targetFile);
             }
-            copyFile(source, targetFile);
+            atomicCopy(source, targetFile);
         }
 
-        private void copyFile(Path source, Path targetFile) throws IOException {
+        private void atomicCopy(Path source, Path targetFile) throws IOException {
             Files.copy(source, targetFile);
             if (Files.isDirectory(source)) {
                 Stream<Path> f = Files.list(source);
                 for (Path p : f.collect(Collectors.toList())) {
-                    copyFile(p, Paths.get(targetFile.toString(), p.getFileName().toString()));
+                    atomicCopy(p, Paths.get(targetFile.toString(), p.getFileName().toString()));
                 }
-            }
-        }
-
-        public static Path buildNewUniquePath(Path targetFile) {
-            DateFormat format = new SimpleDateFormat("_yyyyMMdd_HHmmssSSSS");
-            Pair<String, String> pair = separateExtension(targetFile.toString());
-            targetFile = Path.of(pair.getKey() + format.format(new Date()) + pair.getValue());
-            return targetFile;
-        }
-
-        public static Pair<String, String> separateExtension(String fileName) {
-            int extPos = fileName.lastIndexOf(".");
-            if (extPos == -1) {
-                return new Pair<>(fileName, "");
-            } else {
-                return new Pair<>(fileName.substring(0, extPos), fileName.substring(extPos));
             }
         }
     }

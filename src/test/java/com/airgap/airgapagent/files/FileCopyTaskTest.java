@@ -3,10 +3,10 @@ package com.airgap.airgapagent.files;
 import com.airgap.airgapagent.flows.work.WorkContext;
 import com.airgap.airgapagent.flows.work.WorkReport;
 import com.airgap.airgapagent.flows.work.WorkStatus;
-import javafx.util.Pair;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
+import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
 
 /**
@@ -38,18 +38,16 @@ class FileCopyTaskTest {
         Assertions.assertEquals(WorkStatus.COMPLETED, report.getStatus());
     }
 
-
     @Test
-    public void testBuildUniquePath() {
-        Path f = FileCopyTask.Target.buildNewUniquePath(Path.of("file.name"));
-        Assertions.assertTrue(f.toString().matches("file..*.name"));
+    void testInvalidTarget() {
+        FileCopyTask task = FileCopyTask.Builder.aNewFileCopyTask()
+                .setSource(Path.of("src/test/resources/sample"))
+                .addFileToCopy(Path.of("sample.txt"))
+                .addTarget(Path.of("target2/"))
+                .build();
+        WorkReport report = task.call(new WorkContext());
+        Assertions.assertEquals(WorkStatus.FAILED, report.getStatus());
+        Assertions.assertEquals(NoSuchFileException.class, report.getError().getClass());
     }
 
-    @Test
-    public void testSeparateExtension() {
-        Assertions.assertEquals(new Pair<>("File",".name"),FileCopyTask.Target.separateExtension("File.name"));
-        Assertions.assertEquals(new Pair<>("",".name"),FileCopyTask.Target.separateExtension(".name"));
-        Assertions.assertEquals(new Pair<>("File",""),FileCopyTask.Target.separateExtension("File"));
-
-    }
 }
