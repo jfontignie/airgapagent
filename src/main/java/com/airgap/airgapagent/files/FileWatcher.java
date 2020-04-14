@@ -12,7 +12,7 @@ import static java.nio.file.StandardWatchEventKinds.*;
  * com.airgap.airgapagent.files
  * Created by Jacques Fontignie on 4/14/2020.
  */
-public class FileWatcher {
+public class FileWatcher implements Watcher {
     private final Path path;
     private final WatchEvent.Kind<?>[] kinds;
 
@@ -21,6 +21,7 @@ public class FileWatcher {
         this.kinds = kinds.toArray(new WatchEvent.Kind[0]);
     }
 
+    @Override
     public WatchService watch() throws IOException {
 
         WatchService watchService = FileSystems.getDefault().newWatchService();

@@ -1,6 +1,9 @@
 package com.airgap.airgapagent.complexflows;
 
+import com.airgap.airgapagent.files.FileWatcher;
 import org.junit.jupiter.api.Test;
+
+import java.nio.file.Path;
 
 /**
  * com.airgap.airgapagent.complexflows
@@ -10,5 +13,8 @@ public class FullTest {
 
     @Test
     public void testFull() {
+
+        FileWatcher.Builder.aNewWatch(Path.of("target")).build();
+
     }
 }
