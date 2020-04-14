@@ -44,7 +44,7 @@ public class FileCopyTask implements Work {
                 try {
                     target.copy(absolute, file);
                 } catch (IOException e) {
-                    logger.error("Impossible to copy file {} to  {}", absolute.toString(), file);
+                    logger.error("Impossible to copy file {} to {}", absolute.toString(), file);
                     return new DefaultWorkReport(WorkStatus.FAILED, workContext, e);
                 }
             }
@@ -90,7 +90,7 @@ public class FileCopyTask implements Work {
 
     public static class Target {
         private final Path target;
-        private boolean overwrite;
+        private final boolean overwrite;
 
         public Target(Path target, boolean overwrite) {
             this.target = target;
