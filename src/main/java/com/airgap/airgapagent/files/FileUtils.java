@@ -13,10 +13,14 @@ import java.util.Date;
  */
 public class FileUtils {
 
-    public static Path buildNewUniquePath(Path targetFile) {
+    public static String buildTimestamp() {
         DateFormat format = new SimpleDateFormat("_yyyyMMdd_HHmmssSSSS");
+        return format.format(new Date());
+    }
+
+    public static Path buildNewUniquePath(Path targetFile) {
         Pair<String, String> pair = separateExtension(targetFile.toString());
-        targetFile = Path.of(pair.getKey() + format.format(new Date()) + pair.getValue());
+        targetFile = Path.of(pair.getKey() + buildTimestamp() + pair.getValue());
         return targetFile;
     }
 
