@@ -10,7 +10,5 @@ public class FullTest {
 
     @Test
     public void testFull() {
-
-
     }
 }
