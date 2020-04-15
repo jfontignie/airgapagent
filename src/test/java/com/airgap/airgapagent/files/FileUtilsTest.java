@@ -1,6 +1,6 @@
 package com.airgap.airgapagent.files;
 
-import javafx.util.Pair;
+import com.airgap.airgapagent.utils.Pair;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 

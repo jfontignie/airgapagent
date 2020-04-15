@@ -28,7 +28,19 @@ class FileWatcherTest {
         Assertions.assertTrue(key.isValid());
         key.pollEvents()
                 .forEach(e ->
-                        System.out.println(String.format("Event: %s on %s (%d)",e.kind(),e.context(),e.count() )));
+                        System.out.println(String.format("Event: %s on %s (%d)", e.kind(), e.context(), e.count())));
+        Assertions.assertTrue(key.isValid());
+
+        f = new File("target/watch" + FileUtils.buildTimestamp());
+
+        Assertions.assertTrue(f.createNewFile());
+        Assertions.assertTrue(key.isValid());
+        key.reset();
+        watchService.take();
+        key.pollEvents()
+                .forEach(e ->
+                        System.out.println(String.format("Event: %s on %s (%d)", e.kind(), e.context(), e.count())));
+
     }
 
     @Test

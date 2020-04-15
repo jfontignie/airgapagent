@@ -1,6 +1,7 @@
 package com.airgap.airgapagent.files;
 
-import javafx.util.Pair;
+
+import com.airgap.airgapagent.utils.Pair;
 
 import java.nio.file.Path;
 import java.text.DateFormat;
@@ -20,7 +21,7 @@ public class FileUtils {
 
     public static Path buildNewUniquePath(Path targetFile) {
         Pair<String, String> pair = separateExtension(targetFile.toString());
-        targetFile = Path.of(pair.getKey() + buildTimestamp() + pair.getValue());
+        targetFile = Path.of(pair.getFirst() + buildTimestamp() + pair.getSecond());
         return targetFile;
     }
 
