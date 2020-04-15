@@ -26,6 +26,7 @@ class FileTriggerTest {
         Assertions.assertNotNull(FileTrigger.Builder.aNewFileTrigger().build().getName());
     }
 
+    @Disabled
     @Test
     public void testTrigger() throws IOException, InterruptedException {
         Trigger trigger = FileTrigger.Builder.aNewFileTrigger()
