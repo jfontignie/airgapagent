@@ -33,19 +33,27 @@ public class FolderSynchronizer {
 
     private void synchronize(Path first, Path second) throws IOException {
         logger.debug("Synchronizing between {} and {}", first, second);
+        if (Files.isDirectory(first)) {
+            synchronizeFolder(first, second);
+        } else {
+            synchronizeFile(first, second);
+        }
+    }
+
+    private void synchronizeFile(Path first, Path second) throws IOException {
         if (Files.notExists(second)) {
-            if (Files.isRegularFile(first)) {
-                Files.copy(first, second);
-            } else {
-                Files.createDirectory(second);
-            }
+            Files.copy(first, second);
+        }
+    }
+
+    private void synchronizeFolder(Path first, Path second) throws IOException {
+        if (Files.notExists(second)) {
+            Files.createDirectory(second);
         }
 
-        if (Files.isDirectory(first)) {
-            List<Path> paths = Files.list(first).collect(Collectors.toList());
-            for (Path f : paths) {
-                synchronize(f, Path.of(second.toString(), String.valueOf(f.getFileName())));
-            }
+        List<Path> paths = Files.list(first).collect(Collectors.toList());
+        for (Path f : paths) {
+            synchronize(f, Path.of(second.toString(), String.valueOf(f.getFileName())));
         }
     }
 
