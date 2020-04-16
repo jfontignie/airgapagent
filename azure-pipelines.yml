@@ -10,6 +10,11 @@ pool:
   vmImage: 'ubuntu-latest'
 
 steps:
+- task: SonarCloudPrepare@1
+  inputs:
+      SonarCloud: 'sonarcloud'
+      organization: 'fontignie'
+      scannerMode: 'Other'
 - task: Maven@3
   inputs:
     mavenPomFile: 'pom.xml'
@@ -24,8 +29,3 @@ steps:
     sonarQubeRunAnalysis: true
     sqMavenPluginVersionChoice: 'latest'
     checkStyleRunAnalysis: true
-- task: SonarCloudPrepare@1
-  inputs:
-      SonarCloud: 'sonarcloud'
-      organization: 'fontignie'
-      scannerMode: 'Other'
