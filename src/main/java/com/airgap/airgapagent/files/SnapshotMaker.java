@@ -23,13 +23,13 @@ public class SnapshotMaker {
         this.root = root;
     }
 
-    public SnapshotNode<Metadata> visit() throws IOException {
+    public SnapshotNode visit() throws IOException {
 
         return visit(root);
     }
 
-    private SnapshotNode<Metadata> visit(Path root) throws IOException {
-        logger.debug("Visiting {}", root.getFileName());
+    private SnapshotNode visit(Path root) throws IOException {
+        logger.trace("Visiting {}", root.getFileName());
         if (Files.isDirectory(root)) {
             return visitFolder(root);
         } else {
@@ -37,15 +37,15 @@ public class SnapshotMaker {
         }
     }
 
-    private SnapshotNode<Metadata> visitFile(Path root) throws IOException {
-        logger.debug("Visiting File {}", root.getFileName());
-        return new SnapshotNode<>(MetadaFactory.analyze(root));
+    private SnapshotNode visitFile(Path root) throws IOException {
+        logger.trace("Visiting File {}", root.getFileName());
+        return new SnapshotNode(MetadaFactory.analyze(root));
     }
 
-    private SnapshotNode<Metadata> visitFolder(Path root) throws IOException {
-        logger.debug("Visiting Folder {}", root.getFileName());
+    private SnapshotNode visitFolder(Path root) throws IOException {
+        logger.trace("Visiting Folder {}", root.getFileName());
 
-        SnapshotNode<Metadata> node = new SnapshotNode<>(MetadaFactory.analyze(root));
+        SnapshotNode node = new SnapshotNode(MetadaFactory.analyze(root));
         List<Path> children = Files.list(root).collect(Collectors.toList());
         for (Path p : children) {
             node.addChild(visit(p));

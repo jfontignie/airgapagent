@@ -1,31 +1,41 @@
 package com.airgap.airgapagent.files;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonSubTypes;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
+
 import java.io.IOException;
 import java.io.Serializable;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Objects;
 import java.util.StringJoiner;
 
 /**
  * com.airgap.airgapagent.files
  * Created by Jacques Fontignie on 4/15/2020.
  */
+@JsonTypeInfo(
+        use = JsonTypeInfo.Id.NAME,
+        include = JsonTypeInfo.As.PROPERTY,
+        property = "type")
+@JsonSubTypes({
+        @JsonSubTypes.Type(value = FolderMetadata.class, name = "DIRECTORY"),
+        @JsonSubTypes.Type(value = FileMetadata.class, name = "FILE")
+})
 public abstract class Metadata implements Serializable {
 
-    private final long fileTime;
     private final Path path;
     private final Type type;
     private final String fileName;
 
-    Metadata(long fileTime, Path path, Type type, String fileName) {
-        this.fileTime = fileTime;
+    Metadata(Path path, Type type, String fileName) {
         this.path = path;
         this.type = type;
         this.fileName = fileName;
     }
 
     public Metadata(Path path) throws IOException {
-        this.fileTime = Files.getLastModifiedTime(path).toMillis();
         this.path = path;
         type = Files.isDirectory(path) ? Type.DIRECTORY : Type.FILE;
         this.fileName = path.getFileName().toString();
@@ -33,10 +43,6 @@ public abstract class Metadata implements Serializable {
 
     public String getFileName() {
         return fileName;
-    }
-
-    public long getFileTime() {
-        return fileTime;
     }
 
     public Path getPath() {
@@ -47,13 +53,32 @@ public abstract class Metadata implements Serializable {
         return type;
     }
 
+    @JsonIgnore
+    public String getIdentifier() {
+        return this.fileName;
+    }
+
     @Override
     public String toString() {
         return new StringJoiner(", ", Metadata.class.getSimpleName() + "[", "]")
-                .add("fileTime=" + fileTime)
+                .add("fileName='" + fileName + "'")
                 .add("path=" + path)
                 .add("type=" + type)
-                .add("fileName='" + fileName + "'")
                 .toString();
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Metadata metadata = (Metadata) o;
+        return Objects.equals(getPath(), metadata.getPath()) &&
+                getType() == metadata.getType() &&
+                Objects.equals(getFileName(), metadata.getFileName());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getPath(), getType(), getFileName());
     }
 }

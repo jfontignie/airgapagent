@@ -23,4 +23,6 @@ class SnapshotNodeTest {
         String secondValue = objectMapper.writeValueAsString(deserialized);
         Assertions.assertEquals(value, secondValue);
     }
+
+
 }

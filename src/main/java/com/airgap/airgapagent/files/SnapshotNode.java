@@ -13,29 +13,29 @@ import java.util.StringJoiner;
  * com.airgap.airgapagent.files
  * Created by Jacques Fontignie on 4/15/2020.
  */
-public class SnapshotNode<T> implements Serializable {
-    private final Set<SnapshotNode<T>> children = new HashSet<>();
-    private final T data;
-    private SnapshotNode<T> parent;
+public class SnapshotNode implements Serializable {
+    private final Set<SnapshotNode> children = new HashSet<>();
+    private final Metadata data;
+    private SnapshotNode parent;
 
     @JsonCreator(mode = JsonCreator.Mode.PROPERTIES)
     public SnapshotNode(
-            @JsonProperty("data") T data,
-            @JsonProperty("children") Set<SnapshotNode<T>> children) {
+            @JsonProperty("data") Metadata data,
+            @JsonProperty("children") Set<SnapshotNode> children) {
         this.data = data;
         this.children.addAll(children);
     }
 
-    public SnapshotNode(T data) {
-        this(data, (SnapshotNode<T>) null);
+    public SnapshotNode(Metadata data) {
+        this(data, (SnapshotNode) null);
     }
 
-    public SnapshotNode(T data, SnapshotNode<T> parent) {
+    public SnapshotNode(Metadata data, SnapshotNode parent) {
         this.data = data;
         this.setParent(parent);
     }
 
-    public void setParent(SnapshotNode<T> parent) {
+    public void setParent(SnapshotNode parent) {
         if (this.parent != parent) {
             this.parent = parent;
             if (parent != null) {
@@ -44,18 +44,18 @@ public class SnapshotNode<T> implements Serializable {
         }
     }
 
-    public void addChild(SnapshotNode<T> snapshotNode) {
+    public void addChild(SnapshotNode snapshotNode) {
         if (!children.contains(snapshotNode)) {
             children.add(snapshotNode);
             snapshotNode.setParent(this);
         }
     }
 
-    public T getData() {
+    public Metadata getData() {
         return data;
     }
 
-    public Set<SnapshotNode<T>> getChildren() {
+    public Set<SnapshotNode> getChildren() {
         return Collections.unmodifiableSet(children);
     }
 

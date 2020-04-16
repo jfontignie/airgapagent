@@ -8,9 +8,7 @@ import org.slf4j.LoggerFactory;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
-import java.util.Base64;
+import java.util.Objects;
 import java.util.StringJoiner;
 
 /**
@@ -19,54 +17,56 @@ import java.util.StringJoiner;
  */
 public class FileMetadata extends Metadata {
     private static final Logger logger = LoggerFactory.getLogger(FileMetadata.class);
-    private final String signature;
     private final String contentType;
     private final long size;
+    private final long fileTime;
 
     @JsonCreator(mode = JsonCreator.Mode.PROPERTIES)
     FileMetadata(@JsonProperty("fileTime") long fileTime,
                  @JsonProperty("path") Path path,
                  @JsonProperty("type") Type type,
                  @JsonProperty("fileName") String fileName,
-                 @JsonProperty("signature") String signature,
-                 @JsonProperty("contenType") String contentType,
+                 @JsonProperty("contentType") String contentType,
                  @JsonProperty("size") long size) {
-        super(fileTime, path, type, fileName);
-        this.signature = signature;
+        super(path, type, fileName);
+        this.fileTime = fileTime;
         this.contentType = contentType;
         this.size = size;
     }
 
     public FileMetadata(Path path) throws IOException {
         super(path);
-        String signature1;
-        try {
-            signature1 = calculateSignature(path);
-        } catch (NoSuchAlgorithmException e) {
-            signature1 = "";
-            logger.info("Impossible to calculate signature", e);
-        }
-
-        signature = signature1;
+        this.fileTime = Files.getLastModifiedTime(path).toMillis();
         contentType = Files.probeContentType(path);
         size = Files.size(path);
     }
 
-    private String calculateSignature(Path path) throws NoSuchAlgorithmException, IOException {
-        MessageDigest.getInstance("SHA-256");
-        byte[] data = Files.readAllBytes(path);
-        MessageDigest digest = MessageDigest.getInstance("SHA-256");
-        byte[] hash = digest.digest(data);
-        return Base64.getEncoder().encodeToString(hash);
-    }
-
-
     @Override
     public String toString() {
         return new StringJoiner(", ", FileMetadata.class.getSimpleName() + "[", "]")
-                .add("parent='" + super.toString() + "'")
-                .add("signature='" + signature + "'")
+                .add("super='" + super.toString() + "'")
+                .add("fileTime=" + fileTime)
                 .add("contentType='" + contentType + "'")
                 .toString();
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof FileMetadata)) return false;
+        if (!super.equals(o)) return false;
+        FileMetadata metadata = (FileMetadata) o;
+        return getFileTime() == metadata.getFileTime() &&
+                size == metadata.size &&
+                Objects.equals(contentType, metadata.contentType);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(super.hashCode(), getFileTime(), contentType, size);
+    }
+
+    public long getFileTime() {
+        return fileTime;
     }
 }

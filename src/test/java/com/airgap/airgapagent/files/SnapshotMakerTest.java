@@ -17,10 +17,10 @@ class SnapshotMakerTest {
     @Test
     public void visit() throws IOException {
         SnapshotMaker maker = new SnapshotMaker(Paths.get("src/test/resources/sample/folder/subfolder"));
-        SnapshotNode<Metadata> result = maker.visit();
+        SnapshotNode result = maker.visit();
         Assertions.assertEquals("subfolder", result.getData().getFileName());
         Assertions.assertEquals(1, result.getChildren().size());
-        SnapshotNode<Metadata> child = result.getChildren().iterator().next();
+        SnapshotNode child = result.getChildren().iterator().next();
         Assertions.assertEquals("subfile.txt", child.getData().getFileName());
         System.out.println(result);
 

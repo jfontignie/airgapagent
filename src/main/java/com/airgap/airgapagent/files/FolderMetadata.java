@@ -12,11 +12,10 @@ import java.nio.file.Path;
  */
 public class FolderMetadata extends Metadata {
     @JsonCreator(mode = JsonCreator.Mode.PROPERTIES)
-    public FolderMetadata(@JsonProperty("fileTime") long fileTime,
-                          @JsonProperty("path") Path path,
+    public FolderMetadata(@JsonProperty("path") Path path,
                           @JsonProperty("type") Type type,
                           @JsonProperty("fileName") String fileName) {
-        super(fileTime, path, type, fileName);
+        super(path, type, fileName);
     }
 
     public FolderMetadata(Path path) throws IOException {
