@@ -1,4 +1,4 @@
-package com.airgap.airgapagent.files;
+package com.airgap.airgapagent.watch;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;

@@ -1,5 +1,6 @@
-package com.airgap.airgapagent.files;
+package com.airgap.airgapagent.watch;
 
+import com.airgap.airgapagent.files.Type;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
@@ -33,7 +34,7 @@ public abstract class Metadata implements Serializable {
         this.fileName = fileName;
     }
 
-    public Metadata(Path path) {
+    Metadata(Path path) {
         this.path = path;
         type = Files.isDirectory(path) ? Type.DIRECTORY : Type.FILE;
         this.fileName = path.getFileName().toString();

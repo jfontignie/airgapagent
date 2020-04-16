@@ -1,5 +1,8 @@
 package com.airgap.airgapagent.files;
 
+import com.airgap.airgapagent.watch.Difference;
+import com.airgap.airgapagent.watch.DifferenceType;
+import com.airgap.airgapagent.watch.SnapshotNode;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 

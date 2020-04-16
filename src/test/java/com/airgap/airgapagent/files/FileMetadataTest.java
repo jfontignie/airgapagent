@@ -1,5 +1,6 @@
 package com.airgap.airgapagent.files;
 
+import com.airgap.airgapagent.watch.FileMetadata;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import org.junit.jupiter.api.Assertions;

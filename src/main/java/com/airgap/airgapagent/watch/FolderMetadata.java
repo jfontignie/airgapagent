@@ -1,9 +1,9 @@
-package com.airgap.airgapagent.files;
+package com.airgap.airgapagent.watch;
 
+import com.airgap.airgapagent.files.Type;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import java.io.IOException;
 import java.nio.file.Path;
 
 /**
@@ -18,7 +18,7 @@ public class FolderMetadata extends Metadata {
         super(path, type, fileName);
     }
 
-    public FolderMetadata(Path path) throws IOException {
+    public FolderMetadata(Path path) {
         super(path);
     }
 }

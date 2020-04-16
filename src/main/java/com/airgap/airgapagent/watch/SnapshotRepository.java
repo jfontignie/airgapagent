@@ -1,4 +1,4 @@
-package com.airgap.airgapagent.files;
+package com.airgap.airgapagent.watch;
 
 import org.springframework.lang.NonNull;
 import org.springframework.lang.Nullable;

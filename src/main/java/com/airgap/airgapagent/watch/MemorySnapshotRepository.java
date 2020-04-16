@@ -1,4 +1,4 @@
-package com.airgap.airgapagent.files;
+package com.airgap.airgapagent.watch;
 
 import java.nio.file.Path;
 import java.util.*;

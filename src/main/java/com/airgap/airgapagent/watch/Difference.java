@@ -1,4 +1,4 @@
-package com.airgap.airgapagent.files;
+package com.airgap.airgapagent.watch;
 
 import java.util.StringJoiner;
 
@@ -10,7 +10,7 @@ public class Difference {
     private final DifferenceType type;
     private SnapshotNode first;
     private SnapshotNode second;
-    private SnapshotNode reference;
+    private final SnapshotNode reference;
 
     public Difference(DifferenceType type, SnapshotNode first, SnapshotNode second) {
         this.first = first;
@@ -24,6 +24,8 @@ public class Difference {
             case MISSING_FIRST:
                 reference = second;
                 break;
+            default:
+                throw new IllegalStateException("Invalid type");
         }
     }
 
@@ -39,6 +41,8 @@ public class Difference {
             case MISSING_SECOND:
                 first = node;
                 break;
+            default:
+                throw new IllegalStateException("Invalid type");
         }
     }
 

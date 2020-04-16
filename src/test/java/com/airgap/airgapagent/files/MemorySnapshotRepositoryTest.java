@@ -1,5 +1,7 @@
 package com.airgap.airgapagent.files;
 
+import com.airgap.airgapagent.watch.MemorySnapshotRepository;
+import com.airgap.airgapagent.watch.SnapshotNode;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 
