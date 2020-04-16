@@ -30,7 +30,7 @@ class SnapshotDifferentiatorTest {
         SnapshotMaker maker = new SnapshotMaker(Path.of("target"));
         SnapshotNode snapshot = maker.visit();
 
-        List<SnapshotDifferentiator.Difference> differences;
+        List<Difference> differences;
         differences = new SnapshotDifferentiator().getDifferences(snapshot, snapshot);
 
         Assertions.assertThat(differences).isEmpty();
@@ -47,7 +47,7 @@ class SnapshotDifferentiatorTest {
         System.out.println(differences);
         Assertions.assertThat(differences).hasSize(3);
 
-        for (SnapshotDifferentiator.Difference difference : differences) {
+        for (Difference difference : differences) {
             boolean found = changes.remove(difference.getReference().getData().getPath());
             Assertions.assertThat(found).isTrue();
         }
@@ -58,10 +58,11 @@ class SnapshotDifferentiatorTest {
     }
 
     @Test
-    void difference() {
-        SnapshotDifferentiator.Difference diff = new SnapshotDifferentiator.Difference(SnapshotDifferentiator.DifferenceType.MISSING_FIRST,
-                null, new SnapshotNode(null));
-        Assertions.assertThat(diff.getType()).isEqualTo(SnapshotDifferentiator.DifferenceType.MISSING_FIRST);
-        Assertions.assertThat(diff.getReference()).isNotNull();
+    public void testEmptySnapshot() {
+        SnapshotDifferentiator differentiator = new SnapshotDifferentiator();
+        List<Difference> difference1 = differentiator.getDifferences(null, new SnapshotNode(null));
+        Assertions.assertThat(difference1).hasSize(1);
+
+
     }
 }

@@ -14,14 +14,14 @@ import java.util.stream.Stream;
  * com.airgap.airgapagent.files
  * Created by Jacques Fontignie on 4/15/2020.
  */
-public class FolderSynchronizer {
+public class SimpleFolderSynchronizer {
 
-    private static final Logger logger = LoggerFactory.getLogger(FolderSynchronizer.class);
+    private static final Logger logger = LoggerFactory.getLogger(SimpleFolderSynchronizer.class);
 
     private final Path second;
     private final Path first;
 
-    public FolderSynchronizer(Path first, Path second) {
+    public SimpleFolderSynchronizer(Path first, Path second) {
         this.first = first;
         this.second = second;
     }

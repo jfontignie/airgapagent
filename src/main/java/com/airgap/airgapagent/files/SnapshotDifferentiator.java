@@ -15,8 +15,22 @@ public class SnapshotDifferentiator {
 
     private static final Logger logger = LoggerFactory.getLogger(SnapshotDifferentiator.class);
 
+
     public @NonNull
-    List<Difference> getDifferences(@NonNull SnapshotNode first, @NonNull SnapshotNode second) {
+    List<Difference> getDifferences(SnapshotNode first, SnapshotNode second) {
+        if (first == null && second == null) {
+            return Collections.emptyList();
+        }
+        if (first == null) {
+            return Collections.singletonList(new Difference(DifferenceType.MISSING_SECOND, second));
+        }
+        if (second == null) {
+            return Collections.singletonList(new Difference(DifferenceType.MISSING_FIRST, first));
+        }
+        return calculateDifferences(first, second);
+    }
+
+    private List<Difference> calculateDifferences(SnapshotNode first, SnapshotNode second) {
 
         if (!first.getData().equals(second.getData())) {
             logger.debug("Data mismatch between {} and {}", first.getData(), second.getData());
@@ -41,54 +55,13 @@ public class SnapshotDifferentiator {
                 differences.add(new Difference(DifferenceType.MISSING_SECOND, f, null));
             }
         }
+        allSeconds.forEach(s -> logger.debug("Not found in first snapshot: {}", s.getData()));
         differences.addAll(
                 allSeconds.stream()
-                        .peek(s -> logger.debug("Not found in first snapshot: {}", s.getData()))
                         .map(s -> new Difference(DifferenceType.MISSING_FIRST, null, s))
                         .collect(Collectors.toList()));
         return differences;
     }
 
-    public enum DifferenceType {
-        MISSING_FIRST, MISSING_SECOND, DIFFERENT
-    }
 
-    public static class Difference {
-        private final SnapshotNode first;
-        private final SnapshotNode second;
-        private final DifferenceType type;
-        private SnapshotNode reference;
-
-        public Difference(DifferenceType type, SnapshotNode first, SnapshotNode second) {
-            this.first = first;
-            this.second = second;
-            this.type = type;
-            switch (type) {
-                case DIFFERENT:
-                case MISSING_SECOND:
-                    reference = first;
-                    break;
-                case MISSING_FIRST:
-                    reference = second;
-                    break;
-            }
-        }
-
-        @Override
-        public String toString() {
-            return new StringJoiner(", ", Difference.class.getSimpleName() + "[", "]")
-                    .add("first=" + first)
-                    .add("second=" + second)
-                    .add("type=" + type)
-                    .toString();
-        }
-
-        public DifferenceType getType() {
-            return type;
-        }
-
-        public SnapshotNode getReference() {
-            return reference;
-        }
-    }
 }
