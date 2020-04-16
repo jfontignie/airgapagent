@@ -44,7 +44,7 @@ public class FileCopyTask implements Work {
                 try {
                     target.copy(absolute, file);
                 } catch (IOException e) {
-                    logger.error("Impossible to copy file {} to {}", absolute.toString(), file);
+                    logger.error("Impossible to copy file {} to {}", absolute, file);
                     return new DefaultWorkReport(WorkStatus.FAILED, workContext, e);
                 }
             }
@@ -89,16 +89,16 @@ public class FileCopyTask implements Work {
     }
 
     public static class Target {
-        private final Path target;
+        private final Path destination;
         private final boolean overwrite;
 
-        public Target(Path target, boolean overwrite) {
-            this.target = target;
+        public Target(Path destination, boolean overwrite) {
+            this.destination = destination;
             this.overwrite = overwrite;
         }
 
         public void copy(Path source, Path file) throws IOException {
-            Path targetFile = Paths.get(target.toString(), file.toString());
+            Path targetFile = Paths.get(destination.toString(), file.toString());
             if (overwrite && Files.exists(targetFile)) {
                 targetFile = FileUtils.buildNewUniquePath(targetFile);
             }
@@ -108,9 +108,10 @@ public class FileCopyTask implements Work {
         private void atomicCopy(Path source, Path targetFile) throws IOException {
             Files.copy(source, targetFile);
             if (Files.isDirectory(source)) {
-                Stream<Path> f = Files.list(source);
-                for (Path p : f.collect(Collectors.toList())) {
-                    atomicCopy(p, Paths.get(targetFile.toString(), p.getFileName().toString()));
+                try (Stream<Path> f = Files.list(source)) {
+                    for (Path p : f.collect(Collectors.toList())) {
+                        atomicCopy(p, Paths.get(targetFile.toString(), p.getFileName().toString()));
+                    }
                 }
             }
         }

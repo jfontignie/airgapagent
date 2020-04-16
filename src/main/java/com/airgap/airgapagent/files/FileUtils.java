@@ -19,6 +19,10 @@ import java.util.Date;
  */
 public class FileUtils {
 
+    private FileUtils() {
+        //Nothing to do
+    }
+
     public static String buildTimestamp() {
         DateFormat format = new SimpleDateFormat("_yyyyMMdd_HHmmssSSSS");
         return format.format(new Date());
@@ -31,7 +35,7 @@ public class FileUtils {
     }
 
     public static Pair<String, String> separateExtension(String fileName) {
-        int extPos = fileName.lastIndexOf(".");
+        int extPos = fileName.lastIndexOf('.');
         if (extPos == -1) {
             return new Pair<>(fileName, "");
         } else {

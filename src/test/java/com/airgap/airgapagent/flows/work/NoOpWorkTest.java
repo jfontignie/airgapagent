@@ -13,12 +13,11 @@ class NoOpWorkTest {
     private final NoOpWork work = new NoOpWork();
 
 
-
     @Test
     public void call() {
         WorkReport workReport = work.call(new WorkContext());
         org.junit.jupiter.api.Assertions.assertNotNull(workReport);
-        Assertions.assertEquals(workReport.getStatus(), WorkStatus.COMPLETED);
+        Assertions.assertEquals(WorkStatus.COMPLETED, workReport.getStatus());
     }
 
 }

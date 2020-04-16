@@ -8,7 +8,11 @@ import java.nio.file.Path;
  * com.airgap.airgapagent.files
  * Created by Jacques Fontignie on 4/15/2020.
  */
-public class MetadaFactory {
+public class MetadataFactory {
+
+    private MetadataFactory() {
+        //Nothing to do
+    }
 
     public static Metadata analyze(Path path) throws IOException {
 

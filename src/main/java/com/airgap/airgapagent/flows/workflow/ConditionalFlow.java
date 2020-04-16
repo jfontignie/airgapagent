@@ -8,9 +8,11 @@ import java.util.UUID;
  * com.airgap.airgapagent.flows.workflow
  * Created by Jacques Fontignie on 4/12/2020.
  */
-public class ConditionalFlow extends AbstractWorkFlow{
-    private Work toExecute, nextOnPredicateSuccess, nextOnPredicateFailure;
-    private WorkReportPredicate predicate;
+public class ConditionalFlow extends AbstractWorkFlow {
+    private final Work toExecute;
+    private final Work nextOnPredicateSuccess;
+    private final Work nextOnPredicateFailure;
+    private final WorkReportPredicate predicate;
 
     ConditionalFlow(String name, Work toExecute, Work nextOnPredicateSuccess, Work nextOnPredicateFailure, WorkReportPredicate predicate) {
         super(name);
@@ -38,7 +40,9 @@ public class ConditionalFlow extends AbstractWorkFlow{
     public static class Builder {
 
         private String name;
-        private Work toExecute, nextOnPredicateSuccess, nextOnPredicateFailure;
+        private Work toExecute;
+        private Work nextOnPredicateSuccess;
+        private Work nextOnPredicateFailure;
         private WorkReportPredicate predicate;
 
         private Builder() {

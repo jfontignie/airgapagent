@@ -2,8 +2,6 @@ package com.airgap.airgapagent.files;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -16,7 +14,6 @@ import java.util.StringJoiner;
  * Created by Jacques Fontignie on 4/15/2020.
  */
 public class FileMetadata extends Metadata {
-    private static final Logger logger = LoggerFactory.getLogger(FileMetadata.class);
     private final String contentType;
     private final long size;
     private final long fileTime;

@@ -8,6 +8,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * com.airgap.airgapagent.files
@@ -39,14 +40,17 @@ public class SnapshotMaker {
 
     private SnapshotNode visitFile(Path root) throws IOException {
         logger.trace("Visiting File {}", root.getFileName());
-        return new SnapshotNode(MetadaFactory.analyze(root));
+        return new SnapshotNode(MetadataFactory.analyze(root));
     }
 
     private SnapshotNode visitFolder(Path root) throws IOException {
         logger.trace("Visiting Folder {}", root.getFileName());
 
-        SnapshotNode node = new SnapshotNode(MetadaFactory.analyze(root));
-        List<Path> children = Files.list(root).collect(Collectors.toList());
+        SnapshotNode node = new SnapshotNode(MetadataFactory.analyze(root));
+        List<Path> children;
+        try (Stream<Path> list = Files.list(root)) {
+            children = list.collect(Collectors.toList());
+        }
         for (Path p : children) {
             node.addChild(visit(p));
         }

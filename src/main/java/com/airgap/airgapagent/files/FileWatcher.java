@@ -48,8 +48,8 @@ public class FileWatcher implements Watcher {
             return new Builder(path);
         }
 
-        public Builder setWatchTypes(EnumSet<WatchType> watchTypes) {
-            this.watchTypes = watchTypes;
+        public Builder setWatchTypes(Set<WatchType> watchTypes) {
+            this.watchTypes = EnumSet.copyOf(watchTypes);
             return this;
         }
 

@@ -4,7 +4,6 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 
-import java.io.IOException;
 import java.io.Serializable;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -25,7 +24,7 @@ import java.util.StringJoiner;
 })
 public abstract class Metadata implements Serializable {
 
-    private final Path path;
+    private transient final Path path;
     private final Type type;
     private final String fileName;
 
@@ -35,7 +34,7 @@ public abstract class Metadata implements Serializable {
         this.fileName = fileName;
     }
 
-    public Metadata(Path path) throws IOException {
+    public Metadata(Path path) {
         this.path = path;
         type = Files.isDirectory(path) ? Type.DIRECTORY : Type.FILE;
         this.fileName = path.getFileName().toString();

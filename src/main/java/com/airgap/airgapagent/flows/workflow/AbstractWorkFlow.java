@@ -11,6 +11,7 @@ public abstract class AbstractWorkFlow implements WorkFlow{
         this.name = name;
     }
 
+    @Override
     public String getName() {
         return name;
     }

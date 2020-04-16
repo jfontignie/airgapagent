@@ -8,6 +8,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * com.airgap.airgapagent.files
@@ -51,14 +52,14 @@ public class FolderSynchronizer {
             Files.createDirectory(second);
         }
 
-        List<Path> paths = Files.list(first).collect(Collectors.toList());
+        List<Path> paths;
+        try (Stream<Path> list = Files.list(first)) {
+            paths = list.collect(Collectors.toList());
+        }
         for (Path f : paths) {
             synchronize(f, Path.of(second.toString(), String.valueOf(f.getFileName())));
         }
     }
 
-    private void copyFile(Path first, Path second) throws IOException {
-        Files.copy(first, second);
-    }
 
 }
