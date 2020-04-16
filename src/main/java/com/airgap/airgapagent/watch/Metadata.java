@@ -24,28 +24,21 @@ import java.util.StringJoiner;
 })
 public abstract class Metadata implements Serializable {
 
-    private final transient Path path;
     private final Type type;
-    private final String fileName;
+    private final String relative;
 
-    Metadata(Path path, Type type, String fileName) {
-        this.path = path;
+    Metadata(Type type, String relative) {
         this.type = type;
-        this.fileName = fileName;
+        this.relative = relative;
     }
 
-    Metadata(Path path) {
-        this.path = path;
+    Metadata(Path root, Path path) {
         type = Files.isDirectory(path) ? Type.DIRECTORY : Type.FILE;
-        this.fileName = path.getFileName().toString();
+        this.relative = root.relativize(path).toString();
     }
 
-    public String getFileName() {
-        return fileName;
-    }
-
-    public Path getPath() {
-        return path;
+    public String getRelative() {
+        return relative;
     }
 
     public Type getType() {
@@ -54,14 +47,13 @@ public abstract class Metadata implements Serializable {
 
     @JsonIgnore
     public String getIdentifier() {
-        return this.fileName;
+        return this.relative;
     }
 
     @Override
     public String toString() {
         return new StringJoiner(", ", Metadata.class.getSimpleName() + "[", "]")
-                .add("fileName='" + fileName + "'")
-                .add("path=" + path)
+                .add("relative='" + relative + "'")
                 .add("type=" + type)
                 .toString();
     }
@@ -71,13 +63,12 @@ public abstract class Metadata implements Serializable {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Metadata metadata = (Metadata) o;
-        return Objects.equals(getPath(), metadata.getPath()) &&
-                getType() == metadata.getType() &&
-                Objects.equals(getFileName(), metadata.getFileName());
+        return getType() == metadata.getType() &&
+                Objects.equals(getRelative(), metadata.getRelative());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(getPath(), getType(), getFileName());
+        return Objects.hash(getRelative(), getType());
     }
 }

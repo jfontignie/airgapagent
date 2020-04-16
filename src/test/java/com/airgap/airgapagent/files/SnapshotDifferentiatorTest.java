@@ -23,13 +23,16 @@ class SnapshotDifferentiatorTest {
     @Test
     void getDifferences() throws IOException {
 
-        Path pathToDelete = Path.of("target/created" + FileUtils.buildTimestamp());
-        Path pathToCreate = Files.createFile(Path.of("target/deleted" + FileUtils.buildTimestamp()));
-        Path pathToModify = Files.createFile(Path.of("target/modified" + FileUtils.buildTimestamp()));
-        Set<Path> changes = new HashSet<>();
-        changes.add(pathToCreate);
-        changes.add(pathToDelete);
-        changes.add(pathToModify);
+        String fileToDelete = "created" + FileUtils.buildTimestamp();
+        String fileToCreate = "deleted" + FileUtils.buildTimestamp();
+        String fileToModify = "modified" + FileUtils.buildTimestamp();
+        Path pathToDelete = Path.of("target/", fileToDelete);
+        Path pathToCreate = Files.createFile(Path.of("target/", fileToCreate));
+        Path pathToModify = Files.createFile(Path.of("target/", fileToModify));
+        Set<String> changes = new HashSet<>();
+        changes.add(fileToCreate);
+        changes.add(fileToDelete);
+        changes.add(fileToModify);
 
         SnapshotMaker maker = new SnapshotMaker(Path.of("target"));
         SnapshotNode snapshot = maker.visit();
@@ -52,7 +55,7 @@ class SnapshotDifferentiatorTest {
         Assertions.assertThat(differences).hasSize(3);
 
         for (Difference difference : differences) {
-            boolean found = changes.remove(difference.getReference().getData().getPath());
+            boolean found = changes.remove(difference.getReference().getData().getRelative());
             Assertions.assertThat(found).isTrue();
         }
 

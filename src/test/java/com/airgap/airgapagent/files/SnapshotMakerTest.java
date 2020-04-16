@@ -20,10 +20,10 @@ class SnapshotMakerTest {
     public void visit() throws IOException {
         SnapshotMaker maker = new SnapshotMaker(Paths.get("src/test/resources/sample/folder/subfolder"));
         SnapshotNode result = maker.visit();
-        Assertions.assertEquals("subfolder", result.getData().getFileName());
+        Assertions.assertEquals("", result.getData().getRelative());
         Assertions.assertEquals(1, result.getChildren().size());
         SnapshotNode child = result.getChildren().iterator().next();
-        Assertions.assertEquals("subfile.txt", child.getData().getFileName());
+        Assertions.assertEquals("subfile.txt", child.getData().getRelative());
         System.out.println(result);
 
         ObjectMapper objectMapper = new ObjectMapper(new YAMLFactory());

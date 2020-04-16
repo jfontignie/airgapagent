@@ -14,12 +14,12 @@ public class MetadataFactory {
         //Nothing to do
     }
 
-    public static Metadata analyze(Path path) throws IOException {
+    public static Metadata analyze(Path root, Path path) throws IOException {
 
         if (Files.isRegularFile(path)) {
-            return new FileMetadata(path);
+            return new FileMetadata(root, path);
         } else {
-            return new FolderMetadata(path);
+            return new FolderMetadata(root, path);
         }
     }
 

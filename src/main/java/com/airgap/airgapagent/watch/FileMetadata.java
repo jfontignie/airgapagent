@@ -21,19 +21,18 @@ public class FileMetadata extends Metadata {
 
     @JsonCreator(mode = JsonCreator.Mode.PROPERTIES)
     FileMetadata(@JsonProperty("fileTime") long fileTime,
-                 @JsonProperty("path") Path path,
                  @JsonProperty("type") Type type,
-                 @JsonProperty("fileName") String fileName,
+                 @JsonProperty("relative") String relative,
                  @JsonProperty("contentType") String contentType,
                  @JsonProperty("size") long size) {
-        super(path, type, fileName);
+        super(type, relative);
         this.fileTime = fileTime;
         this.contentType = contentType;
         this.size = size;
     }
 
-    public FileMetadata(Path path) throws IOException {
-        super(path);
+    public FileMetadata(Path root, Path path) throws IOException {
+        super(root, path);
         this.fileTime = Files.getLastModifiedTime(path).toMillis();
         contentType = Files.probeContentType(path);
         size = Files.size(path);
