@@ -61,7 +61,7 @@ class SnapshotDifferentiatorTest {
     void difference() {
         SnapshotDifferentiator.Difference diff = new SnapshotDifferentiator.Difference(SnapshotDifferentiator.DifferenceType.MISSING_FIRST,
                 null, new SnapshotNode(null));
-        Assertions.assertThat(diff.getType().equals(SnapshotDifferentiator.DifferenceType.MISSING_FIRST));
+        Assertions.assertThat(diff.getType()).isEqualTo(SnapshotDifferentiator.DifferenceType.MISSING_FIRST);
         Assertions.assertThat(diff.getReference()).isNotNull();
     }
 }

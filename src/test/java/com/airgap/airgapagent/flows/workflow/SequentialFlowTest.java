@@ -21,8 +21,8 @@ public class SequentialFlowTest {
         SequentialFlow sequentialFlow = SequentialFlow.Builder.aNewSequentialFlow()
                 .named("testFlow")
                 .execute(work1)
-                .then(work2)
-                .then(work3)
+                .execute(work2)
+                .execute(work3)
                 .build();
 
         // when

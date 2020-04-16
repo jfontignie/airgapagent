@@ -42,7 +42,7 @@ public class SequentialFlow extends AbstractWorkFlow{
     public static class Builder {
 
         private String name;
-        private List<Work> works;
+        private final List<Work> works;
 
         private Builder() {
             this.name = UUID.randomUUID().toString();
@@ -59,11 +59,6 @@ public class SequentialFlow extends AbstractWorkFlow{
         }
 
         public SequentialFlow.Builder execute(Work work) {
-            this.works.add(work);
-            return this;
-        }
-
-        public SequentialFlow.Builder then(Work work) {
             this.works.add(work);
             return this;
         }

@@ -16,7 +16,6 @@ import java.util.StringJoiner;
  */
 @JsonTypeInfo(
         use = JsonTypeInfo.Id.NAME,
-        include = JsonTypeInfo.As.PROPERTY,
         property = "type")
 @JsonSubTypes({
         @JsonSubTypes.Type(value = FolderMetadata.class, name = "DIRECTORY"),
@@ -24,7 +23,7 @@ import java.util.StringJoiner;
 })
 public abstract class Metadata implements Serializable {
 
-    private transient final Path path;
+    private final transient Path path;
     private final Type type;
     private final String fileName;
 

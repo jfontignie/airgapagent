@@ -28,6 +28,7 @@ class FileTriggerTest {
 
     @Disabled
     @Test
+    @SuppressWarnings("java:S1607")
     public void testTrigger() throws IOException, InterruptedException {
         Trigger trigger = FileTrigger.Builder.aNewFileTrigger()
                 .setWatcher(
@@ -52,6 +53,7 @@ class FileTriggerTest {
 
     @Test
     @Disabled
+    @SuppressWarnings({"java:S2699", "java:S1607"})
     void testLong() throws IOException, InterruptedException {
         Trigger trigger = FileTrigger.Builder.aNewFileTrigger()
                 .setWatcher(
