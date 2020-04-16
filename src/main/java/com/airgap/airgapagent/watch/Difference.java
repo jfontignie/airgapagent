@@ -7,12 +7,24 @@ import java.util.StringJoiner;
  * Created by Jacques Fontignie on 4/16/2020.
  */
 public class Difference {
-    private final DifferenceType type;
+    private DifferenceType type;
     private SnapshotNode first;
     private SnapshotNode second;
-    private final SnapshotNode reference;
+    private SnapshotNode reference;
 
     public Difference(DifferenceType type, SnapshotNode first, SnapshotNode second) {
+        setValues(type, first, second);
+    }
+
+    public Difference(DifferenceType type, SnapshotNode node) {
+        if (type == DifferenceType.DIFFERENT) {
+            throw new IllegalStateException("Wrong constructor: use both constructor");
+        }
+        setValues(type, node, node);
+    }
+
+    private void setValues(DifferenceType type, SnapshotNode first, SnapshotNode second) {
+
         this.first = first;
         this.second = second;
         this.type = type;
@@ -23,23 +35,6 @@ public class Difference {
                 break;
             case MISSING_FIRST:
                 reference = second;
-                break;
-            default:
-                throw new IllegalStateException("Invalid type");
-        }
-    }
-
-    public Difference(DifferenceType type, SnapshotNode node) {
-        this.type = type;
-        reference = node;
-        switch (type) {
-            case DIFFERENT:
-                throw new IllegalStateException("Wrong constructor: use both constructor");
-            case MISSING_FIRST:
-                second = node;
-                break;
-            case MISSING_SECOND:
-                first = node;
                 break;
             default:
                 throw new IllegalStateException("Invalid type");
