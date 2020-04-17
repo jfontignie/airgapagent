@@ -16,8 +16,8 @@ import java.nio.file.Path;
 class FolderMetadataTest {
     @Test
     void serialize() throws IOException {
-        FolderMetadata metadata = new FolderMetadata(Path.of("src/test"), Path.of("src/test/resources/sample"));
-        Assertions.assertEquals("resources\\sample", metadata.getRelative());
+        FolderMetadata metadata = new FolderMetadata(Path.of("src/test/resources"), Path.of("src/test/resources/sample"));
+        Assertions.assertEquals("sample", metadata.getRelative());
         ObjectMapper objectMapper = new ObjectMapper(new YAMLFactory());
         String value = objectMapper.writeValueAsString(metadata);
         System.out.println(value);
