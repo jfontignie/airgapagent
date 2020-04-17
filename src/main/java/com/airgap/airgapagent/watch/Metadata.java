@@ -25,8 +25,14 @@ import java.util.StringJoiner;
 public abstract class Metadata implements Serializable {
 
     private final Type type;
-    private final String relative;
-    private final String root;
+    private String relative;
+
+
+    private String root;
+
+    Metadata(Type type) {
+        this.type = type;
+    }
 
     Metadata(String root, Type type, String relative) {
         this.root = root;
@@ -50,6 +56,15 @@ public abstract class Metadata implements Serializable {
 
     public Type getType() {
         return type;
+    }
+
+
+    public void setRelative(String relative) {
+        this.relative = relative;
+    }
+
+    public void setRoot(String root) {
+        this.root = root;
     }
 
     @JsonIgnore
@@ -80,4 +95,6 @@ public abstract class Metadata implements Serializable {
     public int hashCode() {
         return Objects.hash(getRelative(), getRoot(), getType());
     }
+
+
 }

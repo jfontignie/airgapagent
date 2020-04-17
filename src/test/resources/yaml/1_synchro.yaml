@@ -1,0 +1,19 @@
+baseFolder: "src/test/resources/sample"
+earlierThan: 60
+tasks:
+  - name: "Copy data to target folder"
+    type: "COPY"
+    targetFolder: "target/sample"
+  - name: "Remove tasks with specific content"
+    type: "REGEX"
+    regex: ["password","pwd"]
+    then:
+
+      - name: "Send data"
+        type: "SYSLOG"
+        target: "server"
+        port: 514
+      - name: "Copy data to shadow folder"
+        type: "COPY"
+        targetFolder: "target/shadow"
+

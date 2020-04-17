@@ -1,0 +1,49 @@
+package com.airgap.airgapagent.synchro;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+
+/**
+ * com.airgap.airgapagent.synchro
+ * Created by Jacques Fontignie on 4/17/2020.
+ */
+public class CopyTask extends AbstractTask {
+
+    private String targetFolder;
+
+    @JsonIgnore
+    private Path target;
+
+    public CopyTask() {
+        super(TaskType.COPY);
+    }
+
+    public CopyTask(String name, String targetFolder) {
+        this();
+        setName(name);
+        setTargetFolder(targetFolder);
+    }
+
+    public String getTargetFolder() {
+        return targetFolder;
+    }
+
+    public void setTargetFolder(String targetFolder) {
+        this.targetFolder = targetFolder;
+    }
+
+    @Override
+    public void init() throws IOException {
+        target = Path.of(targetFolder);
+        if (Files.notExists(target)) {
+            Files.createDirectory(target);
+        } else {
+            if (Files.isRegularFile(target)) {
+                throw new IllegalStateException("Not a folder");
+            }
+        }
+    }
+}
