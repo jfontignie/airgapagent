@@ -20,12 +20,13 @@ public class FileMetadata extends Metadata {
     private final long fileTime;
 
     @JsonCreator(mode = JsonCreator.Mode.PROPERTIES)
-    FileMetadata(@JsonProperty("fileTime") long fileTime,
+    FileMetadata(@JsonProperty("root") String root,
+                 @JsonProperty("fileTime") long fileTime,
                  @JsonProperty("type") Type type,
                  @JsonProperty("relative") String relative,
                  @JsonProperty("contentType") String contentType,
                  @JsonProperty("size") long size) {
-        super(type, relative);
+        super(root, type, relative);
         this.fileTime = fileTime;
         this.contentType = contentType;
         this.size = size;

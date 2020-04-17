@@ -41,6 +41,14 @@ public class Difference {
         }
     }
 
+    public SnapshotNode getFirst() {
+        return first;
+    }
+
+    public SnapshotNode getSecond() {
+        return second;
+    }
+
     @Override
     public String toString() {
         return new StringJoiner(", ", Difference.class.getSimpleName() + "[", "]")

@@ -26,8 +26,10 @@ public abstract class Metadata implements Serializable {
 
     private final Type type;
     private final String relative;
+    private final String root;
 
-    Metadata(Type type, String relative) {
+    Metadata(String root, Type type, String relative) {
+        this.root = root;
         this.type = type;
         this.relative = relative;
     }
@@ -35,6 +37,11 @@ public abstract class Metadata implements Serializable {
     Metadata(Path root, Path path) {
         type = Files.isDirectory(path) ? Type.DIRECTORY : Type.FILE;
         this.relative = root.relativize(path).toString();
+        this.root = root.toAbsolutePath().toString();
+    }
+
+    public String getRoot() {
+        return root;
     }
 
     public String getRelative() {
@@ -53,6 +60,7 @@ public abstract class Metadata implements Serializable {
     @Override
     public String toString() {
         return new StringJoiner(", ", Metadata.class.getSimpleName() + "[", "]")
+                .add("root='" + root + "'")
                 .add("relative='" + relative + "'")
                 .add("type=" + type)
                 .toString();
@@ -63,12 +71,13 @@ public abstract class Metadata implements Serializable {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Metadata metadata = (Metadata) o;
-        return getType() == metadata.getType() &&
+        return Objects.equals(getRoot(), metadata.getRoot()) &&
+                getType() == metadata.getType() &&
                 Objects.equals(getRelative(), metadata.getRelative());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(getRelative(), getType());
+        return Objects.hash(getRelative(), getRoot(), getType());
     }
 }
