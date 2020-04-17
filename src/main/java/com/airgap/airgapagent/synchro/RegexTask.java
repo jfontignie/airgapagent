@@ -1,5 +1,6 @@
 package com.airgap.airgapagent.synchro;
 
+import java.nio.file.Path;
 import java.util.List;
 
 /**
@@ -24,5 +25,10 @@ public class RegexTask extends AbstractTask {
     @Override
     public void init() {
         //Nothing to do
+    }
+
+    @Override
+    public void call(Path baseFolder, Path path) {
+        //TODO implement
     }
 }

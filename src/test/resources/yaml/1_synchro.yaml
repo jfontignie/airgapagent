@@ -1,5 +1,5 @@
 baseFolder: "src/test/resources/sample"
-earlierThan: 60
+#earlierThan: 100
 tasks:
   - name: "Copy data to target folder"
     type: "COPY"
@@ -8,7 +8,6 @@ tasks:
     type: "REGEX"
     regex: ["password","pwd"]
     then:
-
       - name: "Send data"
         type: "SYSLOG"
         target: "server"

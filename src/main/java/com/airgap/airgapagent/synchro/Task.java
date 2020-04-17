@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
 
 import java.io.IOException;
 import java.io.Serializable;
+import java.nio.file.Path;
 
 /**
  * com.airgap.airgapagent.synchro
@@ -25,4 +26,5 @@ public interface Task extends Serializable {
 
     void init() throws IOException;
 
+    void call(Path baseFolder, Path path) throws IOException;
 }

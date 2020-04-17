@@ -1,5 +1,8 @@
 package com.airgap.airgapagent.synchro;
 
+import java.io.IOException;
+import java.nio.file.Path;
+
 /**
  * com.airgap.airgapagent.synchro
  * Created by Jacques Fontignie on 4/17/2020.
@@ -32,5 +35,10 @@ public class SyslogTask extends AbstractTask {
     @Override
     public void init() {
         //Nothing to do
+    }
+
+    @Override
+    public void call(Path baseFolder, Path path) throws IOException {
+
     }
 }

@@ -1,10 +1,9 @@
 package com.airgap.airgapagent.synchro;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
 
 /**
  * com.airgap.airgapagent.synchro
@@ -14,8 +13,7 @@ public class CopyTask extends AbstractTask {
 
     private String targetFolder;
 
-    @JsonIgnore
-    private Path target;
+    private transient Path target;
 
     public CopyTask() {
         super(TaskType.COPY);
@@ -45,5 +43,16 @@ public class CopyTask extends AbstractTask {
                 throw new IllegalStateException("Not a folder");
             }
         }
+    }
+
+    @Override
+    public void call(Path baseFolder, Path path) throws IOException {
+        Path parent = path.getParent();
+        if (parent != null) {
+            Path parentPath = target.resolve(parent);
+            Files.createDirectories(parentPath);
+        }
+        Path targetPath = target.resolve(path);
+        Files.copy(baseFolder.resolve(path), targetPath, StandardCopyOption.REPLACE_EXISTING);
     }
 }
