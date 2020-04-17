@@ -5,6 +5,7 @@ import com.airgap.airgapagent.watch.SnapshotDifferentiator;
 import com.airgap.airgapagent.watch.SnapshotMaker;
 import com.airgap.airgapagent.watch.SnapshotNode;
 import org.assertj.core.api.Assertions;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
@@ -21,6 +22,7 @@ import java.util.Set;
 class SnapshotDifferentiatorTest {
 
     @Test
+    @Disabled
     void getDifferences() throws IOException {
 
         String fileToDelete = "created" + FileUtils.buildTimestamp();
