@@ -13,7 +13,7 @@ public class CopyTask extends AbstractTask {
 
     private String targetFolder;
 
-    private transient Path target;
+    private Path target;
 
     public CopyTask() {
         super(TaskType.COPY);
@@ -46,13 +46,13 @@ public class CopyTask extends AbstractTask {
     }
 
     @Override
-    public void call(Path baseFolder, Path path) throws IOException {
-        Path parent = path.getParent();
+    public void call(PathInfo path) throws IOException {
+        Path parent = path.getRelative().getParent();
         if (parent != null) {
             Path parentPath = target.resolve(parent);
             Files.createDirectories(parentPath);
         }
-        Path targetPath = target.resolve(path);
-        Files.copy(baseFolder.resolve(path), targetPath, StandardCopyOption.REPLACE_EXISTING);
+        Path targetPath = target.resolve(path.getRelative());
+        Files.copy(path.getOriginalPath(), targetPath, StandardCopyOption.REPLACE_EXISTING);
     }
 }

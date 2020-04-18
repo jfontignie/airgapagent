@@ -4,8 +4,6 @@ import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 
 import java.io.IOException;
-import java.io.Serializable;
-import java.nio.file.Path;
 
 /**
  * com.airgap.airgapagent.synchro
@@ -19,12 +17,12 @@ import java.nio.file.Path;
         @JsonSubTypes.Type(value = RegexTask.class, name = TaskType.Constants.REGEX_NAME),
         @JsonSubTypes.Type(value = SyslogTask.class, name = TaskType.Constants.SYSLOG_NAME),
 })
-public interface Task extends Serializable {
+public interface Task {
     String getName();
 
     TaskType getTaskType();
 
     void init() throws IOException;
 
-    void call(Path baseFolder, Path path) throws IOException;
+    void call(PathInfo path) throws IOException;
 }

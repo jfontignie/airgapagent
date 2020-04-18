@@ -1,5 +1,6 @@
 package com.airgap.airgapagent.synchro;
 
+import java.io.IOException;
 import java.util.List;
 
 /**
@@ -36,5 +37,11 @@ public abstract class AbstractTask implements Task {
 
     public void setThen(List<Task> thenTasks) {
         this.thenTasks = thenTasks;
+    }
+
+    void callNext(PathInfo path) throws IOException {
+        for (Task task : getThen()) {
+            task.call(path);
+        }
     }
 }

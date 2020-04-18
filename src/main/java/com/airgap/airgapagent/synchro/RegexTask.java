@@ -1,7 +1,12 @@
 package com.airgap.airgapagent.synchro;
 
-import java.nio.file.Path;
+import org.apache.tika.Tika;
+
+import java.io.IOException;
+import java.io.Reader;
 import java.util.List;
+import java.util.Scanner;
+import java.util.regex.Pattern;
 
 /**
  * com.airgap.airgapagent.synchro
@@ -9,6 +14,8 @@ import java.util.List;
  */
 public class RegexTask extends AbstractTask {
     private List<String> regex;
+    private Tika tika;
+    private Pattern pattern;
 
     public RegexTask() {
         super(TaskType.REGEX);
@@ -24,11 +31,19 @@ public class RegexTask extends AbstractTask {
 
     @Override
     public void init() {
-        //Nothing to do
+        tika = new Tika();
+        pattern = Pattern.compile(String.join("|", regex));
     }
 
     @Override
-    public void call(Path baseFolder, Path path) {
-        //TODO implement
+    public void call(PathInfo path) throws IOException {
+        try (Reader reader = tika.parse(path.getOriginalPath())) {
+            Scanner scanner = new Scanner(reader);
+            String found = scanner.findWithinHorizon(pattern, 0);
+            if (found != null) {
+                callNext(path);
+            }
+        }
     }
+
 }

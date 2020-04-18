@@ -10,8 +10,9 @@ tasks:
     then:
       - name: "Send data"
         type: "SYSLOG"
-        target: "server"
+        target: "localhost"
         port: 514
+        message: "New File detected matching password"
       - name: "Copy data to shadow folder"
         type: "COPY"
         targetFolder: "target/shadow"

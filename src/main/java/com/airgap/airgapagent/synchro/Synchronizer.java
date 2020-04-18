@@ -4,7 +4,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
-import java.io.Serializable;
 import java.nio.file.FileVisitResult;
 import java.nio.file.FileVisitor;
 import java.nio.file.Files;
@@ -16,11 +15,11 @@ import java.util.List;
  * com.airgap.airgapagent.synchro
  * Created by Jacques Fontignie on 4/17/2020.
  */
-public class Synchronizer implements Serializable {
+public class Synchronizer {
 
     private static final Logger logger = LoggerFactory.getLogger(Synchronizer.class);
 
-    private transient Path baseFolder;
+    private Path baseFolder;
     private int earlierThan;
     private List<Task> tasks;
 
@@ -71,7 +70,7 @@ public class Synchronizer implements Serializable {
 //                }
                 logger.info("Path has been identified to have been modified: {}", path);
                 for (Task task : tasks) {
-                    task.call(baseFolder, baseFolder.relativize(path));
+                    task.call(new PathInfo(baseFolder, path));
                 }
                 return FileVisitResult.CONTINUE;
             }

@@ -1,7 +1,10 @@
 package com.airgap.airgapagent.synchro;
 
+import com.cloudbees.syslog.Severity;
+import com.cloudbees.syslog.sender.UdpSyslogMessageSender;
+
 import java.io.IOException;
-import java.nio.file.Path;
+import java.util.Objects;
 
 /**
  * com.airgap.airgapagent.synchro
@@ -10,6 +13,8 @@ import java.nio.file.Path;
 public class SyslogTask extends AbstractTask {
     private String target;
     private int port;
+    private String message;
+    private UdpSyslogMessageSender syslog;
 
     public SyslogTask() {
         super(TaskType.SYSLOG);
@@ -32,13 +37,27 @@ public class SyslogTask extends AbstractTask {
         this.port = port;
     }
 
-    @Override
-    public void init() {
-        //Nothing to do
+    public String getMessage() {
+        return message;
+    }
+
+    public void setMessage(String message) {
+        this.message = message;
     }
 
     @Override
-    public void call(Path baseFolder, Path path) throws IOException {
+    public void init() {
+        //Nothing to do
+        syslog = new UdpSyslogMessageSender();
+        syslog.setSyslogServerHostname(target);
+        syslog.setSyslogServerPort(port);
+        syslog.setDefaultAppName("Synchro");
+        syslog.setDefaultSeverity(Severity.ALERT);
+    }
 
+    @Override
+    public void call(PathInfo path) throws IOException {
+        Objects.requireNonNull(syslog, "Init not called");
+        syslog.sendMessage(message + ":" + path.getRelative());
     }
 }
