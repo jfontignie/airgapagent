@@ -4,7 +4,6 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
-import java.nio.file.Path;
 
 /**
  * com.airgap.airgapagent.synchro
@@ -23,7 +22,7 @@ class SyslogTaskTest {
 
 
         task.init();
-        task.call(new PathInfo(Path.of("src/test/resources"), Path.of("sample/sample.txt")));
+        task.call(new PathInfo("src/test/resources", "sample/sample.txt"));
         Assertions.assertTrue(true);
     }
 }

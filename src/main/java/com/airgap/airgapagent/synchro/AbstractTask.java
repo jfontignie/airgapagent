@@ -39,6 +39,15 @@ public abstract class AbstractTask implements Task {
         this.thenTasks = thenTasks;
     }
 
+    public void init() throws IOException {
+        if (getThen() == null) {
+            return;
+        }
+        for (Task task : getThen()) {
+            task.init();
+        }
+    }
+
     void callNext(PathInfo path) throws IOException {
         for (Task task : getThen()) {
             task.call(path);
