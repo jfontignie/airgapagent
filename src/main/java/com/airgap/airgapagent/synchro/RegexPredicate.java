@@ -15,15 +15,19 @@ import java.util.regex.Pattern;
  * com.airgap.airgapagent.synchro
  * Created by Jacques Fontignie on 4/17/2020.
  */
-public class RegexTask extends AbstractTask {
+public class RegexPredicate implements Predicate {
     private List<String> regex;
     private Tika tika;
     private Pattern pattern;
-    private static final Logger logger = LoggerFactory.getLogger(RegexTask.class);
+    private static final Logger logger = LoggerFactory.getLogger(RegexPredicate.class);
     private boolean caseSensitive = false;
 
-    public RegexTask() {
-        super(TaskType.REGEX);
+    public RegexPredicate() {
+    }
+
+    public RegexPredicate(List<String> regex, boolean caseSensitive) {
+        this.regex = regex;
+        this.caseSensitive = caseSensitive;
     }
 
     public List<String> getRegex() {
@@ -43,8 +47,7 @@ public class RegexTask extends AbstractTask {
     }
 
     @Override
-    public void init() throws IOException {
-        super.init();
+    public void init() {
         tika = new Tika();
         int flag = 0;
         if (!isCaseSensitive()) {
@@ -55,7 +58,7 @@ public class RegexTask extends AbstractTask {
     }
 
     @Override
-    public void call(PathInfo path) throws IOException {
+    public boolean call(PathInfo path) throws IOException {
         Objects.requireNonNull(tika, "Init method has not been called");
         logger.debug("Analyzing {}", path.getOriginalPath());
         try (Reader reader = tika.parse(path.getOriginalPath())) {
@@ -64,9 +67,10 @@ public class RegexTask extends AbstractTask {
             String found = scanner.findWithinHorizon(pattern, 0);
             if (found != null) {
                 logger.info("Found matching path: {}", path.getOriginalPath());
-                callNext(path);
+                return true;
             }
         }
+        return false;
     }
 
 }

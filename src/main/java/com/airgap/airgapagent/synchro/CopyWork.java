@@ -4,38 +4,39 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
+import java.util.Objects;
 
 /**
  * com.airgap.airgapagent.synchro
  * Created by Jacques Fontignie on 4/17/2020.
  */
-public class CopyTask extends AbstractTask {
+public class CopyWork implements Work {
 
-    private String targetFolder;
 
     private Path target;
 
-    public CopyTask() {
-        super(TaskType.COPY);
+    public CopyWork() {
+        //For jackson
     }
 
-    public CopyTask(String name, String targetFolder) {
-        this();
-        setName(name);
-        setTargetFolder(targetFolder);
+    public CopyWork(Path target) {
+        this.target = target;
     }
 
-    public String getTargetFolder() {
-        return targetFolder;
+    public CopyWork(String targetFolder) {
+        setTarget(targetFolder);
     }
 
-    public void setTargetFolder(String targetFolder) {
-        this.targetFolder = targetFolder;
+    public String getTarget() {
+        return target.toString();
+    }
+
+    public void setTarget(String targetFolder) {
+        this.target = Path.of(targetFolder);
     }
 
     @Override
     public void init() throws IOException {
-        target = Path.of(targetFolder);
         if (Files.notExists(target)) {
             Files.createDirectory(target);
         } else {
@@ -47,6 +48,7 @@ public class CopyTask extends AbstractTask {
 
     @Override
     public void call(PathInfo path) throws IOException {
+        Objects.requireNonNull(target, "Init must be called");
         Path parent = path.getRelative().getParent();
         if (parent != null) {
             Path parentPath = target.resolve(parent);

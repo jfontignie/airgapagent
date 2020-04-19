@@ -13,14 +13,12 @@ import java.io.IOException;
         use = JsonTypeInfo.Id.NAME,
         property = "type")
 @JsonSubTypes({
-        @JsonSubTypes.Type(value = CopyTask.class, name = TaskType.Constants.COPY_NAME),
-        @JsonSubTypes.Type(value = RegexTask.class, name = TaskType.Constants.REGEX_NAME),
-        @JsonSubTypes.Type(value = SyslogTask.class, name = TaskType.Constants.SYSLOG_NAME),
+        @JsonSubTypes.Type(value = CopyWork.class, name = WorkConstants.COPY_NAME),
+        @JsonSubTypes.Type(value = ConditionalWork.class, name = WorkConstants.CONDITION_NAME),
+        @JsonSubTypes.Type(value = SyslogWork.class, name = WorkConstants.SYSLOG_NAME),
+        @JsonSubTypes.Type(value = SequentialWork.class, name = WorkConstants.SEQUENCE_NAME),
 })
-public interface Task {
-    String getName();
-
-    TaskType getTaskType();
+public interface Work {
 
     void init() throws IOException;
 

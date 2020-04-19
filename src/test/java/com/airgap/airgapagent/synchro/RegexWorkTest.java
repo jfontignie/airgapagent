@@ -7,7 +7,6 @@ import org.mockito.Mockito;
 import java.io.IOException;
 import java.io.StringReader;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.Scanner;
 import java.util.regex.Pattern;
 
@@ -15,21 +14,21 @@ import java.util.regex.Pattern;
  * com.airgap.airgapagent.synchro
  * Created by Jacques Fontignie on 4/18/2020.
  */
-class RegexTaskTest {
+class RegexWorkTest {
 
 
     @Test
     void test() throws IOException {
-        RegexTask task = new RegexTask();
+        RegexPredicate task = new RegexPredicate();
         task.setRegex(Arrays.asList("pwd", "password"));
-        Task newTask = Mockito.mock(Task.class);
-        task.setThen(Collections.singletonList(newTask));
+        Work newTask = Mockito.mock(Work.class);
 
         task.init();
-        task.call(new PathInfo("src/test/resources", "src/test/resources/sample/sample.txt"));
-        Mockito.verify(newTask, Mockito.only()).call(Mockito.any());
-    }
+        Assertions.assertTrue(
+                task.call(
+                        new PathInfo("src/test/resources", "src/test/resources/sample/sample.txt")));
 
+    }
 
     @Test
     void setRegex() {

@@ -10,15 +10,21 @@ import java.util.Objects;
  * com.airgap.airgapagent.synchro
  * Created by Jacques Fontignie on 4/17/2020.
  */
-public class SyslogTask extends AbstractTask {
+public class SyslogWork implements Work {
     private String target;
     private int port;
     private String message;
     private UdpSyslogMessageSender syslog;
+    private String name;
 
-    public SyslogTask() {
-        super(TaskType.SYSLOG);
+    public SyslogWork(String target, int port, String message, String name) {
+        this.target = target;
+        this.port = port;
+        this.message = message;
+        this.name = name;
+    }
 
+    public SyslogWork() {
     }
 
     public String getTarget() {
@@ -45,6 +51,14 @@ public class SyslogTask extends AbstractTask {
         this.message = message;
     }
 
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
     @Override
     public void init() {
         //Nothing to do
@@ -60,4 +74,5 @@ public class SyslogTask extends AbstractTask {
         Objects.requireNonNull(syslog, "Init not called");
         syslog.sendMessage(message + ":" + path.getRelative());
     }
+
 }

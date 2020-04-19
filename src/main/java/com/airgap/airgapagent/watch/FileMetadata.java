@@ -15,7 +15,7 @@ import java.util.StringJoiner;
  * Created by Jacques Fontignie on 4/15/2020.
  */
 public class FileMetadata extends Metadata {
-    private final String contentType;
+    private String contentType;
     private final long size;
     private final long fileTime;
 
@@ -35,7 +35,11 @@ public class FileMetadata extends Metadata {
     public FileMetadata(Path root, Path path) throws IOException {
         super(root, path);
         this.fileTime = Files.getLastModifiedTime(path).toMillis();
-        contentType = Files.probeContentType(path);
+        try {
+            contentType = Files.probeContentType(path);
+        } catch (IOException e) {
+            contentType = null;
+        }
         size = Files.size(path);
     }
 

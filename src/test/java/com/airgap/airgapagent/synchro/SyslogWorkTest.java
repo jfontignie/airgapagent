@@ -9,12 +9,12 @@ import java.io.IOException;
  * com.airgap.airgapagent.synchro
  * Created by Jacques Fontignie on 4/18/2020.
  */
-class SyslogTaskTest {
+class SyslogWorkTest {
 
     @Test
     void call() throws IOException {
 
-        SyslogTask task = new SyslogTask();
+        SyslogWork task = new SyslogWork();
         task.setMessage("Info");
         task.setPort(514);
         task.setTarget("localhost");

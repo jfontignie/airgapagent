@@ -1,19 +1,24 @@
-baseFolder: "src/test/resources/sample"
-#earlierThan: 100
-tasks:
-  - name: "Copy data to target folder"
-    type: "COPY"
-    targetFolder: "target/sample"
-  - name: "Remove tasks with specific content"
-    type: "REGEX"
-    regex: ["password","pwd"]
-    then:
-      - name: "Send data"
-        type: "SYSLOG"
-        target: "localhost"
-        port: 514
-        message: "New File detected matching password"
-      - name: "Copy data to shadow folder"
-        type: "COPY"
-        targetFolder: "target/shadow"
-
+baseFolder: "src/test/resources"
+earlierThan: 60
+flow:
+  type: "SEQUENCE"
+  actions:
+    - type: "COPY"
+      target: "target/sample"
+    - type: "CONDITION"
+      predicate:
+        type: "REGEX"
+        regex:
+          - "pwd"
+          - "password"
+        caseSensitive: true
+      nextIfSucceeded:
+        type: "SEQUENCE"
+        actions:
+          - type: "SYSLOG"
+            target: "localhost"
+            port: 514
+            message: "test"
+            name: "name"
+          - type: "COPY"
+            target: "target/shadow"

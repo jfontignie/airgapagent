@@ -3,12 +3,13 @@ package com.airgap.airgapagent.synchro;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
+import com.fasterxml.jackson.dataformat.yaml.YAMLGenerator;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Collections;
+import java.util.Arrays;
 
 /**
  * com.airgap.airgapagent.synchro
@@ -16,27 +17,47 @@ import java.util.Collections;
  */
 class SynchronizerTest {
 
-    private static final String SIMPLE = "baseFolder: \"src/test/resources\"\n" +
-            "earlierThan: 60\n" +
-            "tasks:\n" +
-            "- !<COPY>\n" +
-            "  name: \"Copy\"\n" +
-            "  taskType: \"COPY\"";
 
     @Test
     void testSerialize() throws JsonProcessingException {
-        Synchronizer synchronizer = new Synchronizer();
+        Synchronizer synchronizer = new SynchronizerBuilder().createSynchronizer();
         synchronizer.setBaseFolder("src/test/resources");
         synchronizer.setEarlierThan(60);
-        synchronizer.setTasks(
-                Collections.singletonList(new CopyTask("Copy", "target/sample")));
-        ObjectMapper objectMapper = new ObjectMapper(new YAMLFactory());
+        synchronizer.setFlow(new CopyWork("target/sample"));
+        YAMLFactory jf = new YAMLFactory();
+        jf.disable(YAMLGenerator.Feature.USE_NATIVE_TYPE_ID);
+        ObjectMapper objectMapper = new ObjectMapper(jf);
         String value = objectMapper.writeValueAsString(synchronizer);
         System.out.println(value);
         Synchronizer deserialized = objectMapper.readValue(value, Synchronizer.class);
         String secondValue = objectMapper.writeValueAsString(deserialized);
         Assertions.assertEquals(value, secondValue);
     }
+
+    @Test
+    void testFullSerialize() throws JsonProcessingException {
+        Synchronizer synchronizer = new SynchronizerBuilder()
+                .setBaseFolder("set/test/resources")
+                .setEarlierThan(60)
+                .setWork(new SequentialWork(
+                        new CopyWork("target/sample"),
+                        new ConditionalWork(
+                                new RegexPredicate(Arrays.asList("pwd", "password"), true),
+                                new SequentialWork(new SyslogWork(), new CopyWork("target/shadow")),
+                                null)
+                ))
+                .createSynchronizer();
+
+        YAMLFactory jf = new YAMLFactory();
+        jf.disable(YAMLGenerator.Feature.USE_NATIVE_TYPE_ID);
+        ObjectMapper objectMapper = new ObjectMapper(jf);
+        String value = objectMapper.writeValueAsString(synchronizer);
+        System.out.println(value);
+        Synchronizer deserialized = objectMapper.readValue(value, Synchronizer.class);
+        String secondValue = objectMapper.writeValueAsString(deserialized);
+        Assertions.assertEquals(value, secondValue);
+    }
+
 
     @Test
     public void testFull() throws IOException {
@@ -46,13 +67,6 @@ class SynchronizerTest {
         Assertions.assertNotNull(deserialized);
         deserialized.run();
 
-    }
-
-    @Test
-    void simpleDeserialize() throws JsonProcessingException {
-        ObjectMapper objectMapper = new ObjectMapper(new YAMLFactory());
-        Synchronizer deserialized = objectMapper.readValue(SIMPLE, Synchronizer.class);
-        Assertions.assertNotNull(deserialized);
     }
 
 }

@@ -9,7 +9,6 @@ import java.nio.file.FileVisitor;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.attribute.BasicFileAttributes;
-import java.util.List;
 
 /**
  * com.airgap.airgapagent.synchro
@@ -21,7 +20,13 @@ public class Synchronizer {
 
     private Path baseFolder;
     private int earlierThan;
-    private List<Task> tasks;
+    private Work flow;
+
+    public Synchronizer(Path baseFolder, int earlierThan, Work flow) {
+        this.baseFolder = baseFolder;
+        this.earlierThan = earlierThan;
+        this.flow = flow;
+    }
 
     public Synchronizer() {
         //Nothing to do
@@ -43,18 +48,16 @@ public class Synchronizer {
         this.earlierThan = earlierThan;
     }
 
-    public List<Task> getTasks() {
-        return tasks;
+    public Work getFlow() {
+        return flow;
     }
 
-    public void setTasks(List<Task> tasks) {
-        this.tasks = tasks;
+    public void setFlow(Work flow) {
+        this.flow = flow;
     }
 
     public void run() throws IOException {
-        for (Task task : tasks) {
-            task.init();
-        }
+        flow.init();
 
         long lastTime = System.currentTimeMillis() - earlierThan * 1000;
         Files.walkFileTree(baseFolder, new FileVisitor<>() {
@@ -69,9 +72,7 @@ public class Synchronizer {
 //                    return FileVisitResult.CONTINUE;
 //                }
                 logger.info("Path has been identified to have been modified: {}", path);
-                for (Task task : tasks) {
-                    task.call(new PathInfo(baseFolder, path));
-                }
+                flow.call(new PathInfo(baseFolder, path));
                 return FileVisitResult.CONTINUE;
             }
 
