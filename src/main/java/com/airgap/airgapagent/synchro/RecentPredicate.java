@@ -4,7 +4,6 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.attribute.FileTime;
 import java.util.Objects;
 
 /**
@@ -49,10 +48,9 @@ public class RecentPredicate implements Predicate {
         if (status == null) {
             return true;
         } else {
-            FileTime lastScan = FileTime.fromMillis(status.getLastTime());
-            FileTime currentFileTime = Files.getLastModifiedTime(originalPath);
-            return currentFileTime
-                    .compareTo(lastScan) > 0;
+            long lastScan = status.getLastTime();
+            long currentFileTime = Files.getLastModifiedTime(originalPath).toMillis();
+            return currentFileTime > lastScan;
         }
     }
 
