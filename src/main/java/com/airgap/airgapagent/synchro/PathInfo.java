@@ -19,6 +19,10 @@ public class PathInfo {
         this(Path.of(baseFolder), Path.of(target));
     }
 
+    public static PathInfo of(String baseFolder, String target) {
+        return new PathInfo(baseFolder, target);
+    }
+
     public Path getBaseFolder() {
         return baseFolder;
     }

@@ -73,4 +73,8 @@ public class RegexPredicate implements Predicate {
         return false;
     }
 
+    @Override
+    public void close() {
+        //Nothing to do
+    }
 }

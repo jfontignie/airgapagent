@@ -19,12 +19,10 @@ public class Synchronizer {
     private static final Logger logger = LoggerFactory.getLogger(Synchronizer.class);
 
     private Path baseFolder;
-    private int earlierThan;
     private Work flow;
 
-    public Synchronizer(Path baseFolder, int earlierThan, Work flow) {
+    public Synchronizer(Path baseFolder, Work flow) {
         this.baseFolder = baseFolder;
-        this.earlierThan = earlierThan;
         this.flow = flow;
     }
 
@@ -40,14 +38,6 @@ public class Synchronizer {
         this.baseFolder = Path.of(baseFolder);
     }
 
-    public int getEarlierThan() {
-        return earlierThan;
-    }
-
-    public void setEarlierThan(int earlierThan) {
-        this.earlierThan = earlierThan;
-    }
-
     public Work getFlow() {
         return flow;
     }
@@ -59,30 +49,26 @@ public class Synchronizer {
     public void run() throws IOException {
         flow.init();
 
-        long lastTime = System.currentTimeMillis() - earlierThan * 1000;
         Files.walkFileTree(baseFolder, new FileVisitor<>() {
             @Override
-            public FileVisitResult preVisitDirectory(Path path, BasicFileAttributes basicFileAttributes) throws IOException {
+            public FileVisitResult preVisitDirectory(Path path, BasicFileAttributes basicFileAttributes) {
                 return FileVisitResult.CONTINUE;
             }
 
             @Override
             public FileVisitResult visitFile(Path path, BasicFileAttributes basicFileAttributes) throws IOException {
-//                if (Files.getLastModifiedTime(path).toMillis() < lastTime) {
-//                    return FileVisitResult.CONTINUE;
-//                }
                 logger.info("Path has been identified to have been modified: {}", path);
                 flow.call(new PathInfo(baseFolder, path));
                 return FileVisitResult.CONTINUE;
             }
 
             @Override
-            public FileVisitResult visitFileFailed(Path path, IOException e) throws IOException {
+            public FileVisitResult visitFileFailed(Path path, IOException e) {
                 return FileVisitResult.CONTINUE;
             }
 
             @Override
-            public FileVisitResult postVisitDirectory(Path path, IOException e) throws IOException {
+            public FileVisitResult postVisitDirectory(Path path, IOException e) {
                 return FileVisitResult.CONTINUE;
             }
         });

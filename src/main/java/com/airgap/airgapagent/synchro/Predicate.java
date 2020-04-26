@@ -3,6 +3,7 @@ package com.airgap.airgapagent.synchro;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 
+import java.io.Closeable;
 import java.io.IOException;
 
 /**
@@ -17,7 +18,7 @@ import java.io.IOException;
         @JsonSubTypes.Type(value = ExtensionPredicate.class, name = PredicateConstants.EXTENSION),
 
 })
-public interface Predicate {
+public interface Predicate extends Closeable {
 
     void init() throws IOException;
 

@@ -1,5 +1,8 @@
 package com.airgap.airgapagent.synchro;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
@@ -8,9 +11,11 @@ import java.util.List;
  * com.airgap.airgapagent.synchro
  * Created by Jacques Fontignie on 4/19/2020.
  */
-public class SequentialWork implements Work {
+public class SequentialWork implements CloseableWork {
 
     private List<Work> actions;
+    private static final Logger log = LoggerFactory.getLogger(SequentialWork.class);
+    private int counter;
 
     public SequentialWork() {
 
@@ -41,8 +46,19 @@ public class SequentialWork implements Work {
 
     @Override
     public void call(PathInfo path) throws IOException {
+        counter++;
         for (Work work : actions) {
             work.call(path);
+        }
+    }
+
+    @Override
+    public void close() throws IOException {
+        log.info("Number of processed files: {}", counter);
+        for (Work work : actions) {
+            if (work instanceof CloseableWork) {
+                ((CloseableWork) work).close();
+            }
         }
     }
 }

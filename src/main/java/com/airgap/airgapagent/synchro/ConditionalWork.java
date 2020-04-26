@@ -9,7 +9,7 @@ import java.io.IOException;
  * Created by Jacques Fontignie on 4/19/2020.
  */
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class ConditionalWork implements Work {
+public class ConditionalWork implements CloseableWork {
 
     private Predicate predicate;
     private Work nextIfSucceeded;
@@ -65,6 +65,19 @@ public class ConditionalWork implements Work {
         Work next = result ? nextIfSucceeded : nextIfFailed;
         if (next != null) {
             next.call(path);
+        }
+    }
+
+    @Override
+    public void close() throws IOException {
+        close(nextIfFailed);
+        close(nextIfSucceeded);
+        predicate.close();
+    }
+
+    private void close(Work action) throws IOException {
+        if (action instanceof CloseableWork) {
+            ((CloseableWork) action).close();
         }
     }
 }

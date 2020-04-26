@@ -4,16 +4,10 @@ import java.nio.file.Path;
 
 public class SynchronizerBuilder {
     private Path baseFolder;
-    private int earlierThan;
     private Work work;
 
     public SynchronizerBuilder setBaseFolder(Path baseFolder) {
         this.baseFolder = baseFolder;
-        return this;
-    }
-
-    public SynchronizerBuilder setEarlierThan(int earlierThan) {
-        this.earlierThan = earlierThan;
         return this;
     }
 
@@ -27,7 +21,7 @@ public class SynchronizerBuilder {
     }
 
     public Synchronizer createSynchronizer() {
-        return new Synchronizer(baseFolder, earlierThan, work);
+        return new Synchronizer(baseFolder, work);
     }
 
 }

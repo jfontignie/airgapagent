@@ -22,7 +22,6 @@ class SynchronizerTest {
     void testSerialize() throws JsonProcessingException {
         Synchronizer synchronizer = new SynchronizerBuilder().createSynchronizer();
         synchronizer.setBaseFolder("src/test/resources");
-        synchronizer.setEarlierThan(60);
         synchronizer.setFlow(new CopyWork("target/sample"));
         YAMLFactory jf = new YAMLFactory();
         jf.disable(YAMLGenerator.Feature.USE_NATIVE_TYPE_ID);
@@ -38,7 +37,6 @@ class SynchronizerTest {
     void testFullSerialize() throws JsonProcessingException {
         Synchronizer synchronizer = new SynchronizerBuilder()
                 .setBaseFolder("set/test/resources")
-                .setEarlierThan(60)
                 .setWork(new SequentialWork(
                         new CopyWork("target/sample"),
                         new ConditionalWork(

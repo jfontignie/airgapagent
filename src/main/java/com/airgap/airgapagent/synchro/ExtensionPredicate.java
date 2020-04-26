@@ -41,4 +41,9 @@ public class ExtensionPredicate implements Predicate {
     public boolean call(PathInfo path) {
         return extensions.contains(FileNameUtils.getExtension(path.toString()).toLowerCase());
     }
+
+    @Override
+    public void close() {
+        //Nothing to do
+    }
 }
