@@ -24,6 +24,7 @@ public class ConditionalWork implements CloseableWork {
     }
 
     public ConditionalWork() {
+        //Nothing to do
     }
 
     public Predicate getPredicate() {

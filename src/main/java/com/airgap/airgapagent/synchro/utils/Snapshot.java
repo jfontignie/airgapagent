@@ -1,7 +1,6 @@
 package com.airgap.airgapagent.synchro.utils;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -19,9 +18,7 @@ public class Snapshot {
         this.file = file;
     }
 
-    public void init() throws IOException {
-
-
+    public void init() {
     }
 
     public void put(File file, SnapshotStatus status) {
