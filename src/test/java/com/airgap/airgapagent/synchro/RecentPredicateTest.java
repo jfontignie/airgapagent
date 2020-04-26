@@ -1,5 +1,7 @@
 package com.airgap.airgapagent.synchro;
 
+import com.airgap.airgapagent.synchro.predicate.RecentPredicate;
+import com.airgap.airgapagent.synchro.utils.PathInfo;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 

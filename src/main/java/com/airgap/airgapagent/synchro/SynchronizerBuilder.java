@@ -1,5 +1,7 @@
 package com.airgap.airgapagent.synchro;
 
+import com.airgap.airgapagent.synchro.work.Work;
+
 import java.nio.file.Path;
 
 public class SynchronizerBuilder {

@@ -1,5 +1,10 @@
 package com.airgap.airgapagent.synchro;
 
+import com.airgap.airgapagent.synchro.predicate.RegexPredicate;
+import com.airgap.airgapagent.synchro.work.ConditionalWork;
+import com.airgap.airgapagent.synchro.work.CopyWork;
+import com.airgap.airgapagent.synchro.work.SequentialWork;
+import com.airgap.airgapagent.synchro.work.SyslogWork;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
@@ -9,7 +14,7 @@ import org.junit.jupiter.api.Test;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Arrays;
+import java.util.List;
 
 /**
  * com.airgap.airgapagent.synchro
@@ -40,7 +45,7 @@ class SynchronizerTest {
                 .setWork(new SequentialWork(
                         new CopyWork("target/sample"),
                         new ConditionalWork(
-                                new RegexPredicate(Arrays.asList("pwd", "password"), true),
+                                new RegexPredicate(List.of("pwd", "password"), true),
                                 new SequentialWork(new SyslogWork(), new CopyWork("target/shadow")),
                                 null)
                 ))

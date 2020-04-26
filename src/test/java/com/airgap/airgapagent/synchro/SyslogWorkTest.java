@@ -1,5 +1,7 @@
 package com.airgap.airgapagent.synchro;
 
+import com.airgap.airgapagent.synchro.utils.PathInfo;
+import com.airgap.airgapagent.synchro.work.SyslogWork;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 

@@ -1,5 +1,7 @@
 package com.airgap.airgapagent.synchro;
 
+import com.airgap.airgapagent.synchro.utils.PathInfo;
+import com.airgap.airgapagent.synchro.work.Work;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
