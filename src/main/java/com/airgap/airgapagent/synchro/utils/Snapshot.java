@@ -11,15 +11,7 @@ import java.util.Map;
 public class Snapshot {
 
 
-    private final File file;
     private final Map<File, SnapshotStatus> map = new HashMap<>();
-
-    public Snapshot(File file) {
-        this.file = file;
-    }
-
-    public void init() {
-    }
 
     public void put(File file, SnapshotStatus status) {
         map.put(file, status);
@@ -33,6 +25,4 @@ public class Snapshot {
         return map.containsKey(file);
     }
 
-    public void close() {
-    }
 }

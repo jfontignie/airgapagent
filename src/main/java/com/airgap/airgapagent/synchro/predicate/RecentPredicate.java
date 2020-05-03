@@ -34,7 +34,7 @@ public class RecentPredicate implements Predicate {
     @Override
     public void init() {
         Objects.requireNonNull(statusFile, "Status file not initiated");
-        snapshot = new Snapshot(statusFile.toFile());
+        snapshot = new Snapshot();
     }
 
     @Override
@@ -61,6 +61,6 @@ public class RecentPredicate implements Predicate {
 
     @Override
     public void close() {
-        snapshot.close();
+        //NOthing to do
     }
 }
