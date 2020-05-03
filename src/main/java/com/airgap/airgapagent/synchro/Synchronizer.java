@@ -16,36 +16,16 @@ import java.nio.file.attribute.BasicFileAttributes;
  * com.airgap.airgapagent.synchro
  * Created by Jacques Fontignie on 4/17/2020.
  */
-public class Synchronizer {
+public class Synchronizer extends SynchroConfiguration {
 
     private static final Logger logger = LoggerFactory.getLogger(Synchronizer.class);
 
-    private Path baseFolder;
-    private Work flow;
-
     public Synchronizer(Path baseFolder, Work flow) {
-        this.baseFolder = baseFolder;
-        this.flow = flow;
+        super(baseFolder, flow);
     }
 
     public Synchronizer() {
-        //Nothing to do
-    }
-
-    public String getBaseFolder() {
-        return baseFolder.toAbsolutePath().toString();
-    }
-
-    public void setBaseFolder(String baseFolder) {
-        this.baseFolder = Path.of(baseFolder);
-    }
-
-    public Work getFlow() {
-        return flow;
-    }
-
-    public void setFlow(Work flow) {
-        this.flow = flow;
+        super();
     }
 
     public void run() throws IOException {
