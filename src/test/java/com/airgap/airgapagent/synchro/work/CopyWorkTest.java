@@ -26,6 +26,12 @@ class CopyWorkTest {
         work.init();
     }
 
+    @Test
+    void callNoOverride() throws IOException {
+        work.setOverride(false);
+        work.call(PathInfo.of("src/test/resources", "src/test/resources/sample/sample.txt"));
+        Assertions.assertTrue(Files.exists(Path.of("target/target/sample/sample.txt")));
+    }
 
     @Test
     void call() throws IOException {

@@ -3,7 +3,10 @@ package com.airgap.airgapagent.batch;
 import com.airgap.airgapagent.synchro.utils.PathInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.batch.item.ExecutionContext;
 import org.springframework.batch.item.ItemReader;
+import org.springframework.batch.item.ItemStream;
+import org.springframework.batch.item.ItemStreamException;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -15,7 +18,7 @@ import java.util.stream.Stream;
  * com.airgap.airgapagent.batch
  * Created by Jacques Fontignie on 4/28/2020.
  */
-public class FolderItemReader implements ItemReader<PathInfo> {
+public class FolderItemReader implements ItemReader<PathInfo>, ItemStream {
 
     private static final Logger log = LoggerFactory.getLogger(FolderItemReader.class);
     private final Deque<Path> stack = new ArrayDeque<>();
@@ -48,5 +51,20 @@ public class FolderItemReader implements ItemReader<PathInfo> {
 
         }
         return null;
+    }
+
+    @Override
+    public void open(ExecutionContext executionContext) throws ItemStreamException {
+
+    }
+
+    @Override
+    public void update(ExecutionContext executionContext) throws ItemStreamException {
+
+    }
+
+    @Override
+    public void close() throws ItemStreamException {
+
     }
 }
