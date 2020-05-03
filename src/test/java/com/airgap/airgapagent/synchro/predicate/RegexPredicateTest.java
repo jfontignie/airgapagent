@@ -39,6 +39,7 @@ class RegexPredicateTest {
         Assertions.assertTrue(regexPredicate.call(PathInfo.of("src/test/resources/sample/sample.txt")));
         Assertions.assertTrue(regexPredicate.call(PathInfo.of("src/test/resources/sample/sample.xps")));
         Assertions.assertTrue(regexPredicate.call(PathInfo.of("src/test/resources/sample/sample.zip")));
+        Assertions.assertTrue(regexPredicate.call(PathInfo.of("src/test/resources/sample/sample.7z")));
     }
 
 
@@ -53,6 +54,8 @@ class RegexPredicateTest {
         Assertions.assertFalse(regexPredicate.call(PathInfo.of("src/test/resources/sample/sample.txt")));
         Assertions.assertFalse(regexPredicate.call(PathInfo.of("src/test/resources/sample/sample.xps")));
         Assertions.assertFalse(regexPredicate.call(PathInfo.of("src/test/resources/sample/sample.zip")));
+        Assertions.assertFalse(regexPredicate.call(PathInfo.of("src/test/resources/sample/sample.7z")));
+
     }
 
     @Test
