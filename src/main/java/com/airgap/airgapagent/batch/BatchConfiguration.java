@@ -15,7 +15,9 @@ import org.springframework.batch.item.ItemReader;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.jdbc.datasource.DriverManagerDataSource;
 
+import javax.sql.DataSource;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
@@ -31,6 +33,14 @@ public class BatchConfiguration {
     private static final String CONFIG_NAME = "config";
 
     @Bean
+    public DataSource dataSource() {
+        DriverManagerDataSource dataSource = new DriverManagerDataSource();
+        dataSource.setDriverClassName("org.sqlite.JDBC");
+        dataSource.setUrl("jdbc:sqlite:repository.sqlite");
+        return dataSource;
+    }
+
+    @Bean
     public SynchroConfiguration config(
             ApplicationArguments applicationArguments) throws IOException {
         ObjectMapper objectMapper = new ObjectMapper(new YAMLFactory());
@@ -41,10 +51,11 @@ public class BatchConfiguration {
     }
 
     @Bean
-    public ItemReader<PathInfo> reader(SynchroConfiguration configuration) {
-        return new FolderItemReader(
+    public ItemReader<PathInfo> reader(FolderItemReader folderItemReader, SynchroConfiguration configuration) {
+        folderItemReader.addFolder(
                 Path.of(configuration.getBaseFolder())
         );
+        return folderItemReader;
     }
 
     @Bean
