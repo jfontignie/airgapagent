@@ -36,23 +36,22 @@ public class FolderItemReader implements ItemReader<PathInfo>, ItemStream {
         this.repositoryService = repository;
     }
 
-    public void addFolder(Path folder) {
+    public void setFolder(Path folder) {
         this.rootFolder = folder;
     }
 
     @Override
     public PathInfo read() throws Exception {
         last = null;
-        if (repositoryService.size() == 0) {
-            return null;
-        }
         while (repositoryService.size() != 0) {
             Visit current = repositoryService.pop();
             log.debug("Reading : {}", current);
 
             Path currentPath = Path.of(current.getPath());
             if (Files.isRegularFile(currentPath)) {
+                current.setState(VisitState.ONGOING);
                 last = current;
+                repositoryService.push(current);
                 return new PathInfo(rootFolder, currentPath);
             }
 
@@ -79,12 +78,12 @@ public class FolderItemReader implements ItemReader<PathInfo>, ItemStream {
     public void update(@NonNull ExecutionContext executionContext) {
         if (last != null) {
             last.setState(VisitState.VISITED);
-            repositoryService.update(last);
+            repositoryService.push(last);
         }
     }
 
     @Override
     public void close() {
-        //Nothing to do
+        repositoryService.close(rootFolder);
     }
 }

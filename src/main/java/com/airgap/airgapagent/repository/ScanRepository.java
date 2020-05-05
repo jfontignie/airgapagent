@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.List;
 import java.util.Objects;
 
 /**
@@ -55,10 +56,11 @@ public class ScanRepository {
     }
 
     public Scan findByRepoIdAndState(Repo repo, ScanState state) {
-        return jdbcTemplate.queryForObject("select * from scan where id_repo=? and st_scan=?",
+        List<Scan> scans = jdbcTemplate.query("select * from scan where id_repo=? and st_scan=?",
                 new ScanRowMapper(),
                 repo.getId(),
                 state);
+        return scans.isEmpty() ? null : scans.get(0);
     }
 
     private static class ScanRowMapper implements RowMapper<Scan> {
@@ -67,7 +69,7 @@ public class ScanRepository {
             Scan scan = new Scan();
             scan.setId(rs.getLong("id_scan"));
             scan.setSequence(rs.getInt("sq_sequence"));
-            scan.setId(rs.getLong("id_repo"));
+            scan.setRepoId(rs.getLong("id_repo"));
             scan.setState(ScanState.valueOf(rs.getString("st_scan")));
             return scan;
         }

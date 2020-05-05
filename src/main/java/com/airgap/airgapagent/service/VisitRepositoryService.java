@@ -1,6 +1,9 @@
 package com.airgap.airgapagent.service;
 
-import com.airgap.airgapagent.domain.*;
+import com.airgap.airgapagent.domain.Repo;
+import com.airgap.airgapagent.domain.Scan;
+import com.airgap.airgapagent.domain.ScanState;
+import com.airgap.airgapagent.domain.Visit;
 import com.airgap.airgapagent.repository.RepoRepository;
 import com.airgap.airgapagent.repository.ScanRepository;
 import com.airgap.airgapagent.repository.VisitRepository;
@@ -44,11 +47,6 @@ public class VisitRepositoryService {
         return visit;
     }
 
-    public void update(Visit visit) {
-        visit.setState(VisitState.VISITED);
-        visitRepository.save(visit);
-    }
-
     public Scan getRunningScan(Path rootFolder) {
         log.info("Looking for repository with name {}", rootFolder);
         Repo repo = repoRepository.findByPath(sanitize(rootFolder));
@@ -75,5 +73,11 @@ public class VisitRepositoryService {
         scan.setState(ScanState.ONGOING);
         scanRepository.save(scan);
         return scan;
+    }
+
+    public void close(Path rootFolder) {
+        Scan scan = getRunningScan(rootFolder);
+        scan.setState(ScanState.DONE);
+        scanRepository.save(scan);
     }
 }

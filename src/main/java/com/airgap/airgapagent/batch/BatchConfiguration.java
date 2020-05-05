@@ -12,10 +12,14 @@ import org.springframework.batch.core.configuration.annotation.StepBuilderFactor
 import org.springframework.batch.core.launch.support.RunIdIncrementer;
 import org.springframework.batch.item.ItemProcessor;
 import org.springframework.batch.item.ItemReader;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.io.Resource;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
+import org.springframework.jdbc.datasource.init.DataSourceInitializer;
+import org.springframework.jdbc.datasource.init.ResourceDatabasePopulator;
 
 import javax.sql.DataSource;
 import java.io.File;
@@ -31,6 +35,32 @@ import java.nio.file.Path;
 public class BatchConfiguration {
 
     private static final String CONFIG_NAME = "config";
+
+    @Value("org/springframework/batch/core/schema-drop-sqlite.sql")
+    private Resource dropRepositoryTables;
+
+    @Value("org/springframework/batch/core/schema-sqlite.sql")
+    private Resource springRepositorySchema;
+
+    @Value("schema-all.sql")
+    private Resource airgapSchema;
+
+    @Bean
+    public DataSourceInitializer initializer(DataSource dataSource) {
+        ResourceDatabasePopulator databasePopulator =
+                new ResourceDatabasePopulator();
+
+        databasePopulator.addScript(dropRepositoryTables);
+        databasePopulator.addScript(springRepositorySchema);
+        databasePopulator.addScript(airgapSchema);
+        databasePopulator.setIgnoreFailedDrops(true);
+
+        DataSourceInitializer initializer = new DataSourceInitializer();
+        initializer.setDataSource(dataSource);
+        initializer.setDatabasePopulator(databasePopulator);
+
+        return initializer;
+    }
 
     @Bean
     public DataSource dataSource() {
@@ -52,7 +82,7 @@ public class BatchConfiguration {
 
     @Bean
     public ItemReader<PathInfo> reader(FolderItemReader folderItemReader, SynchroConfiguration configuration) {
-        folderItemReader.addFolder(
+        folderItemReader.setFolder(
                 Path.of(configuration.getBaseFolder())
         );
         return folderItemReader;
