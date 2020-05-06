@@ -4,6 +4,7 @@ target/
 !**/src/main/**
 !**/src/test/**
 repository.sqlite
+test.sqlite
 
 ### STS ###
 .apt_generated

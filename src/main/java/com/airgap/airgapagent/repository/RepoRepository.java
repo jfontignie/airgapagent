@@ -51,6 +51,7 @@ public class RepoRepository {
 
     public void remove(Repo repo) {
         jdbcTemplate.update("delete from repo where id_repo=?", repo.getId());
+        repo.setId(null);
     }
 
     private static class RepoRowMapper implements RowMapper<Repo> {
