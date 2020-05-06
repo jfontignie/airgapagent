@@ -7,5 +7,6 @@ package com.airgap.airgapagent.domain;
 public enum VisitState {
 
     TODO,
-    ONGOING, VISITED
+    VISITED,
+    ONGOING
 }

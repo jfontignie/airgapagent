@@ -8,8 +8,6 @@ public class Scan {
 
     private Long id;
     private Long repoId;
-    private int sequence;
-    private ScanState state;
 
     public Long getId() {
         return id;
@@ -27,19 +25,5 @@ public class Scan {
         this.repoId = repoId;
     }
 
-    public int getSequence() {
-        return sequence;
-    }
 
-    public void setSequence(int sequence) {
-        this.sequence = sequence;
-    }
-
-    public ScanState getState() {
-        return state;
-    }
-
-    public void setState(ScanState state) {
-        this.state = state;
-    }
 }

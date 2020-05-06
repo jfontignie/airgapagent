@@ -18,6 +18,7 @@ public class SequentialWork implements CloseableWork {
     private static final Logger log = LoggerFactory.getLogger(SequentialWork.class);
     private int counter;
 
+
     public SequentialWork() {
 
     }

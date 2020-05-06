@@ -9,9 +9,7 @@ create table IF NOT EXISTS repo (
 
 create table IF NOT EXISTS scan(
     id_scan INTEGER NOT NULL PRIMARY KEY autoincrement,
-    id_repo INTEGER,
-    sq_sequence INTEGER,
-    st_scan VARCHAR(15)
+    id_repo INTEGER
 );
 
 create table IF NOT EXISTS visit (

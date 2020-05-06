@@ -2,6 +2,7 @@ package com.airgap.airgapagent.domain;
 
 import java.nio.file.Path;
 import java.time.Instant;
+import java.util.StringJoiner;
 
 /**
  * com.airgap.airgapagent.batch
@@ -35,7 +36,7 @@ public class Visit {
         return root.toString().toLowerCase();
     }
 
-    private void update() {
+    public void update() {
         this.updated = Instant.now();
     }
 
@@ -53,18 +54,21 @@ public class Visit {
 
     public void setState(VisitState state) {
         this.state = state;
-        update();
     }
 
     public Instant getUpdated() {
         return updated;
     }
 
+    public void setUpdated(Instant updated) {
+        this.updated = updated;
+    }
+
     public Long getId() {
         return id;
     }
 
-    public void setId(long id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
@@ -74,5 +78,16 @@ public class Visit {
 
     public void setScanId(Long scanId) {
         this.scanId = scanId;
+    }
+
+    @Override
+    public String toString() {
+        return new StringJoiner(", ", Visit.class.getSimpleName() + "[", "]")
+                .add("id=" + id)
+                .add("scanId=" + scanId)
+                .add("path='" + path + "'")
+                .add("state=" + state)
+                .add("updated=" + updated)
+                .toString();
     }
 }

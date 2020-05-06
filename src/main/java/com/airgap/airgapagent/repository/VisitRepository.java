@@ -13,6 +13,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
+import java.util.List;
 import java.util.Objects;
 
 /**
@@ -31,7 +32,7 @@ public class VisitRepository {
 
 
     public void save(Visit visit) {
-
+        visit.update(); //Set the new timestamp
         if (visit.getId() == null) {
 
             KeyHolder keyHolder = new GeneratedKeyHolder();
@@ -60,28 +61,38 @@ public class VisitRepository {
 
     }
 
-    public int count() {
-        Integer count = jdbcTemplate.queryForObject("SELECT  count(id_visit) from visit", Integer.class);
-        return count == null ? 0 : count;
-    }
 
-    public Visit findByIdOldestAndStateIsTodo() {
-        return jdbcTemplate.queryForObject("SELECT * from visit where id_visit=(select min(id_visit) from visit where st_visit='TODO') ",
-                new VisitRowMapper());
+    public Visit findByScanIdAndStateAndIdOldest(Long id, VisitState state) {
+        List<Visit> list = jdbcTemplate.query(
+                "SELECT * from visit where " +
+                        "id_visit=(select min(id_visit) from visit where st_visit=? and id_scan=?) ",
+                new VisitRowMapper(),
+                state, id);
+        return list.isEmpty() ? null : list.get(0);
     }
 
     public void remove(Visit visit) {
         jdbcTemplate.update("delete from visit where id_visit=?", visit.getId());
+        visit.setId(null);
+    }
+
+
+    public List<Visit> findByPathAndNoScanIdOrderByDateDesc(Long scanId, String folder) {
+
+        return jdbcTemplate.query("Select * from Visit where de_path=? and NOT id_scan=? order by dt_update Desc",
+                new VisitRowMapper(),
+                folder, scanId);
     }
 
     public static class VisitRowMapper implements RowMapper<Visit> {
         @Override
         public Visit mapRow(ResultSet rs, int rowNum) throws SQLException {
             Visit visit = new Visit();
-            visit.setId(rs.getInt("id_visit"));
+            visit.setId(rs.getLong("id_visit"));
             visit.setPath(Path.of(rs.getString("de_path")));
             visit.setScanId(rs.getLong("id_scan"));
             visit.setState(VisitState.valueOf(rs.getString("st_visit")));
+            visit.setUpdated(rs.getTimestamp("dt_update").toInstant());
             return visit;
         }
     }

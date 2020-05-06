@@ -26,6 +26,7 @@ public class SyslogWork implements Work {
     }
 
     public SyslogWork() {
+        //Nothing to do
     }
 
     public String getTarget() {

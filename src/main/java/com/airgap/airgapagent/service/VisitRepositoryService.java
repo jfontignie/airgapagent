@@ -2,16 +2,18 @@ package com.airgap.airgapagent.service;
 
 import com.airgap.airgapagent.domain.Repo;
 import com.airgap.airgapagent.domain.Scan;
-import com.airgap.airgapagent.domain.ScanState;
 import com.airgap.airgapagent.domain.Visit;
+import com.airgap.airgapagent.domain.VisitState;
 import com.airgap.airgapagent.repository.RepoRepository;
 import com.airgap.airgapagent.repository.ScanRepository;
 import com.airgap.airgapagent.repository.VisitRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Service;
 
 import java.nio.file.Path;
+import java.util.List;
 import java.util.Objects;
 
 /**
@@ -34,16 +36,17 @@ public class VisitRepositoryService {
     }
 
     public void push(Visit visit) {
+        log.trace("Pushing {}", visit);
         visitRepository.save(visit);
     }
 
-    public int size() {
-        return visitRepository.count();
-    }
 
-    public Visit pop() {
-        Visit visit = visitRepository.findByIdOldestAndStateIsTodo();
-        visitRepository.remove(visit);
+    public Visit popNext(Scan scan) {
+        Visit visit = visitRepository.findByScanIdAndStateAndIdOldest(scan.getId(), VisitState.TODO);
+        log.trace("Popping {}", visit);
+        if (visit != null) {
+            visitRepository.remove(visit);
+        }
         return visit;
     }
 
@@ -51,7 +54,7 @@ public class VisitRepositoryService {
         log.info("Looking for repository with name {}", rootFolder);
         Repo repo = repoRepository.findByPath(sanitize(rootFolder));
         if (repo == null) return null;
-        Scan scan = scanRepository.findByRepoIdAndState(repo, ScanState.ONGOING);
+        Scan scan = scanRepository.findByRepoIdAndState(repo, VisitState.TODO);
         log.info("Found scan ongoing: {}", scan);
         return scan;
     }
@@ -70,14 +73,13 @@ public class VisitRepositoryService {
         Objects.requireNonNull(repo.getId(), "Repo should have been set");
         Scan scan = new Scan();
         scan.setRepoId(repo.getId());
-        scan.setState(ScanState.ONGOING);
         scanRepository.save(scan);
         return scan;
     }
 
-    public void close(Path rootFolder) {
-        Scan scan = getRunningScan(rootFolder);
-        scan.setState(ScanState.DONE);
-        scanRepository.save(scan);
+    public @Nullable
+    Visit findPreviousScanofPath(Scan scan, Path currentPath) {
+        List<Visit> visits = visitRepository.findByPathAndNoScanIdOrderByDateDesc(scan.getId(), sanitize(currentPath));
+        return visits.isEmpty() ? null : visits.get(0);
     }
 }
