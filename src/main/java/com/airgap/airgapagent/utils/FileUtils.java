@@ -32,6 +32,7 @@ public class FileUtils {
         return Path.of(path, baseName + "_" + getTimeStamp() + "." + extension);
     }
 
+    @SuppressWarnings("java:S2245")
     public static Path withRandomTimeStamp(Path targetPath) {
         String target = targetPath.toString();
         String path = FilenameUtils.getPath(target);
