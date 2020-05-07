@@ -79,9 +79,7 @@ public class CopyWork extends AbstractWork {
                 }
                 expectedPath = null;
             }
-            if (expectedPath == null) {
-                throw new IllegalStateException("Impossible to find a temporary name");
-            }
+            Objects.requireNonNull(expectedPath, "Impossible to find a temporary name");
             Files.copy(path.getOriginalPath(), FileUtils.withRandomTimeStamp(expectedPath), StandardCopyOption.REPLACE_EXISTING);
         } else {
             Files.copy(path.getOriginalPath(), targetPath, StandardCopyOption.REPLACE_EXISTING);
