@@ -1,7 +1,6 @@
 package com.airgap.airgapagent.batch;
 
 import com.airgap.airgapagent.synchro.utils.PathInfo;
-import com.airgap.airgapagent.synchro.work.CloseableWork;
 import com.airgap.airgapagent.synchro.work.Work;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -50,12 +49,10 @@ public class PathInfoProcessor implements ItemProcessor<PathInfo, PathInfo>, Ite
 
     @Override
     public void close() {
-        if (rootWork instanceof CloseableWork) {
-            try {
-                ((CloseableWork) rootWork).close();
-            } catch (IOException e) {
-                throw new ItemStreamException(e);
-            }
+        try {
+            rootWork.close();
+        } catch (IOException e) {
+            throw new ItemStreamException(e);
         }
     }
 }

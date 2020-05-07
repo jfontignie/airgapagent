@@ -11,18 +11,17 @@ import java.util.Objects;
  * com.airgap.airgapagent.synchro
  * Created by Jacques Fontignie on 4/17/2020.
  */
-public class SyslogWork implements Work {
+public class SyslogWork extends AbstractWork {
     private String target;
     private int port;
     private String message;
     private UdpSyslogMessageSender syslog;
-    private String name;
 
     public SyslogWork(String target, int port, String message, String name) {
         this.target = target;
         this.port = port;
         this.message = message;
-        this.name = name;
+        setName(name);
     }
 
     public SyslogWork() {
@@ -51,14 +50,6 @@ public class SyslogWork implements Work {
 
     public void setMessage(String message) {
         this.message = message;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
     }
 
     @Override

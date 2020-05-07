@@ -1,6 +1,7 @@
 baseFolder: "src/test/resources"
 flow:
   type: "SEQUENCE"
+  name: "global"
   actions:
     - type: "COPY"
       target: "target/sample"
@@ -13,6 +14,7 @@ flow:
         caseSensitive: true
       nextIfSucceeded:
         type: "SEQUENCE"
+        name: "suspicious"
         actions:
           - type: "SYSLOG"
             target: "localhost"

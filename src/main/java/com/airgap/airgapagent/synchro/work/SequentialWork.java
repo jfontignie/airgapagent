@@ -12,7 +12,7 @@ import java.util.List;
  * com.airgap.airgapagent.synchro
  * Created by Jacques Fontignie on 4/19/2020.
  */
-public class SequentialWork implements CloseableWork {
+public class SequentialWork extends AbstractWork {
 
     private List<Work> actions;
     private static final Logger log = LoggerFactory.getLogger(SequentialWork.class);
@@ -56,11 +56,9 @@ public class SequentialWork implements CloseableWork {
 
     @Override
     public void close() throws IOException {
-        log.info("Number of processed files: {}", counter);
+        log.info("Number of processed files in task '{}': {}", getName(), counter);
         for (Work work : actions) {
-            if (work instanceof CloseableWork) {
-                ((CloseableWork) work).close();
-            }
+            work.close();
         }
     }
 }

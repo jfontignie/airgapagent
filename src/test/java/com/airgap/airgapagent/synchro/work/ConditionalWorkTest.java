@@ -65,7 +65,7 @@ class ConditionalWorkTest {
 
     @Test
     void callClose() throws IOException {
-        CloseableWork successWork = Mockito.mock(CloseableWork.class);
+        Work successWork = Mockito.mock(Work.class);
         work.setNextIfSucceeded(successWork);
         work.close();
         Mockito.verify(successWork, atLeastOnce()).close();

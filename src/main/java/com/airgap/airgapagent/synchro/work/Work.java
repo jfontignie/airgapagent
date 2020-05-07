@@ -4,6 +4,7 @@ import com.airgap.airgapagent.synchro.utils.PathInfo;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 
+import java.io.Closeable;
 import java.io.IOException;
 
 /**
@@ -19,9 +20,10 @@ import java.io.IOException;
         @JsonSubTypes.Type(value = SyslogWork.class, name = WorkConstants.SYSLOG_NAME),
         @JsonSubTypes.Type(value = SequentialWork.class, name = WorkConstants.SEQUENCE_NAME),
 })
-public interface Work {
+public interface Work extends Closeable {
 
     void init() throws IOException;
 
     void call(PathInfo path) throws IOException;
+
 }

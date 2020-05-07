@@ -8,6 +8,7 @@ import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.io.Reader;
+import java.nio.file.Files;
 import java.util.List;
 import java.util.Objects;
 import java.util.Scanner;
@@ -71,6 +72,9 @@ public class RegexPredicate implements Predicate {
     public boolean call(PathInfo path) throws IOException {
         Objects.requireNonNull(tika, "Init method has not been called");
         logger.debug("Analyzing {}", path.getOriginalPath());
+        if (Files.isDirectory(path.getOriginalPath())) {
+            return true;
+        }
         try (Reader reader = tika.parse(path.getOriginalPath())) {
             Scanner scanner = new Scanner(reader);
 

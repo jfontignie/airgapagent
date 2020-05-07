@@ -11,7 +11,7 @@ import java.io.IOException;
  * Created by Jacques Fontignie on 4/19/2020.
  */
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class ConditionalWork implements CloseableWork {
+public class ConditionalWork extends AbstractWork {
 
     private Predicate predicate;
     private Work nextIfSucceeded;
@@ -79,8 +79,6 @@ public class ConditionalWork implements CloseableWork {
     }
 
     private void close(Work action) throws IOException {
-        if (action instanceof CloseableWork) {
-            ((CloseableWork) action).close();
-        }
+        action.close();
     }
 }
