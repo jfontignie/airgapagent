@@ -32,6 +32,9 @@ public class VisitRepository {
 
 
     public void save(Visit visit) {
+        Objects.requireNonNull(visit.getPath(), "path is not set");
+        Objects.requireNonNull(visit.getState(), "State is not set");
+        Objects.requireNonNull(visit.getScanId(), "Scan is not set");
         visit.update(); //Set the new timestamp
         if (visit.getId() == null) {
 

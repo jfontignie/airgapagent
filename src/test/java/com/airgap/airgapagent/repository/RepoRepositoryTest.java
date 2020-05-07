@@ -5,11 +5,7 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.batch.test.DataSourceInitializer;
-import org.springframework.core.io.ClassPathResource;
-import org.springframework.core.io.Resource;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.datasource.DriverManagerDataSource;
 
 /**
  * com.airgap.airgapagent.repository
@@ -22,21 +18,8 @@ class RepoRepositoryTest {
 
     @BeforeEach
     public void setUp() {
-
-        DriverManagerDataSource dataSource = new DriverManagerDataSource();
-        dataSource.setDriverClassName("org.sqlite.JDBC");
-        dataSource.setUrl("jdbc:sqlite:test.sqlite");
-        DataSourceInitializer initializer = new DataSourceInitializer();
-        initializer.setDataSource(dataSource);
-        initializer.setInitScripts(
-                new Resource[]{
-                        new ClassPathResource("delete-all.sql"),
-                        new ClassPathResource("schema-all.sql")
-                }
-        );
-        initializer.afterPropertiesSet();
-
-        repoRepository = new RepoRepository(new JdbcTemplate(dataSource));
+        JdbcTemplate jdbcTemplate = JdbcTemplateHelper.createJdbcTemplate();
+        repoRepository = new RepoRepository(jdbcTemplate);
 
     }
 
@@ -72,6 +55,7 @@ class RepoRepositoryTest {
         repoRepository.save(repo);
         Repo found = repoRepository.findByPath(TO_FIND);
         Assertions.assertEquals(repo.getId(), found.getId());
+        Assertions.assertEquals(TO_FIND, found.getPath());
         repoRepository.remove(found);
         Assertions.assertNull(repoRepository.findByPath(TO_FIND));
     }

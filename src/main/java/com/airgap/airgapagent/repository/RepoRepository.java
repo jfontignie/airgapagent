@@ -50,6 +50,7 @@ public class RepoRepository {
     }
 
     public void remove(Repo repo) {
+        Objects.requireNonNull(repo.getId(), "The repo was detached");
         jdbcTemplate.update("delete from repo where id_repo=?", repo.getId());
         repo.setId(null);
     }

@@ -48,7 +48,9 @@ public class ScanRepository {
 
 
     public void remove(Scan scan) {
+        Objects.requireNonNull(scan.getId(), "Scan has been detached");
         jdbcTemplate.update("delete from scan where id_scan=?", scan.getId());
+        scan.setId(null);
     }
 
     public Scan findByRepoIdAndState(Repo repo, VisitState state) {
