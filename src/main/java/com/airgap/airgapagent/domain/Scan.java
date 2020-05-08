@@ -1,13 +1,25 @@
 package com.airgap.airgapagent.domain;
 
+import javax.persistence.*;
+import java.util.Set;
+
 /**
  * com.airgap.airgapagent.domain
  * Created by Jacques Fontignie on 5/5/2020.
  */
+@Entity
 public class Scan {
 
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
-    private Long repoId;
+
+    @ManyToOne
+    private Repo repo;
+
+    @OneToMany
+    private Set<Visit> visits;
 
     public Long getId() {
         return id;
@@ -17,13 +29,11 @@ public class Scan {
         this.id = id;
     }
 
-    public Long getRepoId() {
-        return repoId;
+    public Repo getRepo() {
+        return repo;
     }
 
-    public void setRepoId(Long repoId) {
-        this.repoId = repoId;
+    public void setRepo(Repo repo) {
+        this.repo = repo;
     }
-
-
 }

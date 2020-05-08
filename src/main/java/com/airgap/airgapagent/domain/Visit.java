@@ -1,5 +1,6 @@
 package com.airgap.airgapagent.domain;
 
+import javax.persistence.*;
 import java.nio.file.Path;
 import java.time.Instant;
 import java.util.StringJoiner;
@@ -8,25 +9,28 @@ import java.util.StringJoiner;
  * com.airgap.airgapagent.batch
  * Created by Jacques Fontignie on 5/5/2020.
  */
+@Entity
 public class Visit {
 
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id = null;
 
-    private Long scanId;
+    @ManyToOne
+    private Scan scan;
+
     private String path;
 
     private VisitState state;
+
     private Instant updated;
 
     public Visit() {
     }
 
     public Visit(Scan scan, Path path) {
-        this(scan.getId(), path);
-    }
-
-    public Visit(Long scanId, Path path) {
-        this.scanId = scanId;
+        this.scan = scan;
         setPath(path);
         this.state = VisitState.TODO;
         update();
@@ -36,6 +40,8 @@ public class Visit {
         return root.toString().toLowerCase();
     }
 
+    @PrePersist
+    @PreUpdate
     public void update() {
         this.updated = Instant.now();
     }
@@ -60,10 +66,6 @@ public class Visit {
         return updated;
     }
 
-    public void setUpdated(Instant updated) {
-        this.updated = updated;
-    }
-
     public Long getId() {
         return id;
     }
@@ -72,19 +74,19 @@ public class Visit {
         this.id = id;
     }
 
-    public Long getScanId() {
-        return scanId;
+    public Scan getScan() {
+        return scan;
     }
 
-    public void setScanId(Long scanId) {
-        this.scanId = scanId;
+    public void setScan(Scan scan) {
+        this.scan = scan;
     }
 
     @Override
     public String toString() {
         return new StringJoiner(", ", Visit.class.getSimpleName() + "[", "]")
                 .add("id=" + id)
-                .add("scanId=" + scanId)
+                .add("scanId" + (scan != null ? scan.getId() : null))
                 .add("path='" + path + "'")
                 .add("state=" + state)
                 .add("updated=" + updated)

@@ -79,6 +79,7 @@ public class ConditionalWork extends AbstractWork {
     }
 
     private void close(Work action) throws IOException {
-        action.close();
+        if (action != null)
+            action.close();
     }
 }

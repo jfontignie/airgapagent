@@ -16,7 +16,7 @@ public class JdbcTemplateHelper {
 
         Resource[] initScripts = {
                 new ClassPathResource("delete-all.sql"),
-                new ClassPathResource("schema-all.sql")
+                new ClassPathResource("dummy-schema-all.sql")
         };
         return createJdbcTemplate(initScripts);
     }
@@ -26,7 +26,7 @@ public class JdbcTemplateHelper {
 
         Resource[] initScripts = {
                 new ClassPathResource("delete-all.sql"),
-                new ClassPathResource("schema-all.sql"),
+                new ClassPathResource("dummy-schema-all.sql"),
                 new ClassPathResource("test-all.sql")
         };
         return createJdbcTemplate(initScripts);

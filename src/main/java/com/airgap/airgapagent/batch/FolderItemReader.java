@@ -50,7 +50,7 @@ public class FolderItemReader implements ItemReader<PathInfo> {
             Path currentPath = Path.of(current.getPath());
             if (Files.isRegularFile(currentPath)) {
                 //Important to get the last scan before pushing
-                Visit v = repositoryService.findPreviousScanofPath(scan, currentPath);
+                Visit v = repositoryService.findPreviousScanOfPath(scan, currentPath);
 
 
                 if (v != null
@@ -70,7 +70,7 @@ public class FolderItemReader implements ItemReader<PathInfo> {
 
             Stream<Path> stream = Files.list(currentPath);
             try (stream) {
-                stream.forEach(p -> repositoryService.push(new Visit(scan.getId(), p)));
+                stream.forEach(p -> repositoryService.push(new Visit(scan, p)));
             }
 
         }

@@ -1,5 +1,0 @@
-DROP TABLE if EXISTS repo;
-DROP TABLE if EXISTS scan;
-DROP TABLE if EXISTS visit;
-
-

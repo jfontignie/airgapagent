@@ -42,21 +42,24 @@ public class VisitRepositoryService {
 
 
     public Visit popNext(Scan scan) {
-        Visit visit = visitRepository.findByScanIdAndStateAndIdOldest(scan.getId(), VisitState.TODO);
-        log.trace("Popping {}", visit);
-        if (visit != null) {
-            visitRepository.remove(visit);
+        List<Visit> visits = visitRepository.findByScanAndStateOrderByUpdatedDesc(scan, VisitState.TODO);
+        log.trace("Popping {}", visits);
+        if (!visits.isEmpty()) {
+            Visit visit = visits.get(0);
+            visitRepository.delete(visit);
+            return visit;
         }
-        return visit;
+        return null;
     }
 
     public Scan getRunningScan(Path rootFolder) {
         log.info("Looking for repository with name {}", rootFolder);
-        Repo repo = repoRepository.findByPath(sanitize(rootFolder));
-        if (repo == null) return null;
-        Scan scan = scanRepository.findByRepoIdAndState(repo, VisitState.TODO);
-        log.info("Found scan ongoing: {}", scan);
-        return scan;
+        List<Repo> repo = repoRepository.findByPath(sanitize(rootFolder));
+        if (repo.isEmpty()) return null;
+
+        List<Scan> scan = scanRepository.findRunningScanByRepo(repo.get(0), VisitState.TODO);
+        log.info("Found scan ongoing: {}", scan.size());
+        return scan.isEmpty() ? null : scan.get(0);
     }
 
     private String sanitize(Path folder) {
@@ -64,22 +67,25 @@ public class VisitRepositoryService {
     }
 
     public Scan newScan(Path rootFolder) {
-        Repo repo = repoRepository.findByPath(sanitize(rootFolder));
-        if (repo == null) {
+        List<Repo> repos = repoRepository.findByPath(sanitize(rootFolder));
+        Repo repo;
+        if (repos.isEmpty()) {
             repo = new Repo();
             repo.setPath(sanitize(rootFolder));
             repoRepository.save(repo);
+        } else {
+            repo = repos.get(0);
         }
         Objects.requireNonNull(repo.getId(), "Repo should have been set");
         Scan scan = new Scan();
-        scan.setRepoId(repo.getId());
+        scan.setRepo(repo);
         scanRepository.save(scan);
         return scan;
     }
 
     public @Nullable
-    Visit findPreviousScanofPath(Scan scan, Path currentPath) {
-        List<Visit> visits = visitRepository.findByPathAndNoScanIdOrderByDateDesc(scan.getId(), sanitize(currentPath));
+    Visit findPreviousScanOfPath(Scan scan, Path currentPath) {
+        List<Visit> visits = visitRepository.findByScanNotEqualsAndPathEqualsOrderByUpdatedDesc(scan, sanitize(currentPath));
         return visits.isEmpty() ? null : visits.get(0);
     }
 }
