@@ -19,7 +19,7 @@ import java.util.stream.Collectors;
  * com.airgap.airgapagent.synchro
  * Created by Jacques Fontignie on 4/17/2020.
  */
-public class RegexPredicate implements Predicate {
+public class RegexPredicate extends AbstractPredicate {
     private List<String> regex;
     private Tika tika;
     private Pattern pattern;
@@ -85,11 +85,6 @@ public class RegexPredicate implements Predicate {
             }
         }
         return false;
-    }
-
-    @Override
-    public void close() {
-        //Nothing to do
     }
 
     @JsonIgnore

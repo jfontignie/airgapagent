@@ -14,7 +14,7 @@ import java.util.Objects;
  * com.airgap.airgapagent.synchro
  * Created by Jacques Fontignie on 4/19/2020.
  */
-public class RecentPredicate implements Predicate {
+public class RecentPredicate extends AbstractPredicate {
 
     private Path statusFile;
     private Snapshot snapshot;
@@ -33,7 +33,7 @@ public class RecentPredicate implements Predicate {
 
     @Override
     public void init() {
-        Objects.requireNonNull(statusFile, "Status file not initiated");
+        Objects.requireNonNull(statusFile, "Status file not set");
         snapshot = new Snapshot();
     }
 
@@ -58,9 +58,4 @@ public class RecentPredicate implements Predicate {
         }
     }
 
-
-    @Override
-    public void close() {
-        //NOthing to do
-    }
 }

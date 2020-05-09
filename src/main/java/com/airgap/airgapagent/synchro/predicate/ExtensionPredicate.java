@@ -12,7 +12,7 @@ import java.util.Set;
  * com.airgap.airgapagent.synchro
  * Created by Jacques Fontignie on 4/19/2020.
  */
-public class ExtensionPredicate implements Predicate {
+public class ExtensionPredicate extends AbstractPredicate {
 
 
     private final Set<String> extensions = new HashSet<>();
@@ -34,10 +34,6 @@ public class ExtensionPredicate implements Predicate {
         extensions.add(ext);
     }
 
-    @Override
-    public void init() {
-        //Nothing to do
-    }
 
     @Override
     public boolean call(PathInfo path) {
@@ -49,8 +45,4 @@ public class ExtensionPredicate implements Predicate {
         return extensions.contains(foundExtension.toLowerCase());
     }
 
-    @Override
-    public void close() {
-        //Nothing to do
-    }
 }

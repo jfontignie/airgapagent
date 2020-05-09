@@ -26,7 +26,7 @@ class RegexPredicateTest {
     }
 
     @AfterEach
-    public void tearDown() {
+    public void tearDown() throws IOException {
         regexPredicate.close();
     }
 
