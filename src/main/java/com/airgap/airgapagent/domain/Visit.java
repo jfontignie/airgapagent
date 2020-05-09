@@ -3,6 +3,7 @@ package com.airgap.airgapagent.domain;
 import javax.persistence.*;
 import java.nio.file.Path;
 import java.time.Instant;
+import java.util.Objects;
 import java.util.StringJoiner;
 
 /**
@@ -91,5 +92,25 @@ public class Visit {
                 .add("state=" + state)
                 .add("updated=" + updated)
                 .toString();
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Visit)) return false;
+        Visit visit = (Visit) o;
+        return Objects.equals(id, visit.id) &&
+                Objects.equals(scan, visit.scan) &&
+                Objects.equals(path, visit.path) &&
+                state == visit.state;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, scan, path, state);
+    }
+
+    public void setUpdated(Instant instant) {
+        this.updated = instant;
     }
 }

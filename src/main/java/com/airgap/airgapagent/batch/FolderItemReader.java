@@ -3,6 +3,7 @@ package com.airgap.airgapagent.batch;
 import com.airgap.airgapagent.domain.Scan;
 import com.airgap.airgapagent.domain.Visit;
 import com.airgap.airgapagent.domain.VisitState;
+import com.airgap.airgapagent.service.FileWrapperService;
 import com.airgap.airgapagent.service.VisitRepositoryService;
 import com.airgap.airgapagent.synchro.utils.PathInfo;
 import org.slf4j.Logger;
@@ -11,10 +12,8 @@ import org.springframework.batch.item.ItemReader;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Objects;
-import java.util.stream.Stream;
 
 /**
  * com.airgap.airgapagent.batch
@@ -25,13 +24,17 @@ public class FolderItemReader implements ItemReader<PathInfo> {
 
     private static final Logger log = LoggerFactory.getLogger(FolderItemReader.class);
     private final VisitRepositoryService repositoryService;
+    private final FileWrapperService fileWrapperService;
     private Path rootFolder;
     private Scan scan;
 
 
     @Autowired
-    public FolderItemReader(VisitRepositoryService repository) {
+    public FolderItemReader(
+            FileWrapperService fileWrapperService,
+            VisitRepositoryService repository) {
         this.repositoryService = repository;
+        this.fileWrapperService = fileWrapperService;
     }
 
     public void setFolder(Path folder) {
@@ -48,14 +51,14 @@ public class FolderItemReader implements ItemReader<PathInfo> {
 
 
             Path currentPath = Path.of(current.getPath());
-            if (Files.isRegularFile(currentPath)) {
+            if (fileWrapperService.isRegularFile(currentPath)) {
                 //Important to get the last scan before pushing
                 Visit v = repositoryService.findPreviousScanOfPath(scan, currentPath);
 
 
                 if (v != null
                         && v.getState() == VisitState.VISITED
-                        && v.getUpdated().compareTo(Files.getLastModifiedTime(currentPath).toInstant()) > 0) {
+                        && v.getUpdated().compareTo(fileWrapperService.getLastModifiedTime(currentPath).toInstant()) > 0) {
                     log.debug("Already scanned: {}", currentPath);
                     continue;
                 }
@@ -68,10 +71,7 @@ public class FolderItemReader implements ItemReader<PathInfo> {
 
             }
 
-            Stream<Path> stream = Files.list(currentPath);
-            try (stream) {
-                stream.forEach(p -> repositoryService.push(new Visit(scan, p)));
-            }
+            fileWrapperService.list(currentPath).forEach(p -> repositoryService.push(new Visit(scan, p)));
 
         }
         return null;

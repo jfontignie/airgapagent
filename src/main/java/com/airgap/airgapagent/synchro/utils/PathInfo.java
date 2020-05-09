@@ -1,6 +1,7 @@
 package com.airgap.airgapagent.synchro.utils;
 
 import java.nio.file.Path;
+import java.util.Objects;
 
 /**
  * com.airgap.airgapagent.synchro
@@ -37,5 +38,19 @@ public class PathInfo {
 
     public Path getRelative() {
         return baseFolder.relativize(target);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof PathInfo)) return false;
+        PathInfo pathInfo = (PathInfo) o;
+        return Objects.equals(baseFolder, pathInfo.baseFolder) &&
+                Objects.equals(target, pathInfo.target);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(baseFolder, target);
     }
 }
