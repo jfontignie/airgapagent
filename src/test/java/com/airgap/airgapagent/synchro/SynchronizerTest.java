@@ -45,9 +45,10 @@ class SynchronizerTest {
                 .setWork(new SequentialWork(
                         new CopyWork("target/sample"),
                         new ConditionalWork(
-                                new RegexPredicate(List.of("pwd", "password"), true),
-                                new SequentialWork(new SyslogWork(), new CopyWork("target/shadow")),
-                                null)
+                                new SequentialWork(new SyslogWork(),
+                                        new CopyWork("target/shadow")),
+                                null,
+                                new RegexPredicate(List.of("pwd", "password"), true))
                 ))
                 .createSynchronizer();
 

@@ -5,6 +5,9 @@ import com.airgap.airgapagent.synchro.utils.PathInfo;
 import com.fasterxml.jackson.annotation.JsonInclude;
 
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * com.airgap.airgapagent.synchro
@@ -13,26 +16,31 @@ import java.io.IOException;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class ConditionalWork extends AbstractWork {
 
-    private Predicate predicate;
+    private List<Predicate> predicates = Collections.emptyList();
     private Work nextIfSucceeded;
     private Work nextIfFailed;
+    private ConditionType conditionType = ConditionType.OR;
 
-    public ConditionalWork(Predicate predicate, Work nextIfSucceeded, Work nextIfFailed) {
-        this.predicate = predicate;
+    public ConditionalWork(Work nextIfSucceeded, Work nextIfFailed, List<Predicate> predicates) {
+        this.predicates = predicates;
         this.nextIfSucceeded = nextIfSucceeded;
         this.nextIfFailed = nextIfFailed;
+    }
+
+    public ConditionalWork(Work nextIfSucceeded, Work nextIfFailed, Predicate... predicates) {
+        this(nextIfSucceeded, nextIfFailed, Arrays.asList(predicates));
     }
 
     public ConditionalWork() {
         //Nothing to do
     }
 
-    public Predicate getPredicate() {
-        return predicate;
+    public List<Predicate> getPredicates() {
+        return predicates;
     }
 
-    public void setPredicate(Predicate predicate) {
-        this.predicate = predicate;
+    public void setPredicates(List<Predicate> predicates) {
+        this.predicates = predicates;
     }
 
     public Work getNextIfSucceeded() {
@@ -51,9 +59,19 @@ public class ConditionalWork extends AbstractWork {
         this.nextIfFailed = nextIfFailed;
     }
 
+    public ConditionType getConditionType() {
+        return conditionType;
+    }
+
+    public void setConditionType(ConditionType conditionType) {
+        this.conditionType = conditionType;
+    }
+
     @Override
     public void init() throws IOException {
-        predicate.init();
+        for (Predicate predicate : predicates) {
+            predicate.init();
+        }
         if (nextIfSucceeded != null) {
             nextIfSucceeded.init();
         }
@@ -64,7 +82,15 @@ public class ConditionalWork extends AbstractWork {
 
     @Override
     public void call(PathInfo path) throws IOException {
-        boolean result = predicate.call(path);
+        boolean result = false;
+        for (Predicate predicate : predicates) {
+            boolean current = predicate.call(path);
+            result = current;
+            if ((conditionType == ConditionType.OR && current) ||
+                    (conditionType == ConditionType.AND && !current)) {
+                break;
+            }
+        }
         Work next = result ? nextIfSucceeded : nextIfFailed;
         if (next != null) {
             next.call(path);
@@ -75,7 +101,9 @@ public class ConditionalWork extends AbstractWork {
     public void close() throws IOException {
         close(nextIfFailed);
         close(nextIfSucceeded);
-        predicate.close();
+        for (Predicate predicate : predicates) {
+            predicate.close();
+        }
     }
 
     private void close(Work action) throws IOException {

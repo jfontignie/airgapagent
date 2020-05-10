@@ -6,12 +6,12 @@ flow:
     - type: "COPY"
       target: "target/sample"
     - type: "CONDITION"
-      predicate:
-        type: "REGEX"
-        regex:
-          - "pwd"
-          - "password"
-        caseSensitive: true
+      predicates:
+        - type: "REGEX"
+          regex:
+            - "pwd"
+            - "password"
+          caseSensitive: true
       nextIfSucceeded:
         type: "SEQUENCE"
         name: "suspicious"

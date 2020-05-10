@@ -8,6 +8,7 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import java.io.IOException;
+import java.util.Collections;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.atLeastOnce;
@@ -29,13 +30,13 @@ class ConditionalWorkTest {
         predicate = Mockito.mock(Predicate.class);
         failedWork = Mockito.mock(Work.class);
         successWork = Mockito.mock(Work.class);
-        work.setPredicate(predicate);
+        work.setPredicates(Collections.singletonList(predicate));
         work.setNextIfFailed(failedWork);
         work.setNextIfSucceeded(successWork);
 
         Assertions.assertEquals(successWork, work.getNextIfSucceeded());
         Assertions.assertEquals(failedWork, work.getNextIfFailed());
-        Assertions.assertEquals(predicate, work.getPredicate());
+        Assertions.assertEquals(predicate, work.getPredicates().get(0));
 
         work.init();
     }
