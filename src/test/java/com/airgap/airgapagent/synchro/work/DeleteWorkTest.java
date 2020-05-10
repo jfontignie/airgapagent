@@ -1,6 +1,12 @@
 package com.airgap.airgapagent.synchro.work;
 
+import com.airgap.airgapagent.synchro.utils.PathInfo;
+import org.apache.commons.io.FileUtils;
+import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
+
+import java.io.File;
+import java.io.IOException;
 
 /**
  * com.airgap.airgapagent.synchro.work
@@ -9,7 +15,23 @@ import org.junit.jupiter.api.Test;
 class DeleteWorkTest {
 
     @Test
-    void call() {
+    void call() throws IOException {
+        String pathname = "target/todelete";
+        FileUtils.copyDirectory(new File("src/test/resources/sample"),
+                new File(pathname));
+        Assertions.assertThat(new File(pathname)).exists();
+
+        DeleteWork work = new DeleteWork();
+        work.call(PathInfo.of(pathname));
+        Assertions.assertThat(new File(pathname)).doesNotExist();
+
+        FileUtils.copyFile(new File("src/test/resources/sample/sample.docx"),
+                new File(pathname));
+        Assertions.assertThat(new File(pathname)).exists();
+
+        work.call(PathInfo.of(pathname));
+        Assertions.assertThat(new File(pathname)).doesNotExist();
+
 
     }
 }
