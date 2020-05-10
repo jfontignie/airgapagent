@@ -19,6 +19,8 @@ import java.io.IOException;
         @JsonSubTypes.Type(value = ConditionalWork.class, name = WorkConstants.CONDITION_NAME),
         @JsonSubTypes.Type(value = SyslogWork.class, name = WorkConstants.SYSLOG_NAME),
         @JsonSubTypes.Type(value = SequentialWork.class, name = WorkConstants.SEQUENCE_NAME),
+        @JsonSubTypes.Type(value = DeleteWork.class, name = WorkConstants.DELETE_NAME)
+
 })
 public interface Work extends Closeable {
 

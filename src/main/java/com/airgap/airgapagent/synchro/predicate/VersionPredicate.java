@@ -14,12 +14,12 @@ import java.util.Objects;
  * com.airgap.airgapagent.synchro
  * Created by Jacques Fontignie on 4/19/2020.
  */
-public class RecentPredicate extends AbstractPredicate {
+public class VersionPredicate extends AbstractPredicate {
 
     private Path statusFile;
     private Snapshot snapshot;
 
-    public RecentPredicate() {
+    public VersionPredicate() {
         //Nothing to do
     }
 

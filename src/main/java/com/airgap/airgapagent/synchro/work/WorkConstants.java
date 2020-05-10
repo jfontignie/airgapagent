@@ -6,6 +6,7 @@ package com.airgap.airgapagent.synchro.work;
  */
 public class WorkConstants {
 
+    public static final String DELETE_NAME = "DELETE";
     static final String SYSLOG_NAME = "SYSLOG";
     static final String COPY_NAME = "COPY";
     static final String CONDITION_NAME = "CONDITION";

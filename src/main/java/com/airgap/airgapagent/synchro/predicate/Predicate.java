@@ -17,7 +17,9 @@ import java.io.IOException;
 @JsonSubTypes({
         @JsonSubTypes.Type(value = RegexPredicate.class, name = PredicateConstants.REGEX),
         @JsonSubTypes.Type(value = ExtensionPredicate.class, name = PredicateConstants.EXTENSION),
-        @JsonSubTypes.Type(value = RecentPredicate.class, name = PredicateConstants.RECENT),
+        @JsonSubTypes.Type(value = VersionPredicate.class, name = PredicateConstants.RECENT),
+        @JsonSubTypes.Type(value = FileTimePredicate.class, name = PredicateConstants.FILE_TIME),
+
 })
 public interface Predicate extends Closeable {
 
