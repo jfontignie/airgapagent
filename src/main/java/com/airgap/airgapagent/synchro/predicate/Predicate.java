@@ -23,7 +23,7 @@ import java.io.IOException;
 })
 public interface Predicate extends Closeable {
 
-    void init() throws IOException;
+    void init();
 
     boolean call(PathInfo path) throws IOException;
 }

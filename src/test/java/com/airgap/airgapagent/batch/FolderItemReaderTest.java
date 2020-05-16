@@ -11,7 +11,6 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
-import org.mockito.stubbing.Answer;
 
 import java.nio.file.Path;
 import java.nio.file.attribute.FileTime;
@@ -35,11 +34,10 @@ class FolderItemReaderTest {
     public void setUp() {
         scan = new Scan();
 
-        Answer not_implemented = invocation -> {
+        fileWrapperService = Mockito.mock(FileWrapperService.class, invocation -> {
             throw new IllegalStateException("not implemented : " +
                     invocation.getMock().getClass().getName() + "->" + invocation.getMethod().getName());
-        };
-        fileWrapperService = Mockito.mock(FileWrapperService.class, not_implemented);
+        });
         visitRepositoryService = Mockito.mock(VisitRepositoryService.class);
         folderItemReader = new FolderItemReader(fileWrapperService, visitRepositoryService);
     }
