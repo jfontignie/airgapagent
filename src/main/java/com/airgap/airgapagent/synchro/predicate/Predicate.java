@@ -1,6 +1,5 @@
 package com.airgap.airgapagent.synchro.predicate;
 
-import com.airgap.airgapagent.synchro.utils.PathInfo;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 
@@ -21,9 +20,9 @@ import java.io.IOException;
         @JsonSubTypes.Type(value = FileTimePredicate.class, name = PredicateConstants.FILE_TIME),
 
 })
-public interface Predicate extends Closeable {
+public interface Predicate<T> extends Closeable {
 
     void init();
 
-    boolean call(PathInfo path) throws IOException;
+    boolean call(T t) throws IOException;
 }

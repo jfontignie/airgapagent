@@ -1,6 +1,5 @@
 package com.airgap.airgapagent.synchro.work;
 
-import com.airgap.airgapagent.synchro.utils.PathInfo;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 
@@ -22,10 +21,10 @@ import java.io.IOException;
         @JsonSubTypes.Type(value = DeleteWork.class, name = WorkConstants.DELETE_NAME)
 
 })
-public interface Work extends Closeable {
+public interface Work<T> extends Closeable {
 
     void init() throws IOException;
 
-    void call(PathInfo path) throws IOException;
+    void call(T t) throws IOException;
 
 }

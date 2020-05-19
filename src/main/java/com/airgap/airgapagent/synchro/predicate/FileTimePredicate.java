@@ -13,7 +13,7 @@ import java.util.Objects;
  * com.airgap.airgapagent.synchro.predicate
  * Created by Jacques Fontignie on 5/10/2020.
  */
-public class FileTimePredicate extends AbstractPredicate {
+public class FileTimePredicate extends AbstractPredicate<PathInfo> {
 
     private String rule;
     private Duration duration;

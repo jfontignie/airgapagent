@@ -14,7 +14,7 @@ import java.util.Objects;
  * com.airgap.airgapagent.synchro
  * Created by Jacques Fontignie on 4/19/2020.
  */
-public class VersionPredicate extends AbstractPredicate {
+public class VersionPredicate extends AbstractPredicate<PathInfo> {
 
     private Path statusFile;
     private Snapshot snapshot;

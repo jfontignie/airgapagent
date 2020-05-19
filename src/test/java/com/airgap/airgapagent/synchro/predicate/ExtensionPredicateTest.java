@@ -6,7 +6,6 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import java.io.IOException;
 import java.util.Set;
 
 /**
@@ -18,12 +17,12 @@ class ExtensionPredicateTest {
     private final ExtensionPredicate extensionPredicate = new ExtensionPredicate();
 
     @BeforeEach()
-    public void setUp() throws IOException {
+    public void setUp() {
         extensionPredicate.init();
     }
 
     @AfterEach
-    public void tearDown() throws IOException {
+    public void tearDown() {
         extensionPredicate.close();
     }
 

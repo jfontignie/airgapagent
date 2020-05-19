@@ -12,7 +12,7 @@ import java.util.Set;
  * com.airgap.airgapagent.synchro
  * Created by Jacques Fontignie on 4/19/2020.
  */
-public class ExtensionPredicate extends AbstractPredicate {
+public class ExtensionPredicate extends AbstractPredicate<PathInfo> {
 
 
     private final Set<String> extensions = new HashSet<>();

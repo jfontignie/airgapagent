@@ -16,7 +16,7 @@ class SyslogWorkTest {
     @Test
     void call() throws IOException {
 
-        SyslogWork task = new SyslogWork();
+        SyslogWork<PathInfo> task = new SyslogWork<>();
         task.setMessage("Info");
         task.setPort(514);
         task.setTarget("localhost");

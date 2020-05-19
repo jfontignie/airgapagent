@@ -1,5 +1,6 @@
 package com.airgap.airgapagent.synchro;
 
+import com.airgap.airgapagent.synchro.utils.PathInfo;
 import com.airgap.airgapagent.synchro.work.Work;
 
 import java.nio.file.Path;
@@ -11,9 +12,9 @@ import java.nio.file.Path;
 public class SynchroConfiguration {
 
     protected Path baseFolder;
-    protected Work flow;
+    protected Work<PathInfo> flow;
 
-    public SynchroConfiguration(Path baseFolder, Work flow) {
+    public SynchroConfiguration(Path baseFolder, Work<PathInfo> flow) {
         this.baseFolder = baseFolder;
         this.flow = flow;
     }
@@ -30,11 +31,11 @@ public class SynchroConfiguration {
         this.baseFolder = Path.of(baseFolder);
     }
 
-    public Work getFlow() {
+    public Work<PathInfo> getFlow() {
         return flow;
     }
 
-    public void setFlow(Work flow) {
+    public void setFlow(Work<PathInfo> flow) {
         this.flow = flow;
     }
 

@@ -1,7 +1,6 @@
 package com.airgap.airgapagent.synchro.work;
 
 import com.airgap.airgapagent.synchro.predicate.Predicate;
-import com.airgap.airgapagent.synchro.utils.PathInfo;
 import com.fasterxml.jackson.annotation.JsonInclude;
 
 import java.io.IOException;
@@ -14,20 +13,22 @@ import java.util.List;
  * Created by Jacques Fontignie on 4/19/2020.
  */
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class ConditionalWork extends AbstractWork {
+public class ConditionalWork<T> extends AbstractWork<T> {
 
-    private List<Predicate> predicates = Collections.emptyList();
-    private Work nextIfSucceeded;
-    private Work nextIfFailed;
+    private List<Predicate<T>> predicates = Collections.emptyList();
+    private Work<T> nextIfSucceeded;
+    private Work<T> nextIfFailed;
     private ConditionType conditionType = ConditionType.OR;
 
-    public ConditionalWork(Work nextIfSucceeded, Work nextIfFailed, List<Predicate> predicates) {
+    public ConditionalWork(Work<T> nextIfSucceeded, Work<T> nextIfFailed, List<Predicate<T>> predicates) {
         this.predicates = predicates;
         this.nextIfSucceeded = nextIfSucceeded;
         this.nextIfFailed = nextIfFailed;
     }
 
-    public ConditionalWork(Work nextIfSucceeded, Work nextIfFailed, Predicate... predicates) {
+
+    @SafeVarargs
+    public ConditionalWork(Work<T> nextIfSucceeded, Work<T> nextIfFailed, Predicate<T>... predicates) {
         this(nextIfSucceeded, nextIfFailed, Arrays.asList(predicates));
     }
 
@@ -35,27 +36,27 @@ public class ConditionalWork extends AbstractWork {
         //Nothing to do
     }
 
-    public List<Predicate> getPredicates() {
+    public List<Predicate<T>> getPredicates() {
         return predicates;
     }
 
-    public void setPredicates(List<Predicate> predicates) {
+    public void setPredicates(List<Predicate<T>> predicates) {
         this.predicates = predicates;
     }
 
-    public Work getNextIfSucceeded() {
+    public Work<T> getNextIfSucceeded() {
         return nextIfSucceeded;
     }
 
-    public void setNextIfSucceeded(Work nextIfSucceeded) {
+    public void setNextIfSucceeded(Work<T> nextIfSucceeded) {
         this.nextIfSucceeded = nextIfSucceeded;
     }
 
-    public Work getNextIfFailed() {
+    public Work<T> getNextIfFailed() {
         return nextIfFailed;
     }
 
-    public void setNextIfFailed(Work nextIfFailed) {
+    public void setNextIfFailed(Work<T> nextIfFailed) {
         this.nextIfFailed = nextIfFailed;
     }
 
@@ -69,7 +70,7 @@ public class ConditionalWork extends AbstractWork {
 
     @Override
     public void init() throws IOException {
-        for (Predicate predicate : predicates) {
+        for (Predicate<T> predicate : predicates) {
             predicate.init();
         }
         if (nextIfSucceeded != null) {
@@ -81,9 +82,9 @@ public class ConditionalWork extends AbstractWork {
     }
 
     @Override
-    public void call(PathInfo path) throws IOException {
+    public void call(T path) throws IOException {
         boolean result = false;
-        for (Predicate predicate : predicates) {
+        for (Predicate<T> predicate : predicates) {
             boolean current = predicate.call(path);
             result = current;
             if ((conditionType == ConditionType.OR && current) ||
@@ -91,7 +92,7 @@ public class ConditionalWork extends AbstractWork {
                 break;
             }
         }
-        Work next = result ? nextIfSucceeded : nextIfFailed;
+        Work<T> next = result ? nextIfSucceeded : nextIfFailed;
         if (next != null) {
             next.call(path);
         }
@@ -101,12 +102,12 @@ public class ConditionalWork extends AbstractWork {
     public void close() throws IOException {
         close(nextIfFailed);
         close(nextIfSucceeded);
-        for (Predicate predicate : predicates) {
+        for (Predicate<T> predicate : predicates) {
             predicate.close();
         }
     }
 
-    private void close(Work action) throws IOException {
+    private void close(Work<T> action) throws IOException {
         if (action != null)
             action.close();
     }

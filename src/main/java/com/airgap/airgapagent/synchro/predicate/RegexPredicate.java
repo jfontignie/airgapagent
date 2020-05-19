@@ -19,7 +19,7 @@ import java.util.stream.Collectors;
  * com.airgap.airgapagent.synchro
  * Created by Jacques Fontignie on 4/17/2020.
  */
-public class RegexPredicate extends AbstractPredicate {
+public class RegexPredicate extends AbstractPredicate<PathInfo> {
     private List<String> regex;
     private Tika tika;
     private Pattern pattern;

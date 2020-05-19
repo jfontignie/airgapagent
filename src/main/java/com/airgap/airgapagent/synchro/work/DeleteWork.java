@@ -10,7 +10,7 @@ import java.nio.file.Files;
  * com.airgap.airgapagent.synchro
  * Created by Jacques Fontignie on 4/17/2020.
  */
-public class DeleteWork extends AbstractWork {
+public class DeleteWork extends AbstractWork<PathInfo> {
 
     @Override
     public void call(PathInfo path) throws IOException {

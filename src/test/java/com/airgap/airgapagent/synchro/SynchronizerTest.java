@@ -42,10 +42,10 @@ class SynchronizerTest {
     void testFullSerialize() throws JsonProcessingException {
         Synchronizer synchronizer = new SynchronizerBuilder()
                 .setBaseFolder("set/test/resources")
-                .setWork(new SequentialWork(
+                .setWork(new SequentialWork<>(
                         new CopyWork("target/sample"),
-                        new ConditionalWork(
-                                new SequentialWork(new SyslogWork(),
+                        new ConditionalWork<>(
+                                new SequentialWork<>(new SyslogWork<>(),
                                         new CopyWork("target/shadow")),
                                 null,
                                 new RegexPredicate(List.of("pwd", "password"), true))

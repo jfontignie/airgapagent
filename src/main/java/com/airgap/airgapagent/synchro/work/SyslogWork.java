@@ -1,6 +1,5 @@
 package com.airgap.airgapagent.synchro.work;
 
-import com.airgap.airgapagent.synchro.utils.PathInfo;
 import com.cloudbees.syslog.Severity;
 import com.cloudbees.syslog.sender.UdpSyslogMessageSender;
 
@@ -11,7 +10,7 @@ import java.util.Objects;
  * com.airgap.airgapagent.synchro
  * Created by Jacques Fontignie on 4/17/2020.
  */
-public class SyslogWork extends AbstractWork {
+public class SyslogWork<T> extends AbstractWork<T> {
     private String target;
     private int port;
     private String message;
@@ -58,14 +57,14 @@ public class SyslogWork extends AbstractWork {
         syslog = new UdpSyslogMessageSender();
         syslog.setSyslogServerHostname(target);
         syslog.setSyslogServerPort(port);
-        syslog.setDefaultAppName("Synchro");
+        syslog.setDefaultAppName("AirGap");
         syslog.setDefaultSeverity(Severity.ALERT);
     }
 
     @Override
-    public void call(PathInfo path) throws IOException {
+    public void call(T t) throws IOException {
         Objects.requireNonNull(syslog, "Init not called");
-        syslog.sendMessage(message + ":" + path.getRelative());
+        syslog.sendMessage(message + ":" + t);
     }
 
 }

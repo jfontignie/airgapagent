@@ -1,14 +1,18 @@
 package com.airgap.airgapagent.synchro.work;
 
 import com.airgap.airgapagent.synchro.predicate.Predicate;
+import com.airgap.airgapagent.synchro.utils.PathInfo;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mock;
 import org.mockito.Mockito;
+import org.mockito.MockitoAnnotations;
 
 import java.io.IOException;
 import java.util.Collections;
+import java.util.Objects;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.atLeastOnce;
@@ -20,16 +24,23 @@ import static org.mockito.Mockito.never;
  */
 class ConditionalWorkTest {
 
-    private final ConditionalWork work = new ConditionalWork();
-    private Predicate predicate;
-    private Work failedWork;
-    private Work successWork;
+    private final ConditionalWork<PathInfo> work = new ConditionalWork<>();
+
+
+    @Mock
+    private Predicate<PathInfo> predicate;
+
+    @Mock
+    private Work<PathInfo> failedWork;
+
+    @Mock
+    private Work<PathInfo> successWork;
 
     @BeforeEach
     public void setUp() throws IOException {
-        predicate = Mockito.mock(Predicate.class);
-        failedWork = Mockito.mock(Work.class);
-        successWork = Mockito.mock(Work.class);
+
+        MockitoAnnotations.initMocks(this);
+        Objects.requireNonNull(predicate);
         work.setPredicates(Collections.singletonList(predicate));
         work.setNextIfFailed(failedWork);
         work.setNextIfSucceeded(successWork);
@@ -66,8 +77,6 @@ class ConditionalWorkTest {
 
     @Test
     void callClose() throws IOException {
-        Work successWork = Mockito.mock(Work.class);
-        work.setNextIfSucceeded(successWork);
         work.close();
         Mockito.verify(successWork, atLeastOnce()).close();
     }

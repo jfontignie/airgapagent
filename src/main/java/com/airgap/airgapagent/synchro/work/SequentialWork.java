@@ -1,6 +1,5 @@
 package com.airgap.airgapagent.synchro.work;
 
-import com.airgap.airgapagent.synchro.utils.PathInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -12,9 +11,9 @@ import java.util.List;
  * com.airgap.airgapagent.synchro
  * Created by Jacques Fontignie on 4/19/2020.
  */
-public class SequentialWork extends AbstractWork {
+public class SequentialWork<T> extends AbstractWork<T> {
 
-    private List<Work> actions;
+    private List<Work<T>> actions;
     private static final Logger log = LoggerFactory.getLogger(SequentialWork.class);
     private int counter;
 
@@ -23,41 +22,42 @@ public class SequentialWork extends AbstractWork {
 
     }
 
-    public SequentialWork(Work... works) {
+    @SafeVarargs
+    public SequentialWork(Work<T>... works) {
         this(Arrays.asList(works));
     }
 
-    public SequentialWork(List<Work> toPerform) {
+    public SequentialWork(List<Work<T>> toPerform) {
         this.actions = toPerform;
     }
 
-    public List<Work> getActions() {
+    public List<Work<T>> getActions() {
         return actions;
     }
 
-    public void setActions(List<Work> actions) {
+    public void setActions(List<Work<T>> actions) {
         this.actions = actions;
     }
 
     @Override
     public void init() throws IOException {
-        for (Work work : actions) {
+        for (Work<T> work : actions) {
             work.init();
         }
     }
 
     @Override
-    public void call(PathInfo path) throws IOException {
+    public void call(T t) throws IOException {
         counter++;
-        for (Work work : actions) {
-            work.call(path);
+        for (Work<T> work : actions) {
+            work.call(t);
         }
     }
 
     @Override
     public void close() throws IOException {
         log.info("Number of processed files in task '{}': {}", getName(), counter);
-        for (Work work : actions) {
+        for (Work<T> work : actions) {
             work.close();
         }
     }

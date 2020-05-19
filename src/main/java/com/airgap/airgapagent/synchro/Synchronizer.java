@@ -20,7 +20,7 @@ public class Synchronizer extends SynchroConfiguration {
 
     private static final Logger logger = LoggerFactory.getLogger(Synchronizer.class);
 
-    public Synchronizer(Path baseFolder, Work flow) {
+    public Synchronizer(Path baseFolder, Work<PathInfo> flow) {
         super(baseFolder, flow);
     }
 

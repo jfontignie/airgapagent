@@ -19,9 +19,9 @@ import java.io.IOException;
  */
 public class PathInfoProcessor implements ItemProcessor<PathInfo, PathInfo>, ItemStream {
     private static final Logger log = LoggerFactory.getLogger(PathInfoProcessor.class);
-    private final Work rootWork;
+    private final Work<PathInfo> rootWork;
 
-    public PathInfoProcessor(Work rootWork) {
+    public PathInfoProcessor(Work<PathInfo> rootWork) {
         this.rootWork = rootWork;
     }
 

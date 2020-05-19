@@ -7,7 +7,7 @@ import java.util.UUID;
  * com.airgap.airgapagent.synchro.work
  * Created by Jacques Fontignie on 5/7/2020.
  */
-public abstract class AbstractWork implements Work {
+public abstract class AbstractWork<T> implements Work<T> {
 
     private String name = UUID.randomUUID().toString();
 
