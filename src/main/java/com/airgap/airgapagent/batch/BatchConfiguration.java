@@ -35,7 +35,7 @@ public class BatchConfiguration {
             ApplicationArguments applicationArguments) throws IOException {
         ObjectMapper objectMapper = new ObjectMapper(new YAMLFactory());
         if (!applicationArguments.containsOption(CONFIG_NAME)) {
-            throw new IllegalStateException("config has not been specified");
+            return new SynchroConfiguration();
         }
         return objectMapper.readValue(new File(applicationArguments.getOptionValues(CONFIG_NAME).get(0)), SynchroConfiguration.class);
     }

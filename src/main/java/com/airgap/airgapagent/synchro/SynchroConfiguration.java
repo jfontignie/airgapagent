@@ -11,8 +11,8 @@ import java.nio.file.Path;
  */
 public class SynchroConfiguration {
 
-    protected Path baseFolder;
-    protected Work<PathInfo> flow;
+    protected Path baseFolder = Path.of(".");
+    protected Work<PathInfo> flow = new NoOpWork<>();
 
     public SynchroConfiguration(Path baseFolder, Work<PathInfo> flow) {
         this.baseFolder = baseFolder;
