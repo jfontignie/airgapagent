@@ -1,8 +1,8 @@
 package com.airgap.airgapagent.service.urlscan;
 
-import org.junit.Ignore;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.core.env.StandardEnvironment;
 import org.springframework.mock.env.MockEnvironment;
@@ -38,7 +38,7 @@ class URLScanIOServiceTest {
     }
 
     @SuppressWarnings("java:S1607")
-    @Ignore
+    @Disabled
     @Test
     public void completeScan() throws MalformedURLException {
         URLScanIOService urlScanIOService = new URLScanIOService(environment, WebClient.builder());

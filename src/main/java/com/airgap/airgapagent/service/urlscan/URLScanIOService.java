@@ -31,7 +31,6 @@ public class URLScanIOService {
     public URLScanIOService(Environment environment, WebClient.Builder webClientBuilder) {
         String apiKey = environment.getProperty(URLSCANIO_APIKEY, "");
 
-
         webClient = webClientBuilder
                 .baseUrl("https://urlscan.io/api/v1/")
                 .defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON.toString())
@@ -59,7 +58,10 @@ public class URLScanIOService {
                 .uri("scan/")
                 .body(Mono.just(scanQuery), URLScanQuery.class)
                 .retrieve()
-                .bodyToMono(Submission.class);
+                .bodyToMono(Submission.class)
+                .retryWhen(Retry.backoff(5, Duration.ofSeconds(5)).filter(t -> t instanceof
+                        WebClientResponseException.TooManyRequests))
+                ;
     }
 
     public Mono<ScanResult> getResult(Submission scanId) {
@@ -70,6 +72,8 @@ public class URLScanIOService {
                 .retrieve()
                 .bodyToMono(ScanResult.class)
                 .retryWhen(Retry.fixedDelay(60, Duration.ofSeconds(2))
-                        .filter(throwable -> throwable instanceof WebClientResponseException.NotFound));
+                        .filter(throwable -> throwable instanceof WebClientResponseException.NotFound))
+                .retryWhen(Retry.backoff(5, Duration.ofSeconds(5)).filter(t -> t instanceof
+                        WebClientResponseException.TooManyRequests));
     }
 }
