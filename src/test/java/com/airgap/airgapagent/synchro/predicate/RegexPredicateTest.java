@@ -39,7 +39,7 @@ class RegexPredicateTest {
         Assertions.assertTrue(regexPredicate.call(PathInfo.of("src/test/resources/sample/sample.7z")));
     }
 
-    @Disabled
+    @Disabled("Verify performances")
     @Test
     void testBigFiles() throws IOException {
         Assertions.assertTrue(regexPredicate.call(PathInfo.of("src/test/resources/sample/sample.eml")));

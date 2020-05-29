@@ -32,7 +32,7 @@ public class SoarSample {
 //    AtomicInteger counter = new AtomicInteger();
 //    AtomicLong last = new AtomicLong(System.currentTimeMillis());
 
-    @Disabled
+    @Disabled("Verify performance")
     @Test
     void testCrawl() throws IOException {
         FileWalkerService service = new FileWalkerService();

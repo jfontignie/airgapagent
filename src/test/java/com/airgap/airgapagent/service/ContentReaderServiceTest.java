@@ -15,7 +15,7 @@ import java.util.Optional;
 class ContentReaderServiceTest {
 
     @Test
-    public void testFile() throws IOException {
+    void testFile() throws IOException {
         ContentReaderService contentReaderService = new ContentReaderService();
         Assertions.assertTrue(contentReaderService.getContent(new File("does not exits")).isEmpty());
 

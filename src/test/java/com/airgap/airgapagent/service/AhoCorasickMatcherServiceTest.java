@@ -56,7 +56,7 @@ class AhoCorasickMatcherServiceTest {
         System.out.println(found);
     }
 
-    @Disabled
+    @Disabled("Compare performance between regex and Aho Corasick")
     @Test
     public void perfTest() throws IOException {
 

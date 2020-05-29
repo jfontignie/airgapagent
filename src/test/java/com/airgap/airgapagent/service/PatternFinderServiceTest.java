@@ -14,15 +14,13 @@ import java.util.regex.Pattern;
  */
 class PatternFinderServiceTest {
     @Test
-    public void testFinder() {
+    void testFinder() {
         PatternFinderService service = new PatternFinderService();
         Pattern pattern = Pattern.compile("line.?");
         SuperStringReader reader = new SuperStringReader("one upon a time a lineA in the fsaffsag lineB");
 
         Set<String> expected = new HashSet<>(Set.of("lineA", "lineB"));
-        service.listPattern(reader, pattern).subscribe(s -> {
-            Assertions.assertTrue(expected.remove(s));
-        });
+        service.listPattern(reader, pattern).subscribe(s -> Assertions.assertTrue(expected.remove(s)));
         Assertions.assertTrue(expected.isEmpty());
         Assertions.assertTrue(reader.isClosed());
     }
