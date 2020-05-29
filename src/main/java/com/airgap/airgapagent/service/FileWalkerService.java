@@ -37,6 +37,7 @@ public class FileWalkerService {
             return;
         }
         if (file.isFile() && walkerState.getFileFilter().accept(file)) {
+            walkerState.incVisited();
             fluxSink.next(file);
         } else {
             if (walkerState.getDirectoryFilter().accept(file)) {

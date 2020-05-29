@@ -1,4 +1,4 @@
-baseFolder: "src/test/resources"
+baseFolder: "src/test/resources/sample"
 flow:
   type: "SEQUENCE"
   name: "global"

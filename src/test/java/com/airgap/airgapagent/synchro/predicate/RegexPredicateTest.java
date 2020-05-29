@@ -1,10 +1,7 @@
 package com.airgap.airgapagent.synchro.predicate;
 
 import com.airgap.airgapagent.synchro.utils.PathInfo;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 
 import java.io.IOException;
 import java.util.List;
@@ -40,6 +37,13 @@ class RegexPredicateTest {
         Assertions.assertTrue(regexPredicate.call(PathInfo.of("src/test/resources/sample/sample.xps")));
         Assertions.assertTrue(regexPredicate.call(PathInfo.of("src/test/resources/sample/sample.zip")));
         Assertions.assertTrue(regexPredicate.call(PathInfo.of("src/test/resources/sample/sample.7z")));
+    }
+
+    @Disabled
+    @Test
+    void testBigFiles() throws IOException {
+        Assertions.assertTrue(regexPredicate.call(PathInfo.of("src/test/resources/sample/sample.eml")));
+        Assertions.assertTrue(regexPredicate.call(PathInfo.of("src/test/resources/sample/sample.xlsx")));
     }
 
     @Test

@@ -1,14 +1,83 @@
 package com.airgap.airgapagent.soar;
 
+import com.airgap.airgapagent.algo.Automaton;
+import com.airgap.airgapagent.service.*;
+import org.apache.tika.Tika;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import reactor.core.scheduler.Schedulers;
+
+import java.io.File;
+import java.io.IOException;
+import java.io.Reader;
+import java.time.Duration;
+import java.util.Optional;
+import java.util.Scanner;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicLong;
+import java.util.regex.Pattern;
+
 /**
  * com.airgap.airgapagent.soar
  * Created by Jacques Fontignie( on 5/22/2020.
  */
 public class SoarSample {
-//    private static final File SOURCE = new File("c:/");
+
+    private static final Logger log = LoggerFactory.getLogger(SoarSample.class);
+    //    private static final File SOURCE = new File("c:/");
 //    private SyslogService syslogService;
 //    AtomicInteger counter = new AtomicInteger();
 //    AtomicLong last = new AtomicLong(System.currentTimeMillis());
+
+    @Disabled
+    @Test
+    void testCrawl() throws IOException {
+        FileWalkerService service = new FileWalkerService();
+        FileWalkerContext context = FileWalkerContext.of("c:/projects");
+        AtomicInteger counter = new AtomicInteger();
+        AtomicInteger current = new AtomicInteger();
+        AtomicLong sizeProcessed = new AtomicLong();
+
+        AhoCorasickMatcherService ahoCorasickMatcherService = new AhoCorasickMatcherService();
+        ExactMatchBuilderService exactMatchBuilderService = new ExactMatchBuilderService();
+        Automaton automaton = ahoCorasickMatcherService.buildAutomaton(
+                exactMatchBuilderService.buildSet(new File("src/test/resources/sample/bigsample.csv")));
+
+        ContentReaderService contentReaderService = new ContentReaderService();
+
+        IntervalRunner runner = IntervalRunner.of(Duration.ofSeconds(10), true);
+
+        service.listFiles(context)
+                .doOnEach(f -> {
+                    File file = f.get();
+                    if (file != null) {
+                        sizeProcessed.addAndGet(file.length());
+                    }
+                    current.incrementAndGet();
+                    runner.trigger(() -> {
+                        log.info("Running {} / {} ({} %) - Processed: {} M",
+                                current,
+                                context.getVisited(),
+                                current.get() * 100 / context.getVisited(),
+                                sizeProcessed.get() / 1024);
+                    });
+                })
+                .parallel()
+                .runOn(Schedulers.parallel())
+                .filter(file -> contentReaderService.getContent(file).map(r -> {
+                    AtomicInteger countFound = new AtomicInteger();
+                    ahoCorasickMatcherService.listMatches(r, automaton).subscribe(matchingResult -> {
+                        countFound.incrementAndGet();
+                    }).dispose();
+                    return countFound.get() > 0;
+                }).orElse(false))
+                .subscribe(f -> {
+                    log.info("Found {}, ", f);
+                    counter.incrementAndGet();
+                }).dispose();
+    }
 
 //    @Disabled
 //    @Test
@@ -42,19 +111,19 @@ public class SoarSample {
 ////        disposable.dispose();
 //    }
 
-//    private boolean matches(Reader reader) {
-//        Scanner scanner = new Scanner(reader);
-//        return scanner.findWithinHorizon(Pattern.compile("password="), 0) != null;
-//    }
-//
-//    private Optional<Reader> reader(File file) {
-//        Tika tika = new Tika();
-//        try {
-//            return Optional.of(tika.parse(file));
-//        } catch (IOException e) {
-//            return Optional.empty();
-//        }
-//    }
+    private boolean matches(Reader reader) {
+        Scanner scanner = new Scanner(reader);
+        return scanner.findWithinHorizon(Pattern.compile("password="), 0) != null;
+    }
+
+    private Optional<Reader> reader(File file) {
+        Tika tika = new Tika();
+        try {
+            return Optional.of(tika.parse(file));
+        } catch (IOException e) {
+            return Optional.empty();
+        }
+    }
 
 //    @Test
 //    public void flow1(Folder folder, Folder targetFolder) {

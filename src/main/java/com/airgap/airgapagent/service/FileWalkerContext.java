@@ -11,11 +11,13 @@ public class FileWalkerContext {
     private final FileWalkerFilter fileFilter;
     private final File file;
     private File reference;
+    private int visited;
 
     public FileWalkerContext(File file, FileWalkerFilter fileFilter, FileWalkerFilter directoryFilter) {
         this.file = file;
         this.fileFilter = fileFilter;
         this.directoryFilter = directoryFilter;
+        visited = 0;
     }
 
     public FileWalkerContext(File file) {
@@ -52,5 +54,13 @@ public class FileWalkerContext {
 
     public void reset() {
         this.reference = null;
+    }
+
+    public void incVisited() {
+        visited++;
+    }
+
+    public int getVisited() {
+        return visited;
     }
 }
