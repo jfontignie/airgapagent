@@ -12,6 +12,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
  */
 class IntervalRunnerTest {
 
+    @SuppressWarnings("java:S2925")
     @Test
     void trigger() throws InterruptedException {
         IntervalRunner trigger = IntervalRunner.of(Duration.ofSeconds(1), true);
