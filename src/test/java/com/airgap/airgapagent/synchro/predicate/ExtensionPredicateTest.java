@@ -17,18 +17,18 @@ class ExtensionPredicateTest {
     private final ExtensionPredicate extensionPredicate = new ExtensionPredicate();
 
     @BeforeEach()
-    public void setUp() {
+    void setUp() {
         extensionPredicate.init();
     }
 
     @AfterEach
-    public void tearDown() {
+    void tearDown() {
         extensionPredicate.close();
     }
 
 
     @Test
-    public void testMultiple() {
+    void testMultiple() {
         extensionPredicate.setExtensions(Set.of(".txt", ".TXT", "txt", ".TxT"));
         Assertions.assertEquals(1, extensionPredicate.getExtensions().size());
     }
