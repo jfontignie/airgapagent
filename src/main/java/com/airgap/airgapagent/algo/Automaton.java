@@ -11,23 +11,33 @@ public class Automaton {
     private final char[][] originalPatterns;
     private final Map<TrieNode, TrieNode> fail = new HashMap<>();
     private final Map<TrieNode, int[]> patterns = new HashMap<>();
+    private final boolean caseSensitive;
     private TrieNode root;
 
 
-    public Automaton(char[]... patterns) {
-        this(Arrays.stream(patterns)
+    public Automaton(boolean caseSensitive, char[]... patterns) {
+        this(caseSensitive, Arrays.stream(patterns)
                 .map(String::valueOf)
                 .collect(Collectors.toSet()));
     }
 
-    public Automaton(Set<String> patterns) {
+    public Automaton(boolean caseSensitive, Set<String> patterns) {
         originalPatterns = patterns.stream()
+                .map(s -> caseSensitive ? s : s.toLowerCase())
                 .map(String::toCharArray)
                 .collect(Collectors.toList())
                 .toArray(new char[0][0]);
-
+        this.caseSensitive = caseSensitive;
         constructTrie(originalPatterns);
         computeFailureFunction();
+    }
+
+    public Automaton(char[][] patterns) {
+        this(true, patterns);
+    }
+
+    public boolean isCaseSensitive() {
+        return caseSensitive;
     }
 
     private static char toUnsignedchar(final int value) {
@@ -35,7 +45,7 @@ public class Automaton {
     }
 
     private void constructTrie(final char[]... patterns) {
-        final TrieNode root = new TrieNode();
+        root = new TrieNode();
         final int k = patterns.length;
 
         for (int patternIndex = 0; patternIndex < k; ++patternIndex) {
@@ -59,7 +69,7 @@ public class Automaton {
         }
 
         this.patterns.put(root, new int[0]);
-        this.root = root;
+
     }
 
     @SuppressWarnings("java:S3776")

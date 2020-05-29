@@ -21,7 +21,11 @@ public class AhoCorasickMatcher extends MultipleStringMatcher {
             if (current == -1) {
                 break;
             }
-            char car = (char) current;
+
+            char car = (char) ((char) current & 0xFF);
+            if (!automaton.isCaseSensitive()) {
+                car = Character.toLowerCase(car);
+            }
 
             while (state.getChild(car) == null) {
                 state = automaton.getFail().get(state);

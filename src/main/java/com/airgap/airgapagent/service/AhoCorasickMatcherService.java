@@ -23,8 +23,8 @@ public class AhoCorasickMatcherService {
 
     private final AhoCorasickMatcher matcher = new AhoCorasickMatcher();
 
-    public Automaton buildAutomaton(Set<String> patterns) {
-        return new Automaton(patterns);
+    public Automaton buildAutomaton(Set<String> patterns, boolean caseSensitive) {
+        return new Automaton(caseSensitive, patterns);
     }
 
     public Flux<MatchingResult> listMatches(Reader reader, Automaton automaton) {
