@@ -17,7 +17,7 @@ import java.nio.file.attribute.FileTime;
 class VersionPredicateTest {
 
     @Test
-    public void test() throws IOException {
+    void test() throws IOException {
         VersionPredicate predicate = new VersionPredicate();
         predicate.setStatusFile("target/state.txt");
         predicate.init();
