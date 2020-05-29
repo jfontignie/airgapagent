@@ -64,7 +64,7 @@ class SynchronizerTest {
 
 
     @Test
-    public void testFull() throws IOException {
+    void testFull() throws IOException {
 
         ObjectMapper objectMapper = new ObjectMapper(new YAMLFactory());
         Synchronizer deserialized = objectMapper.readValue(new File("src/test/resources/yaml/1_synchro.yaml"), Synchronizer.class);
