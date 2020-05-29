@@ -15,7 +15,7 @@ import java.net.URL;
 class DomainToolsServiceTest {
 
     @Test
-    public void scanDomainTools() throws MalformedURLException {
+    void scanDomainTools() throws MalformedURLException {
         DomainToolsService domainToolsService = new DomainToolsService(WebClient.builder());
         Mono<WhoIsInfo> result = domainToolsService.scan(new URL("https://domaintools.com/test"));
         WhoIsInfo info = result.block();

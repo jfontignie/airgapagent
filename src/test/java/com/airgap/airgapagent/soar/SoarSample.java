@@ -24,7 +24,7 @@ import java.util.regex.Pattern;
  * com.airgap.airgapagent.soar
  * Created by Jacques Fontignie( on 5/22/2020.
  */
-public class SoarSample {
+class SoarSample {
 
     private static final Logger log = LoggerFactory.getLogger(SoarSample.class);
     //    private static final File SOURCE = new File("c:/");
