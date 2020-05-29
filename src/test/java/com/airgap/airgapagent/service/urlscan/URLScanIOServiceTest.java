@@ -26,21 +26,20 @@ class URLScanIOServiceTest {
     private StandardEnvironment environment;
 
     @BeforeEach
-    public void setUp() {
+    void setUp() {
         this.environment = new StandardEnvironment();
     }
 
     @Test
-    public void scanInvalidKey() throws MalformedURLException {
+    void scanInvalidKey() throws MalformedURLException {
         URLScanIOService urlScanIOService = new URLScanIOService(new MockEnvironment(), WebClient.builder());
         Mono<Submission> result = urlScanIOService.scan(new URL("http://www.github.com"));
         assertThrows(WebClientResponseException.Unauthorized.class, result::block);
     }
 
-    @SuppressWarnings("java:S1607")
-    @Disabled
+    @Disabled("Real call to the website with key in variable:urlscanio.apikey")
     @Test
-    public void completeScan() throws MalformedURLException {
+    void completeScan() throws MalformedURLException {
         URLScanIOService urlScanIOService = new URLScanIOService(environment, WebClient.builder());
         Mono<Submission> mono = urlScanIOService.scan(new URL("http://www.github.com"));
         Submission scanId = mono.block();

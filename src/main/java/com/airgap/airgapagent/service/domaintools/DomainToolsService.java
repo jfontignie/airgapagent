@@ -1,6 +1,5 @@
 package com.airgap.airgapagent.service.domaintools;
 
-import org.springframework.core.env.Environment;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.web.reactive.function.client.WebClient;
@@ -16,7 +15,7 @@ public class DomainToolsService {
     private final WebClient webClient;
 
 
-    public DomainToolsService(Environment environment, WebClient.Builder webClientBuilder) {
+    public DomainToolsService(WebClient.Builder webClientBuilder) {
 
 
         webClient = webClientBuilder

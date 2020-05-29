@@ -2,7 +2,6 @@ package com.airgap.airgapagent.service.domaintools;
 
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
-import org.springframework.mock.env.MockEnvironment;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
 
@@ -17,7 +16,7 @@ class DomainToolsServiceTest {
 
     @Test
     public void scanDomainTools() throws MalformedURLException {
-        DomainToolsService domainToolsService = new DomainToolsService(new MockEnvironment(), WebClient.builder());
+        DomainToolsService domainToolsService = new DomainToolsService(WebClient.builder());
         Mono<WhoIsInfo> result = domainToolsService.scan(new URL("https://domaintools.com/test"));
         WhoIsInfo info = result.block();
         Assertions.assertThat(info).isNotNull();

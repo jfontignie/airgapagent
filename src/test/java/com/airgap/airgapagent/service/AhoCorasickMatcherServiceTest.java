@@ -58,7 +58,7 @@ class AhoCorasickMatcherServiceTest {
 
     @Disabled("Compare performance between regex and Aho Corasick")
     @Test
-    public void perfTest() throws IOException {
+    void perfTest() throws IOException {
 
         perfTestRegex();
         perfTestRegex2();
@@ -86,7 +86,7 @@ class AhoCorasickMatcherServiceTest {
     }
 
 
-    public void perfTestRegex() throws IOException {
+    void perfTestRegex() throws IOException {
         long start = System.currentTimeMillis();
 
         Tika tika = new Tika();
@@ -97,7 +97,7 @@ class AhoCorasickMatcherServiceTest {
         System.out.println("Regex with one: " + (System.currentTimeMillis() - start) + " ms.");
     }
 
-    public void perfTestRegex2() throws IOException {
+    void perfTestRegex2() throws IOException {
         long start = System.currentTimeMillis();
 
         Tika tika = new Tika();
