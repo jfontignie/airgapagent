@@ -4,6 +4,7 @@ import com.airgap.airgapagent.algo.Automaton;
 import com.airgap.airgapagent.domain.ExactMatchContext;
 import com.airgap.airgapagent.domain.ExactMatchingResult;
 import com.airgap.airgapagent.utils.CsvWriter;
+import com.airgap.airgapagent.utils.ExceptionUtils;
 import com.airgap.airgapagent.utils.FileWalkerContext;
 import com.airgap.airgapagent.utils.PersistentFileWalker;
 import org.slf4j.Logger;
@@ -59,25 +60,26 @@ public class FileScanService {
                         .runOn(Schedulers.parallel())
                         .map(file -> contentReaderService.getContent(file).map(r -> {
                             AtomicInteger countFound = new AtomicInteger();
-                            try {
-                                ahoCorasickMatcherService.listMatches(r, automaton)
-                                        .take(exactMatchContext.getMaxHit())
-                                        .subscribe(matchingResult -> countFound.incrementAndGet())
-                                        .dispose();
-                            } catch (Exception e) {
-                                //catch possible reader exceptions but do nothing
-                                log.error("Error while reading {} - {}", file, e.getMessage());
-                                try {
-                                    errorWriter.write(
-                                            new StringJoiner(";", "", "\n")
-                                                    .add(file.toString())
-                                                    .add(e.toString())
-                                                    .toString());
-                                    errorWriter.flush();
-                                } catch (IOException ioException) {
-                                    log.error("Error wile saving data");
-                                }
-                            }
+                            ahoCorasickMatcherService.listMatches(r, automaton)
+                                    .take(exactMatchContext.getMaxHit())
+                                    .doOnError(e -> {
+                                        log.error("Error while reading {} - {}", file, ExceptionUtils.expand(e));
+                                        try {
+                                            errorWriter.write(
+                                                    new StringJoiner(";", "", "\n")
+                                                            .add(file.toString())
+                                                            .add(ExceptionUtils.expand(e))
+                                                            .toString());
+                                            errorWriter.flush();
+
+                                        } catch (IOException ioException) {
+                                            log.error("Error wile saving data");
+                                        }
+
+                                    })
+                                    .subscribe(matchingResult -> countFound.incrementAndGet())
+                                    .dispose();
+
                             return new ExactMatchingResult(file, countFound.get());
                         }))
                         .filter(result -> result.map(r -> r.getOccurrences() >= exactMatchContext.getMinHit()).orElse(false))
