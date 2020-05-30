@@ -13,14 +13,14 @@ import org.springframework.stereotype.Component;
  * Created by Jacques Fontignie on 5/30/2020.
  */
 @Component
-public class CommandLineStartupRunner implements ApplicationRunner {
+public class CommandLineApplicationRunner implements ApplicationRunner {
     private static final Logger log =
-            LoggerFactory.getLogger(CommandLineStartupRunner.class);
+            LoggerFactory.getLogger(CommandLineApplicationRunner.class);
     private final FileScanService fileScanService;
     private final ExactMatchContext exactMatchContext;
 
-    public CommandLineStartupRunner(FileScanService fileScanService,
-                                    ExactMatchContext exactMatchContext
+    public CommandLineApplicationRunner(FileScanService fileScanService,
+                                        ExactMatchContext exactMatchContext
     ) {
         this.fileScanService = fileScanService;
         this.exactMatchContext = exactMatchContext;
