@@ -1,10 +1,10 @@
 package com.airgap.airgapagent.algo;
 
-import com.airgap.airgapagent.service.ExactMatchBuilderService;
+import com.airgap.airgapagent.service.CorpusBuilderService;
+import com.airgap.airgapagent.utils.ConstantsTest;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.StringReader;
 import java.util.ArrayList;
@@ -20,8 +20,8 @@ class AhoCorasickMatcherTest {
 
     @Test
     void match() throws IOException {
-        ExactMatchBuilderService service = new ExactMatchBuilderService();
-        Set<String> set = service.buildSet(new File("src/test/resources/sample/bigsample.csv"));
+        CorpusBuilderService service = new CorpusBuilderService();
+        Set<String> set = service.buildSet(ConstantsTest.CORPUS_SAMPLE);
         AhoCorasickMatcher matcher = new AhoCorasickMatcher();
         String s = "603046751.7603046751.7,523650288.4";
         List<MatchingResult> found = new ArrayList<>();

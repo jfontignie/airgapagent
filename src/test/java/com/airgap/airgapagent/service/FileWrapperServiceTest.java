@@ -1,5 +1,6 @@
 package com.airgap.airgapagent.service;
 
+import com.airgap.airgapagent.utils.ConstantsTest;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -19,7 +20,7 @@ class FileWrapperServiceTest {
     void isRegularFile() {
         Assertions.assertTrue(fileWrapperService.isRegularFile(Path.of("src/test/resources/sample/sample.docx")));
 
-        Assertions.assertFalse(fileWrapperService.isRegularFile(Path.of("src/test/resources/sample")));
+        Assertions.assertFalse(fileWrapperService.isRegularFile(Path.of(ConstantsTest.SAMPLE_FOLDER_STRING)));
     }
 
     @Test

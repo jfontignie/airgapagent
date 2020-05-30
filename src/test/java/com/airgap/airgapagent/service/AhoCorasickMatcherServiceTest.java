@@ -2,6 +2,7 @@ package com.airgap.airgapagent.service;
 
 import com.airgap.airgapagent.algo.Automaton;
 import com.airgap.airgapagent.algo.MatchingResult;
+import com.airgap.airgapagent.utils.ConstantsTest;
 import org.apache.tika.Tika;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Disabled;
@@ -27,8 +28,8 @@ class AhoCorasickMatcherServiceTest {
     @Test
     void listMatches() throws IOException {
 
-        ExactMatchBuilderService exactMatchBuilderService = new ExactMatchBuilderService();
-        Set<String> set = exactMatchBuilderService.buildSet(new File("src/test/resources/sample/bigsample.csv"));
+        CorpusBuilderService corpusBuilderService = new CorpusBuilderService();
+        Set<String> set = corpusBuilderService.buildSet(ConstantsTest.CORPUS_SAMPLE);
         AhoCorasickMatcherService ahoCorasickMatcherService = new AhoCorasickMatcherService();
         Automaton automaton = ahoCorasickMatcherService.buildAutomaton(set, false);
 

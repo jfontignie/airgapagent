@@ -1,23 +1,14 @@
 package com.airgap.airgapagent.soar;
 
-import com.airgap.airgapagent.algo.Automaton;
-import com.airgap.airgapagent.service.*;
 import org.apache.tika.Tika;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Disabled;
-import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import reactor.core.scheduler.Schedulers;
 
 import java.io.File;
 import java.io.IOException;
 import java.io.Reader;
-import java.time.Duration;
 import java.util.Optional;
 import java.util.Scanner;
-import java.util.concurrent.atomic.AtomicInteger;
-import java.util.concurrent.atomic.AtomicLong;
 import java.util.regex.Pattern;
 
 /**
@@ -32,57 +23,7 @@ class SoarSample {
 //    AtomicInteger counter = new AtomicInteger();
 //    AtomicLong last = new AtomicLong(System.currentTimeMillis());
 
-    @Disabled("Verify performance")
-    @Test
-    void testCrawl() throws IOException {
-        FileWalkerService service = new FileWalkerService();
-        FileWalkerContext context = FileWalkerContext.of("c:/projects");
-        AtomicInteger counter = new AtomicInteger();
-        AtomicInteger current = new AtomicInteger();
-        AtomicLong sizeProcessed = new AtomicLong();
 
-        AhoCorasickMatcherService ahoCorasickMatcherService = new AhoCorasickMatcherService();
-        ExactMatchBuilderService exactMatchBuilderService = new ExactMatchBuilderService();
-        Automaton automaton = ahoCorasickMatcherService.buildAutomaton(
-                exactMatchBuilderService.buildSet(new File("src/test/resources/sample/bigsample.csv")), false);
-
-        ContentReaderService contentReaderService = new ContentReaderService();
-
-        IntervalRunner runner = IntervalRunner.of(Duration.ofSeconds(10), true);
-
-        service.listFiles(context)
-                .doOnEach(f -> {
-                    File file = f.get();
-                    if (file != null) {
-                        sizeProcessed.addAndGet(file.length());
-                    }
-                    current.incrementAndGet();
-                    runner.trigger(() -> log.info("Running {} / {} ({} %) - Processed: {} M",
-                            current,
-                            context.getVisited(),
-                            current.get() * 100 / context.getVisited(),
-                            sizeProcessed.get() / 1024));
-                })
-                .parallel()
-                .runOn(Schedulers.parallel())
-                .filter(file -> contentReaderService.getContent(file).map(r -> {
-                    AtomicInteger countFound = new AtomicInteger();
-                    try {
-                        ahoCorasickMatcherService.listMatches(r, automaton)
-                                .subscribe(matchingResult -> countFound.incrementAndGet())
-                                .dispose();
-                    } catch (Exception e) {
-                        return countFound.get() > 0;
-                    }
-                    return countFound.get() > 0;
-                }).orElse(false))
-                .doOnNext(f -> {
-                    log.info("Found {} - {}, ", counter.get(), f);
-                    counter.incrementAndGet();
-                }).sequential().blockLast();
-
-        Assertions.assertTrue(true);
-    }
 
 //    @Disabled
 //    @Test

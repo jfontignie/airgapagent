@@ -1,4 +1,4 @@
-package com.airgap.airgapagent.service;
+package com.airgap.airgapagent.utils;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;

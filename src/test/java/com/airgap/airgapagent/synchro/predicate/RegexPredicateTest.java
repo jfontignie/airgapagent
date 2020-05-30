@@ -1,6 +1,7 @@
 package com.airgap.airgapagent.synchro.predicate;
 
 import com.airgap.airgapagent.synchro.utils.PathInfo;
+import com.airgap.airgapagent.utils.ConstantsTest;
 import org.junit.jupiter.api.*;
 
 import java.io.IOException;
@@ -48,7 +49,7 @@ class RegexPredicateTest {
 
     @Test
     void testFolder() throws IOException {
-        Assertions.assertTrue(regexPredicate.call(PathInfo.of("src/test/resources/sample")));
+        Assertions.assertTrue(regexPredicate.call(PathInfo.of(ConstantsTest.SAMPLE_FOLDER_STRING)));
     }
 
     @Test

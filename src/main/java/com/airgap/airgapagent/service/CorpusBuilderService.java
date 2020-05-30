@@ -19,9 +19,9 @@ import java.util.TreeSet;
  * Created by Jacques Fontignie on 5/29/2020.
  */
 @Service
-public class ExactMatchBuilderService {
+public class CorpusBuilderService {
 
-    private static final Logger log = LoggerFactory.getLogger(ExactMatchBuilderService.class);
+    private static final Logger log = LoggerFactory.getLogger(CorpusBuilderService.class);
 
     public Set<String> buildSet(File file) throws IOException {
         return build(file, new HashSet<>());
@@ -34,7 +34,7 @@ public class ExactMatchBuilderService {
 
 
     private Set<String> build(File file, Set<String> set) throws IOException {
-        log.info("Reading list of exact matches in{}", file);
+        log.info("Reading list of exact matches in {}", file);
         CsvMapper mapper = new CsvMapper();
         mapper.enable(CsvParser.Feature.WRAP_AS_ARRAY);
         CsvSchema bootstrapSchema = CsvSchema.emptySchema().withSkipFirstDataRow(true);
@@ -43,7 +43,7 @@ public class ExactMatchBuilderService {
         while (iterator.hasNext()) {
             set.add(iterator.next()[0]);
         }
-        log.info("Found {} in file", set.size());
+        log.info("Found {} corpus in file", set.size());
         return set;
     }
 

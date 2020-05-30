@@ -1,5 +1,7 @@
 package com.airgap.airgapagent.service;
 
+import com.airgap.airgapagent.utils.ConstantsTest;
+import com.airgap.airgapagent.utils.FileWalkerContext;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
@@ -30,7 +32,7 @@ class FileWalkerServiceTest {
     @Test
     void listFiles() {
         FileWalkerService service = new FileWalkerService();
-        FileWalkerContext context = FileWalkerContext.of("src/test/resources/sample");
+        FileWalkerContext context = FileWalkerContext.of(ConstantsTest.SAMPLE_FOLDER);
         AtomicInteger counter = new AtomicInteger();
 
         service.listFiles(context).subscribe(f -> {
@@ -77,9 +79,6 @@ class FileWalkerServiceTest {
                     log.info("End parallel loop {}, ", f);
 
                 }).sequential().blockLast();
-//        disposable.dispose();
-
-//        Assertions.assertTrue(disposable.isDisposed());
         log.info("Count {}", countStop.get());
         Assertions.assertEquals(counter.get(), countStop.get());
 

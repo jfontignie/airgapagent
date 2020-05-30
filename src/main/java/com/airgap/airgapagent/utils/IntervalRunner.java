@@ -1,4 +1,4 @@
-package com.airgap.airgapagent.service;
+package com.airgap.airgapagent.utils;
 
 import java.time.Duration;
 

@@ -1,4 +1,7 @@
-package com.airgap.airgapagent.service;
+package com.airgap.airgapagent.utils;
+
+import com.airgap.airgapagent.service.FileWalkerFilter;
+import com.airgap.airgapagent.service.FileWalkerService;
 
 import java.io.File;
 
@@ -20,7 +23,7 @@ public class FileWalkerContext {
         visited = 0;
     }
 
-    public FileWalkerContext(File file) {
+    private FileWalkerContext(File file) {
         this(file, FileWalkerService.TRUE, FileWalkerService.TRUE);
     }
 
@@ -28,7 +31,7 @@ public class FileWalkerContext {
         return of(new File(s));
     }
 
-    private static FileWalkerContext of(File file) {
+    public static FileWalkerContext of(File file) {
         return new FileWalkerContext(file);
     }
 
