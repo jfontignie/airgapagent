@@ -30,6 +30,7 @@ public class CommandLineApplicationRunner implements ApplicationRunner {
     public void run(ApplicationArguments args) throws Exception {
         log.info("Ready to analyse folder");
         fileScanService.run(exactMatchContext);
-        log.info("Analysis starting");
+        log.info("Analysis finished");
+
     }
 }

@@ -8,7 +8,9 @@ public class AirgapagentApplication {
 
     @SuppressWarnings("java:S4823")
     public static void main(String[] args) {
-        SpringApplication.run(AirgapagentApplication.class, args);
+        System.exit(SpringApplication.exit(
+                SpringApplication.run(AirgapagentApplication.class, args)
+        ));
     }
 
 
