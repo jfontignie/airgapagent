@@ -35,7 +35,7 @@ class FileScanServiceTest {
 
     @Disabled("Performance test")
     @Test
-    public void testLong() throws IOException {
+    void testLong() throws IOException {
         FileScanService fileScanService = new FileScanService(
                 new FileWalkerService(), new AhoCorasickMatcherService(),
                 new CorpusBuilderService(),

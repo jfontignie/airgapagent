@@ -17,7 +17,7 @@ import java.time.Duration;
 class PersistentFileWalkerTest {
 
     @Test
-    public void walk() throws IOException {
+    void walk() throws IOException {
         File stateLocation = new File("target/PersistentFileWalkerTest.dat");
 
         Files.deleteIfExists(stateLocation.toPath());

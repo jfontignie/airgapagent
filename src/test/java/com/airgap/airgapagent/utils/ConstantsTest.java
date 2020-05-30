@@ -9,6 +9,7 @@ import java.io.File;
  * com.airgap.airgapagent.service
  * Created by Jacques Fontignie on 5/30/2020.
  */
+@SuppressWarnings("java:S5786")
 public class ConstantsTest {
 
     public static final String SAMPLE_FOLDER_STRING = "src/test/resources/sample";
