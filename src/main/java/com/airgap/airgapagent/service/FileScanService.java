@@ -56,19 +56,19 @@ public class FileScanService {
                 persistentFileWalker.listFiles(context)
                         .parallel()
                         .runOn(Schedulers.parallel())
-                        .map(file -> contentReaderService.getContent(file).map(r -> {
+                        .map(file -> contentReaderService.getContent(file).map(reader -> {
                             AtomicInteger countFound = new AtomicInteger();
-                            ahoCorasickMatcherService.listMatches(r, automaton)
+                            ahoCorasickMatcherService.listMatches(reader, automaton)
                                     .take(exactMatchContext.getMaxHit())
-                                    .doOnError(e -> errorWriter.trigger(file.toString(), e))
-                                    .doOnNext(m -> countFound.incrementAndGet())
+                                    .doOnError(throwable -> errorWriter.trigger(file.toString(), throwable))
+                                    .doOnNext(matchingResult -> countFound.incrementAndGet())
                                     .subscribe();
                             return new ExactMatchingResult(file.toString(), countFound.get());
                         }))
-                        .filter(result -> result.map(r -> r.getOccurrences() >= exactMatchContext.getMinHit()).orElse(false))
-                        .doOnNext(result -> result.ifPresent(r -> {
-                                    log.info("Found {}", r);
-                                    foundWriter.save(r);
+                        .filter(result -> result.map(exactMatchingResult -> exactMatchingResult.getOccurrences() >= exactMatchContext.getMinHit()).orElse(false))
+                        .doOnNext(result -> result.ifPresent(exactMatchingResult -> {
+                                    log.info("Found {}", exactMatchingResult);
+                                    foundWriter.save(exactMatchingResult);
                                 }
                         ))
                         .sequential()
