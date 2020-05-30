@@ -1,6 +1,5 @@
 package com.airgap.airgapagent.domain;
 
-import java.io.File;
 import java.util.StringJoiner;
 
 /**
@@ -8,16 +7,16 @@ import java.util.StringJoiner;
  * Created by Jacques Fontignie on 5/30/2020.
  */
 public class ExactMatchingResult {
-    private final File file;
+    private final String source;
     private final int occurrences;
 
-    public ExactMatchingResult(File file, int occurrences) {
-        this.file = file;
+    public ExactMatchingResult(String source, int occurrences) {
+        this.source = source;
         this.occurrences = occurrences;
     }
 
-    public File getFile() {
-        return file;
+    public String getSource() {
+        return source;
     }
 
     public int getOccurrences() {
@@ -27,7 +26,7 @@ public class ExactMatchingResult {
     @Override
     public String toString() {
         return new StringJoiner(", ")
-                .add("file=" + file)
+                .add("source=" + source)
                 .add("occurrences=" + occurrences)
                 .toString();
     }

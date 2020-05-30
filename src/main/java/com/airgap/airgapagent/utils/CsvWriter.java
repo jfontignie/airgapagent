@@ -39,7 +39,7 @@ public class CsvWriter implements Closeable {
         try {
             writer.write(
                     new StringJoiner(CSV_SEPARATOR, "", "\n")
-                            .add(result.getFile().toString())
+                            .add(result.getSource())
                             .add(String.valueOf(result.getOccurrences())).toString());
             writer.flush();
         } catch (IOException e) {
