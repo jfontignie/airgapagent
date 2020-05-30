@@ -6,7 +6,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
-import org.springframework.batch.core.configuration.annotation.EnableBatchProcessing;
 import org.springframework.batch.core.configuration.annotation.JobBuilderFactory;
 import org.springframework.batch.core.configuration.annotation.StepBuilderFactory;
 import org.springframework.batch.core.launch.support.RunIdIncrementer;
@@ -14,7 +13,6 @@ import org.springframework.batch.item.ItemProcessor;
 import org.springframework.batch.item.ItemReader;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
 
 import java.io.File;
 import java.io.IOException;
@@ -24,9 +22,9 @@ import java.nio.file.Path;
  * com.airgap.airgapagent.batch
  * Created by Jacques Fontignie on 4/27/2020.
  */
-@Configuration
-@EnableBatchProcessing
-public class BatchConfiguration {
+//@Configuration
+//@EnableBatchProcessing
+public class OldBatchConfiguration {
 
     private static final String CONFIG_NAME = "config";
 
@@ -70,10 +68,12 @@ public class BatchConfiguration {
                 .build();
     }
 
+
     @Bean
     public Job job(
             JobBuilderFactory jobBuilderFactory,
             Step step1) {
+
         return jobBuilderFactory.get("importUserJob")
                 .incrementer(new RunIdIncrementer())
                 .flow(step1)

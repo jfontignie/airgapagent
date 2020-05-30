@@ -40,10 +40,19 @@ public class StateStore {
     }
 
     public void save(FileWalkerContext context) {
+        String state = context.getRefefenceFile().toString();
+        save(state);
+    }
+
+    private void save(String state) {
         try {
-            Files.writeString(stateLocation.toPath(), context.getRefefenceFile().toString());
+            Files.writeString(stateLocation.toPath(), state);
         } catch (IOException e) {
             log.error("Impossible to save state", e);
         }
+    }
+
+    public void clear() {
+        save("");
     }
 }

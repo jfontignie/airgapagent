@@ -25,22 +25,22 @@ public class FileScanService {
 
     private static final Logger log = LoggerFactory.getLogger(FileScanService.class);
 
-    private final AhoCorasickMatcherService ahoCorasickMatcherService;
     private final CorpusBuilderService corpusBuilderService;
     private final ContentReaderService contentReaderService;
     private final FileWalkerService fileWalkerService;
 
     public FileScanService(
-            FileWalkerService fileWalkerService, AhoCorasickMatcherService ahoCorasickMatcherService,
+            FileWalkerService fileWalkerService,
             CorpusBuilderService corpusBuilderService,
             ContentReaderService contentReaderService) {
-        this.ahoCorasickMatcherService = ahoCorasickMatcherService;
         this.corpusBuilderService = corpusBuilderService;
         this.contentReaderService = contentReaderService;
         this.fileWalkerService = fileWalkerService;
     }
 
     public void run(ExactMatchContext exactMatchContext) throws IOException {
+
+        AhoCorasickMatcherService ahoCorasickMatcherService = new AhoCorasickMatcherService();
 
         FileWalkerContext context = FileWalkerContext.of(exactMatchContext.getScanFolder());
 
@@ -71,7 +71,8 @@ public class FileScanService {
                                     errorWriter.write(
                                             new StringJoiner(";", "", "\n")
                                                     .add(file.toString())
-                                                    .add(e.getMessage()).toString());
+                                                    .add(e.toString())
+                                                    .toString());
                                     errorWriter.flush();
                                 } catch (IOException ioException) {
                                     log.error("Error wile saving data");

@@ -47,6 +47,7 @@ public class PersistentFileWalker {
                                 counterProcessed.get() * 100 / fileWalkerContext.getVisited());
                         stateStore.save(fileWalkerContext);
                     });
-                });
+                })
+                .doOnComplete(stateStore::clear);
     }
 }
