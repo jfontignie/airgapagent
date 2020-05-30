@@ -35,6 +35,7 @@ class ExactMatchBuilderServiceTest {
         ExactMatchBuilderService service = new ExactMatchBuilderService();
         Set<String> found = service.buildTreeSet(new File("src/test/resources/sample/bigsample.csv"));
         Assertions.assertNotNull(found);
+        Assertions.assertEquals(65444, found.size());
 
     }
 

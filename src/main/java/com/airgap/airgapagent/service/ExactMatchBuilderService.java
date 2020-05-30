@@ -4,6 +4,8 @@ import com.fasterxml.jackson.databind.MappingIterator;
 import com.fasterxml.jackson.dataformat.csv.CsvMapper;
 import com.fasterxml.jackson.dataformat.csv.CsvParser;
 import com.fasterxml.jackson.dataformat.csv.CsvSchema;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
@@ -19,6 +21,8 @@ import java.util.TreeSet;
 @Service
 public class ExactMatchBuilderService {
 
+    private static final Logger log = LoggerFactory.getLogger(ExactMatchBuilderService.class);
+
     public Set<String> buildSet(File file) throws IOException {
         return build(file, new HashSet<>());
     }
@@ -30,6 +34,7 @@ public class ExactMatchBuilderService {
 
 
     private Set<String> build(File file, Set<String> set) throws IOException {
+        log.info("Reading list of exact matches in{}", file);
         CsvMapper mapper = new CsvMapper();
         mapper.enable(CsvParser.Feature.WRAP_AS_ARRAY);
         CsvSchema bootstrapSchema = CsvSchema.emptySchema().withSkipFirstDataRow(true);
@@ -38,6 +43,7 @@ public class ExactMatchBuilderService {
         while (iterator.hasNext()) {
             set.add(iterator.next()[0]);
         }
+        log.info("Found {} in file", set.size());
         return set;
     }
 

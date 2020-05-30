@@ -76,10 +76,10 @@ class SoarSample {
                     }
                     return countFound.get() > 0;
                 }).orElse(false))
-                .subscribe(f -> {
+                .doOnNext(f -> {
                     log.info("Found {} - {}, ", counter.get(), f);
                     counter.incrementAndGet();
-                }).dispose();
+                }).sequential().blockLast();
 
         Assertions.assertTrue(true);
     }

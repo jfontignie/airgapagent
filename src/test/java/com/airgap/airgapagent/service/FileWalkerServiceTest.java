@@ -4,7 +4,6 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import reactor.core.Disposable;
 import reactor.core.scheduler.Schedulers;
 
 import java.nio.file.Path;
@@ -64,17 +63,25 @@ class FileWalkerServiceTest {
         context.reset();
 
         countStop.set(0);
-        Disposable disposable = service.listFiles(context)
+        service.listFiles(context)
                 .parallel()
                 .runOn(Schedulers.parallel())
-                .subscribe(f -> {
-                    log.info("parallel loop {}, ", f);
+                .doOnNext(f -> {
+                    log.info("Start parallel loop {}, ", f);
+                    long start = System.currentTimeMillis();
+                    //noinspection StatementWithEmptyBody
+                    while (System.currentTimeMillis() - start < 1000) {
+                        //Do nothing
+                    }
                     countStop.incrementAndGet();
-                });
-        disposable.dispose();
+                    log.info("End parallel loop {}, ", f);
 
-        Assertions.assertTrue(disposable.isDisposed());
-//        Assertions.assertEquals(counter.get(), countStop.get());
+                }).sequential().blockLast();
+//        disposable.dispose();
+
+//        Assertions.assertTrue(disposable.isDisposed());
+        log.info("Count {}", countStop.get());
+        Assertions.assertEquals(counter.get(), countStop.get());
 
     }
 
