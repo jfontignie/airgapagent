@@ -18,16 +18,18 @@ class StateStoreTest {
     void save() throws IOException {
         File stateLocation = new File("target/StateStoreTest.dat");
         Files.deleteIfExists(stateLocation.toPath());
-        StateStore store = new StateStore(stateLocation);
-        FileWalkerContext context = FileWalkerContext.of(ConstantsTest.SAMPLE_FOLDER);
+        FileStateConverter converter = FileStateConverter.of();
+        StateStore<File> store = new StateStore<>(stateLocation, converter);
+        WalkerContext<File> context = WalkerContext.of(ConstantsTest.SAMPLE_FOLDER);
+
         store.load(context);
-        Assertions.assertNull(context.getRefefenceFile());
+        Assertions.assertNull(context.getReference());
         File abcd = new File("abcd");
-        context.setLastFileToVisit(abcd);
+        context.setReference(abcd);
         store.save(context);
-        context.setLastFileToVisit(null);
+        context.setReference(null);
         store.load(context);
-        Assertions.assertEquals(abcd, context.getRefefenceFile());
+        Assertions.assertEquals(abcd, context.getReference());
         store.save(context);
         Files.deleteIfExists(stateLocation.toPath());
 

@@ -22,13 +22,15 @@ public class ErrorWriter implements Closeable {
         fileWriter = new FileWriter(file);
     }
 
-    public void trigger(String source, Throwable t) {
+
+    public void trigger(Object source, String message, Throwable t) {
         String expand = ExceptionUtils.expand(t);
-        log.error("Error while reading {} - {}", source, expand);
+        log.error("{} - {} - {}", source, message, expand);
         try {
             fileWriter.write(
                     new StringJoiner(";", "", "\n")
-                            .add(source)
+                            .add((CharSequence) source)
+                            .add(message)
                             .add(expand)
                             .toString());
             fileWriter.flush();
@@ -41,4 +43,5 @@ public class ErrorWriter implements Closeable {
     public void close() throws IOException {
         fileWriter.close();
     }
+
 }

@@ -15,12 +15,19 @@ import java.util.Optional;
 @Service
 public class ContentReaderService {
 
+    private final ErrorService errorService;
+
+    public ContentReaderService(ErrorService errorService) {
+        this.errorService = errorService;
+    }
+
     private final Tika tika = new Tika();
 
     public Optional<Reader> getContent(File file) {
         try {
             return Optional.of(tika.parse(file));
         } catch (IOException e) {
+            errorService.error(file.toString(), "Impossible to parse file", e);
             return Optional.empty();
         }
     }

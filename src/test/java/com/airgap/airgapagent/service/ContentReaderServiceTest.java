@@ -16,7 +16,7 @@ class ContentReaderServiceTest {
 
     @Test
     void testFile() throws IOException {
-        ContentReaderService contentReaderService = new ContentReaderService();
+        ContentReaderService contentReaderService = new ContentReaderService(new DummyErrorService());
         Assertions.assertTrue(contentReaderService.getContent(new File("does not exits")).isEmpty());
 
         Optional<Reader> found = contentReaderService.getContent(new File("src/test/resources/sample/sample.txt"));

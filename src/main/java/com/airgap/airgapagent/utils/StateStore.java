@@ -12,24 +12,29 @@ import java.util.stream.Stream;
  * com.airgap.airgapagent.service
  * Created by Jacques Fontignie on 5/30/2020.
  */
-public class StateStore {
+public class StateStore<T> {
 
     private static final Logger log = LoggerFactory.getLogger(StateStore.class);
 
     private final File stateLocation;
+    private final StateConverter<T> converter;
 
-    public StateStore(File stateLocation) {
+
+    public StateStore(File stateLocation, StateConverter<T> converter) {
         this.stateLocation = stateLocation;
+        this.converter = converter;
     }
 
-    public void load(FileWalkerContext context) {
+    public void load(WalkerContext<T> context) {
         if (stateLocation.exists()) {
             try {
                 try (Stream<String> lines = Files.lines(stateLocation.toPath())) {
-                    lines.findFirst()
+                    lines
+                            .filter(line -> !line.isBlank())
+                            .findFirst()
                             .ifPresent(line -> {
                                 log.info("Last state detected: {}", line);
-                                context.setLastFileToVisit(new File(line));
+                                context.setReference(converter.load(line));
                             });
                 }
             } catch (IOException e) {
@@ -39,8 +44,8 @@ public class StateStore {
         }
     }
 
-    public void save(FileWalkerContext context) {
-        String state = context.getRefefenceFile().toString();
+    public void save(WalkerContext<T> context) {
+        String state = converter.persist(context.getReference());
         save(state);
     }
 
@@ -55,4 +60,5 @@ public class StateStore {
     public void clear() {
         save("");
     }
+
 }

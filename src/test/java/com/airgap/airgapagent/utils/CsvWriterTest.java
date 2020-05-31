@@ -20,7 +20,8 @@ class CsvWriterTest {
         File file = new File("target/CsvWriterTest.csv");
         Files.deleteIfExists(file.toPath());
         CsvWriter writer = CsvWriter.of(file);
-        writer.save(new ExactMatchingResult(new File("teaf").toString(), 5));
+        ExactMatchingResult<Object> exactMatchingResult = new ExactMatchingResult<>(new File("teaf").toString(), 5);
+        writer.save(exactMatchingResult, ObjectStateConverter.of());
         Assertions.assertTrue(file.exists());
         writer.close();
         Assertions.assertTrue(file.exists());

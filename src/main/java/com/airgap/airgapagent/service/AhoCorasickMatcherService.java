@@ -10,6 +10,8 @@ import reactor.core.publisher.Flux;
 
 import java.io.IOException;
 import java.io.Reader;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -25,6 +27,12 @@ public class AhoCorasickMatcherService {
 
     public Automaton buildAutomaton(Set<String> patterns, boolean caseSensitive) {
         return new Automaton(caseSensitive, patterns);
+    }
+
+    public List<MatchingResult> find(Reader reader, Automaton automaton) throws IOException {
+        List<MatchingResult> matchingResults = new ArrayList<>();
+        matcher.match(reader, matchingResults::add, automaton);
+        return matchingResults;
     }
 
     public Flux<MatchingResult> listMatches(Reader reader, Automaton automaton) {

@@ -2,6 +2,7 @@ package com.airgap.airgapagent;
 
 import com.airgap.airgapagent.domain.ExactMatchContext;
 import com.airgap.airgapagent.service.FileScanService;
+import com.airgap.airgapagent.service.FileService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.ApplicationArguments;
@@ -18,10 +19,14 @@ public class CommandLineApplicationRunner implements ApplicationRunner {
             LoggerFactory.getLogger(CommandLineApplicationRunner.class);
     private final FileScanService fileScanService;
     private final ExactMatchContext exactMatchContext;
+    private final FileService fileService;
 
-    public CommandLineApplicationRunner(FileScanService fileScanService,
-                                        ExactMatchContext exactMatchContext
+    public CommandLineApplicationRunner(
+            FileService fileService,
+            FileScanService fileScanService,
+            ExactMatchContext exactMatchContext
     ) {
+        this.fileService = fileService;
         this.fileScanService = fileScanService;
         this.exactMatchContext = exactMatchContext;
     }
@@ -29,7 +34,7 @@ public class CommandLineApplicationRunner implements ApplicationRunner {
     @Override
     public void run(ApplicationArguments args) throws Exception {
         log.info("Ready to analyse folder");
-        fileScanService.run(exactMatchContext);
+        fileScanService.run(exactMatchContext, fileService);
         log.info("Analysis finished");
 
     }

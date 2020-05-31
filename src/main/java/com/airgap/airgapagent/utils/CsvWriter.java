@@ -35,11 +35,11 @@ public class CsvWriter implements Closeable {
         return new CsvWriter(file);
     }
 
-    public void save(ExactMatchingResult result) {
+    public <T> void save(ExactMatchingResult<T> result, StateConverter<T> converter) {
         try {
             writer.write(
                     new StringJoiner(CSV_SEPARATOR, "", "\n")
-                            .add(result.getSource())
+                            .add(converter.persist(result.getSource()))
                             .add(String.valueOf(result.getOccurrences())).toString());
             writer.flush();
         } catch (IOException e) {

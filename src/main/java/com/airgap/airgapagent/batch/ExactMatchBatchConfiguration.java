@@ -21,7 +21,7 @@ public class ExactMatchBatchConfiguration {
     private static final String MATCH_CORPUS_FILE = "match.file.corpus";
     private static final String MATCH_FOUND_FILE = "match.file.found";
     private static final String MATCH_STATE_FILE = "match.file.state";
-    private static final String MATCH_ERROR_FILE = "match.file.error";
+    public static final String MATCH_ERROR_FILE = "match.file.error";
     private static final String MATCH_EXACT_MIN_HIT = "match.minHit";
     private static final String MATCH_EXACT_MAX_HIT = "match.maxHit";
     private static final String MATCH_SAVE_INTERVAL = "match.saveInterval";

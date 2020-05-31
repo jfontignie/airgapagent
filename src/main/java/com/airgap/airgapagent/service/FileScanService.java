@@ -3,17 +3,15 @@ package com.airgap.airgapagent.service;
 import com.airgap.airgapagent.algo.Automaton;
 import com.airgap.airgapagent.domain.ExactMatchContext;
 import com.airgap.airgapagent.domain.ExactMatchingResult;
-import com.airgap.airgapagent.utils.CsvWriter;
-import com.airgap.airgapagent.utils.ErrorWriter;
-import com.airgap.airgapagent.utils.FileWalkerContext;
-import com.airgap.airgapagent.utils.PersistentFileWalker;
+import com.airgap.airgapagent.utils.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
+import reactor.core.publisher.Flux;
 import reactor.core.scheduler.Schedulers;
 
+import java.io.File;
 import java.io.IOException;
-import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * com.airgap.airgapagent.service
@@ -25,56 +23,100 @@ public class FileScanService {
     private static final Logger log = LoggerFactory.getLogger(FileScanService.class);
 
     private final CorpusBuilderService corpusBuilderService;
-    private final ContentReaderService contentReaderService;
-    private final FileWalkerService fileWalkerService;
+    private final VisitorService visitorService;
+    private final ErrorService errorService;
 
     public FileScanService(
-            FileWalkerService fileWalkerService,
+            VisitorService visitorService,
             CorpusBuilderService corpusBuilderService,
-            ContentReaderService contentReaderService) {
+            ErrorService errorService) {
         this.corpusBuilderService = corpusBuilderService;
-        this.contentReaderService = contentReaderService;
-        this.fileWalkerService = fileWalkerService;
+        this.visitorService = visitorService;
+        this.errorService = errorService;
     }
 
-    public void run(ExactMatchContext exactMatchContext) throws IOException {
-
-        AhoCorasickMatcherService ahoCorasickMatcherService = new AhoCorasickMatcherService();
-
-        FileWalkerContext context = FileWalkerContext.of(exactMatchContext.getScanFolder());
+    public <T extends Comparable<T>> void run(ExactMatchContext exactMatchContext,
+                                              CrawlService<T> crawlService,
+                                              StateConverter<T> stateConverter,
+                                              WalkerContext<T> context,
+                                              AhoCorasickMatcherService ahoCorasickMatcherService) throws IOException {
 
         try (CsvWriter foundWriter = new CsvWriter(exactMatchContext.getFoundFile())) {
-            try (ErrorWriter errorWriter = new ErrorWriter(exactMatchContext.getErrorFile())) {
-
+            try (PersistentStateVisitor<T> persistentStateVisitor = new PersistentStateVisitor<>(
+                    exactMatchContext.getStateFile(),
+                    exactMatchContext.getSaveInterval(),
+                    context,
+                    stateConverter
+            )) {
                 Automaton automaton = ahoCorasickMatcherService.buildAutomaton(
                         corpusBuilderService.buildSet(exactMatchContext.getExactMatchFile()), false);
 
-                PersistentFileWalker persistentFileWalker = new PersistentFileWalker(fileWalkerService,
-                        exactMatchContext.getStateFile(),
-                        exactMatchContext.getSaveInterval());
 
-                persistentFileWalker.listFiles(context)
+                persistentStateVisitor.init();
+
+
+                visitorService.list(crawlService, context)
+                        //Persist the state
+                        .doOnNext(file -> persistentStateVisitor.persist())
+
+                        //Run on parallel
                         .parallel()
                         .runOn(Schedulers.parallel())
-                        .map(file -> contentReaderService.getContent(file).map(reader -> {
-                            AtomicInteger countFound = new AtomicInteger();
-                            ahoCorasickMatcherService.listMatches(reader, automaton)
-                                    .take(exactMatchContext.getMaxHit())
-                                    .doOnError(throwable -> errorWriter.trigger(file.toString(), throwable))
-                                    .doOnNext(matchingResult -> countFound.incrementAndGet())
-                                    .subscribe();
-                            return new ExactMatchingResult(file.toString(), countFound.get());
-                        }))
-                        .filter(result -> result.map(exactMatchingResult -> exactMatchingResult.getOccurrences() >= exactMatchContext.getMinHit()).orElse(false))
-                        .doOnNext(result -> result.ifPresent(exactMatchingResult -> {
+
+                        //Init the reader and forget if empty
+                        .flatMap(file -> crawlService.getContentReader(file)
+                                .map(reader -> Flux.just(new DataReader<>(file, reader)))
+                                .orElse(Flux.empty()))
+
+                        //Parse the data to find keywords
+
+                        .flatMap(dataReader ->
+                                ahoCorasickMatcherService.listMatches(dataReader.getReader(), automaton)
+                                        .doOnError(throwable -> errorService.error(dataReader.getSource(),
+                                                "Impossible to parse file",
+                                                throwable))
+                                        .take(exactMatchContext.getMaxHit())
+                                        .count()
+                                        .onErrorReturn(0L)
+                                        .map(count -> new ExactMatchingResult<>(dataReader.getSource(), Math.toIntExact(count)))
+                                        .flux())
+
+                        //Filter for the one with enough occurences found
+                        .filter(result -> result.getOccurrences() >= exactMatchContext.getMinHit())
+
+                        //Display the result
+                        .doOnNext(exactMatchingResult -> {
                                     log.info("Found {}", exactMatchingResult);
-                                    foundWriter.save(exactMatchingResult);
+                                    foundWriter.save(exactMatchingResult, stateConverter);
                                 }
-                        ))
+                        )
+
+                        //Go back on sequential mode
                         .sequential()
+
+                        //Wait the last one has been handler
                         .blockLast();
+
             }
         }
+
     }
 
+    public void run(ExactMatchContext exactMatchContext, FileService crawlService) throws IOException {
+
+
+        AhoCorasickMatcherService ahoCorasickMatcherService = new AhoCorasickMatcherService();
+
+        WalkerContext<File> context = WalkerContext.of(exactMatchContext.getScanFolder());
+
+        StateConverter<File> stateConverter = FileStateConverter.of();
+
+        run(
+                exactMatchContext,
+                crawlService,
+                stateConverter,
+                context,
+                ahoCorasickMatcherService
+        );
+    }
 }
