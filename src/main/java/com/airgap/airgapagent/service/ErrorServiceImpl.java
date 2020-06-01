@@ -24,7 +24,8 @@ public class ErrorServiceImpl implements ErrorService {
     private ErrorWriter errorWriter;
 
     public ErrorServiceImpl(Environment environment) {
-        errorFile = new File(environment.getRequiredProperty(ExactMatchBatchConfiguration.MATCH_ERROR_FILE));
+        String requiredProperty = environment.getRequiredProperty(ExactMatchBatchConfiguration.MATCH_ERROR_FILE);
+        errorFile = new File(requiredProperty);
     }
 
     @Override
@@ -35,6 +36,7 @@ public class ErrorServiceImpl implements ErrorService {
 
     @PostConstruct
     public void setUp() throws IOException {
+        log.info("Error file will be in {}", errorFile);
         errorWriter = new ErrorWriter(errorFile);
     }
 

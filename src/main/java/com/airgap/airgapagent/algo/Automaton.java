@@ -1,5 +1,8 @@
 package com.airgap.airgapagent.algo;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -8,6 +11,9 @@ import java.util.stream.Collectors;
  * Created by Jacques Fontignie on 5/29/2020.
  */
 public class Automaton {
+
+    private static final Logger log = LoggerFactory.getLogger(Automaton.class);
+
     private final char[][] originalPatterns;
     private final Map<TrieNode, TrieNode> fail = new HashMap<>();
     private final Map<TrieNode, int[]> patterns = new HashMap<>();
@@ -27,6 +33,7 @@ public class Automaton {
                 .map(String::toCharArray)
                 .collect(Collectors.toList())
                 .toArray(new char[0][0]);
+        log.info("Automaton built with corpus size : {}", originalPatterns.length);
         this.caseSensitive = caseSensitive;
         constructTrie(originalPatterns);
         computeFailureFunction();

@@ -13,6 +13,7 @@ public class ExceptionUtils {
     }
 
     public static String expand(Throwable throwable) {
+        if (throwable == null) return "<noexception>";
         StringJoiner joiner = new StringJoiner("->");
         do {
             joiner.add(throwable.toString());

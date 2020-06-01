@@ -12,7 +12,6 @@ public class ExactMatchContext {
     private final File exactMatchFile;
     private final File foundFile;
     private final File stateFile;
-    private final File errorFile;
 
     private final int minHit;
     private final int maxHit;
@@ -24,7 +23,6 @@ public class ExactMatchContext {
                              File exactMatchFile,
                              File foundFile,
                              File stateFile,
-                             File errorFile,
                              int minHit,
                              int maxHit,
                              Duration saveInterval) {
@@ -32,7 +30,6 @@ public class ExactMatchContext {
         this.exactMatchFile = exactMatchFile;
         this.foundFile = foundFile;
         this.stateFile = stateFile;
-        this.errorFile = errorFile;
         this.minHit = minHit;
         this.maxHit = maxHit;
         this.saveInterval = saveInterval;
@@ -66,7 +63,4 @@ public class ExactMatchContext {
         return saveInterval;
     }
 
-    public File getErrorFile() {
-        return errorFile;
-    }
 }

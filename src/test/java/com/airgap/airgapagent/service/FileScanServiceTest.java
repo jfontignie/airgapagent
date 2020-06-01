@@ -1,5 +1,6 @@
 package com.airgap.airgapagent.service;
 
+import com.airgap.airgapagent.batch.ExactMatchBatchConfiguration;
 import com.airgap.airgapagent.domain.ExactMatchContext;
 import com.airgap.airgapagent.domain.ExactMatchContextBuilder;
 import com.airgap.airgapagent.utils.ConstantsTest;
@@ -7,6 +8,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
+import org.springframework.mock.env.MockEnvironment;
 
 import java.io.File;
 import java.io.IOException;
@@ -22,8 +24,12 @@ class FileScanServiceTest {
     private FileService fileService;
 
     @BeforeEach
-    public void setUp() {
-        DummyErrorService errorService = new DummyErrorService();
+    public void setUp() throws IOException {
+        MockEnvironment environment = new MockEnvironment().withProperty(ExactMatchBatchConfiguration.MATCH_ERROR_FILE, "target/error.dat");
+
+        ErrorServiceImpl errorService = new ErrorServiceImpl(environment);
+        errorService.setUp();
+
         fileScanService = new FileScanService(
                 new VisitorService(),
                 new CorpusBuilderService(),
@@ -39,7 +45,6 @@ class FileScanServiceTest {
                 .setExactMatchFile(new File(ConstantsTest.CORPUS_SAMPLE_STRING))
                 .setFoundFile(new File("target/run_found.csv"))
                 .setStateFile(new File("target/run_sate.dat"))
-                .setErrorFile(new File("target/run_error.csv"))
                 .setMinHit(50)
                 .setMaxHit(100)
                 .setSaveInterval(Duration.ofSeconds(5))
@@ -56,7 +61,6 @@ class FileScanServiceTest {
                 .setExactMatchFile(new File(ConstantsTest.CORPUS_SAMPLE_STRING))
                 .setFoundFile(new File("target/testLong_found.csv"))
                 .setStateFile(new File("target/testLong_state.dat"))
-                .setErrorFile(new File("target/testLong_error.csv"))
                 .setMinHit(50)
                 .setMaxHit(100)
                 .setSaveInterval(Duration.ofSeconds(1))

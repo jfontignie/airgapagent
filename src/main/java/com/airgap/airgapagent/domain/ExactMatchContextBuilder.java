@@ -9,7 +9,6 @@ public class ExactMatchContextBuilder {
     private File exactMatchFile;
     private File foundFile;
     private File stateFile;
-    private File errorFile;
     private Integer minHit;
     private Integer maxHit;
     private Duration saveInterval;
@@ -34,11 +33,6 @@ public class ExactMatchContextBuilder {
         return this;
     }
 
-    public ExactMatchContextBuilder setErrorFile(File errorFile) {
-        this.errorFile = errorFile;
-        return this;
-    }
-
     public ExactMatchContextBuilder setMinHit(int minHit) {
         this.minHit = minHit;
         return this;
@@ -59,10 +53,9 @@ public class ExactMatchContextBuilder {
         Objects.requireNonNull(exactMatchFile);
         Objects.requireNonNull(foundFile);
         Objects.requireNonNull(stateFile);
-        Objects.requireNonNull(errorFile);
         Objects.requireNonNull(minHit);
         Objects.requireNonNull(maxHit);
         Objects.requireNonNull(saveInterval);
-        return new ExactMatchContext(scanFolder, exactMatchFile, foundFile, stateFile, errorFile, minHit, maxHit, saveInterval);
+        return new ExactMatchContext(scanFolder, exactMatchFile, foundFile, stateFile, minHit, maxHit, saveInterval);
     }
 }

@@ -7,6 +7,7 @@ import java.io.Closeable;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.Objects;
 import java.util.StringJoiner;
 
 /**
@@ -27,12 +28,13 @@ public class ErrorWriter implements Closeable {
         String expand = ExceptionUtils.expand(t);
         log.error("{} - {} - {}", source, message, expand);
         try {
+            String str = new StringJoiner(";", "", "\n")
+                    .add(Objects.requireNonNullElse(source, "").toString())
+                    .add(message)
+                    .add(expand)
+                    .toString();
             fileWriter.write(
-                    new StringJoiner(";", "", "\n")
-                            .add((CharSequence) source)
-                            .add(message)
-                            .add(expand)
-                            .toString());
+                    str);
             fileWriter.flush();
         } catch (IOException ioException) {
             log.error("Error wile saving data");

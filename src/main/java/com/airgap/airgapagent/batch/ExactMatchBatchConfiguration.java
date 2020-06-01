@@ -34,7 +34,6 @@ public class ExactMatchBatchConfiguration {
                 .setExactMatchFile(new File(environment.getRequiredProperty(MATCH_CORPUS_FILE)))
                 .setFoundFile(new File(environment.getRequiredProperty(MATCH_FOUND_FILE)))
                 .setStateFile(new File(environment.getRequiredProperty(MATCH_STATE_FILE)))
-                .setErrorFile(new File(environment.getRequiredProperty(MATCH_ERROR_FILE)))
                 .setMinHit(environment.getRequiredProperty(MATCH_EXACT_MIN_HIT, Integer.class))
                 .setMaxHit(environment.getRequiredProperty(MATCH_EXACT_MAX_HIT, Integer.class))
                 .setSaveInterval(Duration.ofSeconds(environment.getRequiredProperty(MATCH_SAVE_INTERVAL, Integer.class)))
