@@ -13,6 +13,7 @@ import reactor.core.scheduler.Schedulers;
 
 import java.io.IOException;
 import java.time.Duration;
+import java.util.Objects;
 import java.util.Set;
 
 /**
@@ -41,12 +42,17 @@ public class ExactMatchService {
     }
 
     @SuppressWarnings("java:S2095")
-    public <T extends Comparable<T>> Flux<ExactMatchingResult<T>> performScan(ExactMatchContext<T> exactMatchContext,
-                                                                              CrawlService<T> crawlService,
-                                                                              StateConverter<T> stateConverter,
-                                                                              WalkerContext<T> context,
-                                                                              Automaton automaton) {
+    public <T extends Comparable<T>> Flux<ExactMatchingResult<T>> buildScan(ExactMatchContext<T> exactMatchContext,
+                                                                            CrawlService<T> crawlService,
+                                                                            StateConverter<T> stateConverter) throws IOException {
 
+
+        //noinspection BlockingMethodInNonBlockingContext
+        Automaton automaton = ahoCorasickMatcherService.buildAutomaton(
+                corpusBuilderService.buildSet(exactMatchContext.getExactMatchFile()), Set.of(AutomatonOption.CASE_INSENSITIVE));
+
+
+        WalkerContext<T> context = WalkerContext.of(exactMatchContext.getRoot());
         PersistentStateVisitor<T> persistentStateVisitor = new PersistentStateVisitor<>(
                 exactMatchContext.getStateFile(),
                 exactMatchContext.getSaveInterval(),
@@ -88,22 +94,17 @@ public class ExactMatchService {
     }
 
 
-    public <T extends Comparable<T>> void scan(ExactMatchContext<T> exactMatchContext,
+    public <T extends Comparable<T>> long scan(ExactMatchContext<T> exactMatchContext,
                                                CrawlService<T> crawlService,
                                                StateConverter<T> stateConverter) throws IOException {
-
-        Automaton automaton = ahoCorasickMatcherService.buildAutomaton(
-                corpusBuilderService.buildSet(exactMatchContext.getExactMatchFile()), Set.of(AutomatonOption.CASE_INSENSITIVE));
 
         try (CsvWriter foundWriter = new CsvWriter(exactMatchContext.getFoundFile())) {
 
             IntervalRunner runner = IntervalRunner.of(Duration.ofSeconds(5), true);
 
-            Long count = performScan(exactMatchContext,
+            Long count = buildScan(exactMatchContext,
                     crawlService,
-                    stateConverter,
-                    WalkerContext.of(exactMatchContext.getRoot()),
-                    automaton)
+                    stateConverter)
                     //Display the result
                     .doOnNext(exactMatchingResult -> foundWriter.save(exactMatchingResult, stateConverter))
                     .doOnNext(tExactMatchingResult -> runner.trigger(integer -> log.info("Elements found so far: {}", integer)))
@@ -112,6 +113,7 @@ public class ExactMatchService {
                     .block();
 
             log.info("Operation finished. Files found: {}", count);
+            return Objects.requireNonNullElse(count, 0L);
         }
     }
 

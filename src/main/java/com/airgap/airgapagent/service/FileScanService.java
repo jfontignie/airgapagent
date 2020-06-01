@@ -6,9 +6,11 @@ import com.airgap.airgapagent.utils.StateConverter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
+import reactor.core.publisher.Flux;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Objects;
 
 /**
  * com.airgap.airgapagent.service
@@ -23,23 +25,56 @@ public class FileScanService {
 
     private final ExactMatchService exactMatchService;
 
+    private final ErrorService errorService;
+
     public FileScanService(
-            ExactMatchService exactMatchService) {
+            ExactMatchService exactMatchService,
+            ErrorService errorService) {
         this.exactMatchService = exactMatchService;
+        this.errorService = errorService;
     }
 
-    public void scanFolder(ExactMatchContext<File> exactMatchContext, FileCrawlService crawlService) throws IOException {
+    public long copyFolder(ExactMatchContext<File> exactMatchContext, FileCrawlService crawlService, File destination) throws IOException {
+        File scanFolder = exactMatchContext.getRoot();
+        if (!scanFolder.exists()) {
+            throw new IllegalStateException("Folder " + scanFolder + " does not exist");
+        }
+        Long count = exactMatchService.buildScan(
+                exactMatchContext,
+                crawlService,
+                STATE_CONVERTER)
+                .flatMap(exactMatchingResult -> {
+                    try {
+                        //noinspection BlockingMethodInNonBlockingContext
+                        crawlService.copy(exactMatchContext.getRoot(),
+                                exactMatchingResult.getSource(), destination);
+                        return Flux.just(exactMatchingResult);
+                    } catch (IOException e) {
+                        errorService.error(exactMatchingResult.getSource(), "Impossible to copy file", e);
+                        return Flux.empty();
+                    }
+                }).count()
+                //Wait the last one has been handler
+                .block();
+
+        log.info("Operation finished. Files found: {}", count);
+        return Objects.requireNonNullElse(count, 0L);
+    }
+
+    public long scanFolder(ExactMatchContext<File> exactMatchContext, FileCrawlService crawlService) throws IOException {
         log.info("Staring scan");
         File scanFolder = exactMatchContext.getRoot();
         if (!scanFolder.exists()) {
             throw new IllegalStateException("Folder " + scanFolder + " does not exist");
         }
 
-        exactMatchService.scan(
+        long count = exactMatchService.scan(
                 exactMatchContext,
                 crawlService,
                 STATE_CONVERTER
         );
         log.info("Scan finished");
+        return count;
+
     }
 }

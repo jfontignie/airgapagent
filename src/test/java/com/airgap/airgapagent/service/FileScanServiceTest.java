@@ -4,6 +4,7 @@ import com.airgap.airgapagent.batch.ExactMatchBatchConfiguration;
 import com.airgap.airgapagent.domain.ExactMatchContext;
 import com.airgap.airgapagent.domain.ExactMatchContextBuilder;
 import com.airgap.airgapagent.utils.ConstantsTest;
+import org.apache.commons.io.FileUtils;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
@@ -20,6 +21,8 @@ import java.time.Duration;
  */
 class FileScanServiceTest {
 
+    private static final int EXPECTED = 10;
+    private static final int MIN_HIT = 1;
     private FileScanService fileScanService;
     private FileCrawlService fileCrawlService;
 
@@ -33,7 +36,8 @@ class FileScanServiceTest {
                 new ExactMatchService(
                         new VisitorService(),
                         new CorpusBuilderService(),
-                        errorService)
+                        errorService),
+                errorService
         );
 
         fileCrawlService = new FileCrawlService(new ContentReaderService(errorService));
@@ -46,12 +50,33 @@ class FileScanServiceTest {
                 .setExactMatchFile(new File(ConstantsTest.CORPUS_SAMPLE_STRING))
                 .setFoundFile(new File("target/run_found.csv"))
                 .setStateFile(new File("target/run_sate.dat"))
-                .setMinHit(50)
+                .setMinHit(MIN_HIT)
                 .setMaxHit(100)
                 .setSaveInterval(Duration.ofSeconds(5))
                 .createExactMatchContext();
-        fileScanService.scanFolder(context, fileCrawlService);
+        long count = fileScanService.scanFolder(context, fileCrawlService);
         Assertions.assertTrue(true);
+        Assertions.assertEquals(EXPECTED, count);
+    }
+
+    @Test
+    void copy() throws IOException {
+
+        File destination = new File("target/copyTest");
+        FileUtils.deleteDirectory(destination);
+        ExactMatchContext<File> context = new ExactMatchContextBuilder<File>()
+                .setRoot(ConstantsTest.SAMPLE_FOLDER)
+                .setExactMatchFile(new File(ConstantsTest.CORPUS_SAMPLE_STRING))
+                .setFoundFile(new File("target/run_found.csv"))
+                .setStateFile(new File("target/run_sate.dat"))
+                .setMinHit(MIN_HIT)
+                .setMaxHit(100)
+                .setSaveInterval(Duration.ofSeconds(5))
+                .createExactMatchContext();
+        long count = fileScanService.copyFolder(context, fileCrawlService, destination);
+        Assertions.assertTrue(destination.exists());
+        FileUtils.deleteDirectory(destination);
+        Assertions.assertEquals(EXPECTED, count);
     }
 
     @Disabled("Performance test")

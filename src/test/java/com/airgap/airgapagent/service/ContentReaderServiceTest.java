@@ -1,5 +1,6 @@
 package com.airgap.airgapagent.service;
 
+import com.airgap.airgapagent.utils.ConstantsTest;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -21,6 +22,7 @@ class ContentReaderServiceTest {
 
         Optional<Reader> found = contentReaderService.getContent(new File("src/test/resources/sample/sample.txt"));
         Assertions.assertTrue(found.isPresent());
+        Assertions.assertTrue(contentReaderService.getContent(ConstantsTest.SAMPLE_CSV).isPresent());
 
         found.get().close();
     }

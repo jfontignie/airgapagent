@@ -18,6 +18,7 @@ public class ConstantsTest {
 
     public static final String CORPUS_SAMPLE_STRING = "src/test/resources/sample/bigsample.csv";
     public static final File CORPUS_SAMPLE = new File(CORPUS_SAMPLE_STRING);
+    public static final File SAMPLE_CSV = new File("src/test/resources/sample/sample.csv");
 
     @Test
     void doNothing() {
