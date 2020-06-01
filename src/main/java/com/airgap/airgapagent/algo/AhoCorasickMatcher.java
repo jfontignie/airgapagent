@@ -10,7 +10,7 @@ import java.util.function.Consumer;
  * <p>
  * https://codereview.stackexchange.com/questions/115624/aho-corasick-for-multiple-exact-string-matching-in-java
  */
-public class AhoCorasickMatcher extends MultipleStringMatcher {
+public class AhoCorasickMatcher implements MultipleStringMatcher {
 
     public void match(Reader reader, Consumer<MatchingResult> target, Automaton automaton) throws IOException {
         TrieNode state = automaton.getRoot();
