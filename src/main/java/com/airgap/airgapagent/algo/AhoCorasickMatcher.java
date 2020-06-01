@@ -14,6 +14,7 @@ public class AhoCorasickMatcher extends MultipleStringMatcher {
 
     public void match(Reader reader, Consumer<MatchingResult> target, Automaton automaton) throws IOException {
         TrieNode state = automaton.getRoot();
+        boolean isCaseInsensitive = automaton.getOptions().contains(AutomatonOption.CASE_INSENSITIVE);
 
         int textIndex = 0;
         while (true) {
@@ -22,8 +23,8 @@ public class AhoCorasickMatcher extends MultipleStringMatcher {
                 break;
             }
 
-            char car = (char) ((char) current & 0xFF);
-            if (!automaton.isCaseSensitive()) {
+            char car = (char) (current & 0xFF);
+            if (isCaseInsensitive) {
                 car = Character.toLowerCase(car);
             }
 

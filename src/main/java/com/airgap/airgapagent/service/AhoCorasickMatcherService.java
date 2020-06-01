@@ -2,6 +2,7 @@ package com.airgap.airgapagent.service;
 
 import com.airgap.airgapagent.algo.AhoCorasickMatcher;
 import com.airgap.airgapagent.algo.Automaton;
+import com.airgap.airgapagent.algo.AutomatonOption;
 import com.airgap.airgapagent.algo.MatchingResult;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -10,8 +11,6 @@ import reactor.core.publisher.Flux;
 
 import java.io.IOException;
 import java.io.Reader;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Set;
 
 /**
@@ -25,14 +24,8 @@ public class AhoCorasickMatcherService {
 
     private final AhoCorasickMatcher matcher = new AhoCorasickMatcher();
 
-    public Automaton buildAutomaton(Set<String> patterns, boolean caseSensitive) {
-        return new Automaton(caseSensitive, patterns);
-    }
-
-    public List<MatchingResult> find(Reader reader, Automaton automaton) throws IOException {
-        List<MatchingResult> matchingResults = new ArrayList<>();
-        matcher.match(reader, matchingResults::add, automaton);
-        return matchingResults;
+    public Automaton buildAutomaton(Set<String> patterns, Set<AutomatonOption> options) {
+        return new Automaton(options, patterns);
     }
 
     public Flux<MatchingResult> listMatches(Reader reader, Automaton automaton) {

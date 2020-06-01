@@ -1,6 +1,7 @@
 package com.airgap.airgapagent.service;
 
 import com.airgap.airgapagent.algo.Automaton;
+import com.airgap.airgapagent.algo.AutomatonOption;
 import com.airgap.airgapagent.domain.ExactMatchContext;
 import com.airgap.airgapagent.domain.ExactMatchingResult;
 import com.airgap.airgapagent.utils.*;
@@ -12,6 +13,7 @@ import reactor.core.scheduler.Schedulers;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Set;
 
 /**
  * com.airgap.airgapagent.service
@@ -49,7 +51,7 @@ public class FileScanService {
                     stateConverter
             )) {
                 Automaton automaton = ahoCorasickMatcherService.buildAutomaton(
-                        corpusBuilderService.buildSet(exactMatchContext.getExactMatchFile()), false);
+                        corpusBuilderService.buildSet(exactMatchContext.getExactMatchFile()), Set.of(AutomatonOption.CASE_INSENSITIVE));
 
 
                 persistentStateVisitor.init();

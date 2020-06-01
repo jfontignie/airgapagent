@@ -17,34 +17,34 @@ public class Automaton {
     private final char[][] originalPatterns;
     private final Map<TrieNode, TrieNode> fail = new HashMap<>();
     private final Map<TrieNode, int[]> patterns = new HashMap<>();
-    private final boolean caseSensitive;
+    private final Set<AutomatonOption> options;
     private TrieNode root;
 
 
-    public Automaton(boolean caseSensitive, char[]... patterns) {
-        this(caseSensitive, Arrays.stream(patterns)
+    public Automaton(Set<AutomatonOption> automatonOptions, char[]... patterns) {
+        this(automatonOptions, Arrays.stream(patterns)
                 .map(String::valueOf)
                 .collect(Collectors.toSet()));
     }
 
-    public Automaton(boolean caseSensitive, Set<String> patterns) {
+    public Automaton(Set<AutomatonOption> automatonOptions, Set<String> patterns) {
         originalPatterns = patterns.stream()
-                .map(s -> caseSensitive ? s : s.toLowerCase())
+                .map(s -> automatonOptions.contains(AutomatonOption.CASE_INSENSITIVE) ? s.toLowerCase() : s)
                 .map(String::toCharArray)
                 .collect(Collectors.toList())
                 .toArray(new char[0][0]);
         log.info("Automaton built with corpus size : {}", originalPatterns.length);
-        this.caseSensitive = caseSensitive;
+        this.options = automatonOptions;
         constructTrie(originalPatterns);
         computeFailureFunction();
     }
 
     public Automaton(char[][] patterns) {
-        this(true, patterns);
+        this(Set.of(AutomatonOption.CASE_INSENSITIVE), patterns);
     }
 
-    public boolean isCaseSensitive() {
-        return caseSensitive;
+    public Set<AutomatonOption> getOptions() {
+        return options;
     }
 
     private static char toUnsignedchar(final int value) {

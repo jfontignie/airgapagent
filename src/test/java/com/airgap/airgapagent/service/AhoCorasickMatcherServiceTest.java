@@ -1,6 +1,7 @@
 package com.airgap.airgapagent.service;
 
 import com.airgap.airgapagent.algo.Automaton;
+import com.airgap.airgapagent.algo.AutomatonOption;
 import com.airgap.airgapagent.algo.MatchingResult;
 import com.airgap.airgapagent.utils.ConstantsTest;
 import org.apache.tika.Tika;
@@ -35,7 +36,7 @@ class AhoCorasickMatcherServiceTest {
         CorpusBuilderService corpusBuilderService = new CorpusBuilderService();
         Set<String> set = corpusBuilderService.buildSet(ConstantsTest.CORPUS_SAMPLE);
         AhoCorasickMatcherService ahoCorasickMatcherService = new AhoCorasickMatcherService();
-        Automaton automaton = ahoCorasickMatcherService.buildAutomaton(set, false);
+        Automaton automaton = ahoCorasickMatcherService.buildAutomaton(set, Set.of(AutomatonOption.CASE_INSENSITIVE));
 
         List<MatchingResult> found = new ArrayList<>();
         Flux<MatchingResult> flux = ahoCorasickMatcherService.listMatches(new StringReader("603046751.7603046751.7,523650288.4"), automaton);
@@ -51,7 +52,7 @@ class AhoCorasickMatcherServiceTest {
         CorpusBuilderService corpusBuilderService = new CorpusBuilderService();
         Set<String> set = corpusBuilderService.buildSet(ConstantsTest.CORPUS_SAMPLE);
         AhoCorasickMatcherService ahoCorasickMatcherService = new AhoCorasickMatcherService();
-        Automaton automaton = ahoCorasickMatcherService.buildAutomaton(set, false);
+        Automaton automaton = ahoCorasickMatcherService.buildAutomaton(set, Set.of());
 
         Reader reader = new ExceptionReader();
 
@@ -73,7 +74,7 @@ class AhoCorasickMatcherServiceTest {
 
         Set<String> set = Set.of("Password");
         AhoCorasickMatcherService ahoCorasickMatcherService = new AhoCorasickMatcherService();
-        Automaton automaton = ahoCorasickMatcherService.buildAutomaton(set, false);
+        Automaton automaton = ahoCorasickMatcherService.buildAutomaton(set, Set.of(AutomatonOption.CASE_INSENSITIVE));
 
         List<MatchingResult> found = new ArrayList<>();
         Flux<MatchingResult> flux = ahoCorasickMatcherService.listMatches(new StringReader("paSsword"), automaton);
@@ -96,7 +97,7 @@ class AhoCorasickMatcherServiceTest {
         long start = System.currentTimeMillis();
         Set<String> set = Set.of("Password", "abcd");
         AhoCorasickMatcherService ahoCorasickMatcherService = new AhoCorasickMatcherService();
-        Automaton automaton = ahoCorasickMatcherService.buildAutomaton(set, false);
+        Automaton automaton = ahoCorasickMatcherService.buildAutomaton(set, Set.of());
 
         List<MatchingResult> found = new ArrayList<>();
 
