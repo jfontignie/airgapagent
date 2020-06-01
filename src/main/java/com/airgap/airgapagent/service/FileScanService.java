@@ -13,6 +13,7 @@ import reactor.core.scheduler.Schedulers;
 
 import java.io.File;
 import java.io.IOException;
+import java.time.Duration;
 import java.util.Set;
 
 /**
@@ -53,11 +54,11 @@ public class FileScanService {
                 Automaton automaton = ahoCorasickMatcherService.buildAutomaton(
                         corpusBuilderService.buildSet(exactMatchContext.getExactMatchFile()), Set.of(AutomatonOption.CASE_INSENSITIVE));
 
-
                 persistentStateVisitor.init();
 
+                IntervalRunner runner = IntervalRunner.of(Duration.ofSeconds(5), true);
 
-                visitorService.list(crawlService, context)
+                Long count = visitorService.list(crawlService, context)
                         //Persist the state
                         .doOnNext(file -> persistentStateVisitor.persist())
 
@@ -80,25 +81,23 @@ public class FileScanService {
                                         .take(exactMatchContext.getMaxHit())
                                         .count()
                                         .onErrorReturn(0L)
-                                        .map(count -> new ExactMatchingResult<>(dataReader.getSource(), Math.toIntExact(count)))
+                                        .map(counter -> new ExactMatchingResult<>(dataReader.getSource(), Math.toIntExact(counter)))
                                         .flux())
 
                         //Filter for the one with enough occurences found
                         .filter(result -> result.getOccurrences() >= exactMatchContext.getMinHit())
 
                         //Display the result
-                        .doOnNext(exactMatchingResult -> {
-                                    log.info("Found {}", exactMatchingResult);
-                                    foundWriter.save(exactMatchingResult, stateConverter);
-                                }
-                        )
+                        .doOnNext(exactMatchingResult -> foundWriter.save(exactMatchingResult, stateConverter))
 
                         //Go back on sequential mode
                         .sequential()
-
+                        .doOnNext(tExactMatchingResult -> runner.trigger(integer -> log.info("Elements found so far: {}", integer)))
+                        .count()
                         //Wait the last one has been handler
-                        .blockLast();
+                        .block();
 
+                log.info("Operation finished. Files found: {}", count);
             }
         }
 

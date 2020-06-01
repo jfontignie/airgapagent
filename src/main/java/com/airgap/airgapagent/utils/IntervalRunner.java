@@ -1,6 +1,7 @@
 package com.airgap.airgapagent.utils;
 
 import java.time.Duration;
+import java.util.function.IntConsumer;
 
 /**
  * com.airgap.airgapagent.service
@@ -10,6 +11,7 @@ public class IntervalRunner {
 
     private final Duration duration;
     private long lastTrigger = 0;
+    private int countCall = 0;
 
     public IntervalRunner(Duration duration, boolean runFirstCall) {
         if (!runFirstCall) {
@@ -22,11 +24,12 @@ public class IntervalRunner {
         return new IntervalRunner(duration, runFirstCall);
     }
 
-    public void trigger(Runnable runnable) {
+    public void trigger(IntConsumer consumer) {
+        countCall++;
         long current = System.currentTimeMillis();
         if (current - lastTrigger > duration.toMillis()) {
             lastTrigger = current;
-            runnable.run();
+            consumer.accept(countCall);
         }
     }
 }

@@ -22,7 +22,6 @@ public class PersistentStateVisitor<T> implements Closeable {
     private final StateConverter<T> converter;
     private final Duration saveInterval;
 
-    private int counterProcessed;
     private IntervalRunner runner;
     private StateStore<T> stateStore;
     private Instant start;
@@ -37,7 +36,6 @@ public class PersistentStateVisitor<T> implements Closeable {
     public void init() {
         stateStore = new StateStore<>(stateLocation, converter);
         stateStore.load(walkerContext);
-        counterProcessed = 0;
         runner = IntervalRunner.of(saveInterval, true);
         start = Instant.now();
     }
@@ -45,16 +43,15 @@ public class PersistentStateVisitor<T> implements Closeable {
     public void persist() {
         Objects.requireNonNull(runner, "Init not called");
 
-        counterProcessed++;
-        runner.trigger(() -> {
+        runner.trigger(counter -> {
             int visited = walkerContext.getVisited();
             String progress = "n/a";
             String estimate = "n/a";
             if (visited != 0) {
-                progress = String.valueOf(counterProcessed * 100 / visited);
+                progress = String.valueOf(counter * 100 / visited);
                 long seconds = ChronoUnit.SECONDS.between(start, Instant.now());
 
-                seconds = (visited - counterProcessed) * seconds / counterProcessed;
+                seconds = (visited - counter) * seconds / counter;
                 estimate = String.format(
                         "%dH:%02dM:%02dS",
                         seconds / 3600,
@@ -62,7 +59,7 @@ public class PersistentStateVisitor<T> implements Closeable {
                         seconds % 60);
             }
             log.info("Running {} / {} ({} %) - estimate: {}",
-                    counterProcessed,
+                    counter,
                     visited,
                     progress,
                     estimate);
