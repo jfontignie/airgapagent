@@ -7,7 +7,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import java.io.File;
 import java.io.IOException;
@@ -20,24 +19,20 @@ import java.io.IOException;
 public class ErrorServiceImpl implements ErrorService {
 
     private static final Logger log = LoggerFactory.getLogger(ErrorServiceImpl.class);
-    private final File errorFile;
-    private ErrorWriter errorWriter;
+    private final ErrorWriter errorWriter;
 
-    public ErrorServiceImpl(Environment environment) {
+    public ErrorServiceImpl(Environment environment) throws IOException {
         String requiredProperty = environment.getRequiredProperty(ExactMatchBatchConfiguration.MATCH_ERROR_FILE);
-        errorFile = new File(requiredProperty);
+        File errorFile = new File(requiredProperty);
+
+        log.info("Error file will be in {}", errorFile);
+        errorWriter = new ErrorWriter(errorFile);
     }
 
     @Override
     public void error(Object source, String message, Throwable e) {
         log.error("Concerned {} - {}", source, message, e);
         errorWriter.trigger(source, message, e);
-    }
-
-    @PostConstruct
-    public void setUp() throws IOException {
-        log.info("Error file will be in {}", errorFile);
-        errorWriter = new ErrorWriter(errorFile);
     }
 
     @PreDestroy

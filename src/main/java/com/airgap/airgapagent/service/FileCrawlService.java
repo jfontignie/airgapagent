@@ -15,11 +15,11 @@ import java.util.stream.Collectors;
  * Created by Jacques Fontignie on 5/31/2020.
  */
 @Service
-public class FileService implements CrawlService<File> {
+public class FileCrawlService implements CrawlService<File> {
 
     private final ContentReaderService contentReaderService;
 
-    public FileService(ContentReaderService contentReaderService) {
+    public FileCrawlService(ContentReaderService contentReaderService) {
         this.contentReaderService = contentReaderService;
     }
 

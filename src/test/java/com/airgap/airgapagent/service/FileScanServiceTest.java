@@ -21,21 +21,20 @@ import java.time.Duration;
 class FileScanServiceTest {
 
     private FileScanService fileScanService;
-    private FileService fileService;
+    private FileCrawlService fileCrawlService;
 
     @BeforeEach
     public void setUp() throws IOException {
         MockEnvironment environment = new MockEnvironment().withProperty(ExactMatchBatchConfiguration.MATCH_ERROR_FILE, "target/error.dat");
 
         ErrorServiceImpl errorService = new ErrorServiceImpl(environment);
-        errorService.setUp();
 
         fileScanService = new FileScanService(
                 new VisitorService(),
                 new CorpusBuilderService(),
                 errorService);
 
-        fileService = new FileService(new ContentReaderService(errorService));
+        fileCrawlService = new FileCrawlService(new ContentReaderService(errorService));
     }
 
     @Test
@@ -49,7 +48,7 @@ class FileScanServiceTest {
                 .setMaxHit(100)
                 .setSaveInterval(Duration.ofSeconds(5))
                 .createExactMatchContext();
-        fileScanService.run(context, fileService);
+        fileScanService.run(context, fileCrawlService);
         Assertions.assertTrue(true);
     }
 
@@ -57,7 +56,7 @@ class FileScanServiceTest {
     @Test
     void testLong() throws IOException {
         ExactMatchContext context = new ExactMatchContextBuilder()
-                .setScanFolder(new File("c:/projects/dev"))
+                .setScanFolder(new File("c:/"))
                 .setExactMatchFile(new File(ConstantsTest.CORPUS_SAMPLE_STRING))
                 .setFoundFile(new File("target/testLong_found.csv"))
                 .setStateFile(new File("target/testLong_state.dat"))
@@ -65,7 +64,7 @@ class FileScanServiceTest {
                 .setMaxHit(100)
                 .setSaveInterval(Duration.ofSeconds(1))
                 .createExactMatchContext();
-        fileScanService.run(context, fileService);
+        fileScanService.run(context, fileCrawlService);
         Assertions.assertTrue(true);
     }
 }
