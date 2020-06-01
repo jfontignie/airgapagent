@@ -27,7 +27,7 @@ class StateStoreTest {
         File abcd = new File("abcd");
         context.setReference(abcd);
         store.save(context);
-        context.setReference(null);
+        context.reset();
         store.load(context);
         Assertions.assertEquals(abcd, context.getReference());
         store.save(context);
