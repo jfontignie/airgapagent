@@ -43,20 +43,24 @@ public class PersistentStateVisitor<T> implements Closeable {
     public void persist() {
         Objects.requireNonNull(runner, "Init not called");
 
-        runner.trigger(counter -> {
-            int visited = walkerContext.getVisited();
+        runner.trigger(analysed -> {
+            int crawled = walkerContext.getVisited();
             String progress = "n/a";
             String estimate = "n/a";
-            String speed = "n/a";
-            if (visited != 0) {
-                progress = String.valueOf(counter * 100 / visited);
-                long seconds = ChronoUnit.SECONDS.between(start, Instant.now());
+            String crawlspeed = "n/a";
+            String analysisSpeed = "n/a";
 
-                if (seconds != 0) {
-                    speed = String.valueOf(counter / seconds);
-                }
+            long seconds = ChronoUnit.SECONDS.between(start, Instant.now());
 
-                seconds = (visited - counter) * seconds / counter;
+            if (seconds != 0) {
+                crawlspeed = String.valueOf(crawled / seconds);
+                analysisSpeed = String.valueOf(analysed / seconds);
+            }
+
+            if (crawled != 0) {
+                progress = String.valueOf(analysed * 100 / crawled);
+
+                seconds = (crawled - analysed) * seconds / analysed;
                 estimate = String.format(
                         "%dH:%02dM:%02dS",
                         seconds / 3600,
@@ -64,11 +68,12 @@ public class PersistentStateVisitor<T> implements Closeable {
                         seconds % 60);
 
             }
-            log.info("Running {} / {} ({} %) - speed: {}/s. - estimate: {}",
-                    counter,
-                    visited,
+            log.info("Running {} / {} ({} %) - crawl speed: {}/s. - analysis speed: {}/s. - estimate to completion: {}",
+                    analysed,
+                    crawled,
                     progress,
-                    speed,
+                    crawlspeed,
+                    analysisSpeed,
                     estimate);
             stateStore.save(walkerContext);
         });
