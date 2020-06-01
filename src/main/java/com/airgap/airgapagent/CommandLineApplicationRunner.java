@@ -9,6 +9,8 @@ import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.stereotype.Component;
 
+import java.io.File;
+
 /**
  * com.airgap.airgapagent
  * Created by Jacques Fontignie on 5/30/2020.
@@ -18,13 +20,13 @@ public class CommandLineApplicationRunner implements ApplicationRunner {
     private static final Logger log =
             LoggerFactory.getLogger(CommandLineApplicationRunner.class);
     private final FileScanService fileScanService;
-    private final ExactMatchContext exactMatchContext;
+    private final ExactMatchContext<File> exactMatchContext;
     private final FileCrawlService fileCrawlService;
 
     public CommandLineApplicationRunner(
             FileCrawlService fileCrawlService,
             FileScanService fileScanService,
-            ExactMatchContext exactMatchContext
+            ExactMatchContext<File> exactMatchContext
     ) {
         this.fileCrawlService = fileCrawlService;
         this.fileScanService = fileScanService;
@@ -34,7 +36,7 @@ public class CommandLineApplicationRunner implements ApplicationRunner {
     @Override
     public void run(ApplicationArguments args) throws Exception {
         log.info("Ready to analyse folder");
-        fileScanService.run(exactMatchContext, fileCrawlService);
+        fileScanService.scanFolder(exactMatchContext, fileCrawlService);
         log.info("Analysis finished");
 
     }

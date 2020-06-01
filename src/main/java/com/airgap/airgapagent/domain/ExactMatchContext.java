@@ -7,8 +7,8 @@ import java.time.Duration;
  * com.airgap.airgapagent.domain
  * Created by Jacques Fontignie on 5/30/2020.
  */
-public class ExactMatchContext {
-    private final File scanFolder;
+public class ExactMatchContext<T> {
+    private final T root;
     private final File exactMatchFile;
     private final File foundFile;
     private final File stateFile;
@@ -19,14 +19,14 @@ public class ExactMatchContext {
 
 
     @SuppressWarnings("java:S107")
-    public ExactMatchContext(File scanFolder,
+    public ExactMatchContext(T root,
                              File exactMatchFile,
                              File foundFile,
                              File stateFile,
                              int minHit,
                              int maxHit,
                              Duration saveInterval) {
-        this.scanFolder = scanFolder;
+        this.root = root;
         this.exactMatchFile = exactMatchFile;
         this.foundFile = foundFile;
         this.stateFile = stateFile;
@@ -35,8 +35,8 @@ public class ExactMatchContext {
         this.saveInterval = saveInterval;
     }
 
-    public File getScanFolder() {
-        return scanFolder;
+    public T getRoot() {
+        return root;
     }
 
     public File getExactMatchFile() {

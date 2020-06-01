@@ -1,7 +1,5 @@
 package com.airgap.airgapagent.utils;
 
-import java.io.File;
-
 /**
  * com.airgap.airgapagent.service
  * Created by Jacques Fontignie on 5/24/2020.
@@ -17,12 +15,8 @@ public class WalkerContext<T> {
         visited = 0;
     }
 
-    public static WalkerContext<File> of(String s) {
-        return of(new File(s));
-    }
-
-    public static WalkerContext<File> of(File file) {
-        return new WalkerContext<>(file);
+    public static <T> WalkerContext<T> of(T t) {
+        return new WalkerContext<>(t);
     }
 
     public T getReference() {

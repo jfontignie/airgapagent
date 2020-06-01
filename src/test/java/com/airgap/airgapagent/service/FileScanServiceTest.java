@@ -30,17 +30,19 @@ class FileScanServiceTest {
         ErrorServiceImpl errorService = new ErrorServiceImpl(environment);
 
         fileScanService = new FileScanService(
-                new VisitorService(),
-                new CorpusBuilderService(),
-                errorService);
+                new ExactMatchService(
+                        new VisitorService(),
+                        new CorpusBuilderService(),
+                        errorService)
+        );
 
         fileCrawlService = new FileCrawlService(new ContentReaderService(errorService));
     }
 
     @Test
     void run() throws IOException {
-        ExactMatchContext context = new ExactMatchContextBuilder()
-                .setScanFolder(ConstantsTest.SAMPLE_FOLDER)
+        ExactMatchContext<File> context = new ExactMatchContextBuilder<File>()
+                .setRoot(ConstantsTest.SAMPLE_FOLDER)
                 .setExactMatchFile(new File(ConstantsTest.CORPUS_SAMPLE_STRING))
                 .setFoundFile(new File("target/run_found.csv"))
                 .setStateFile(new File("target/run_sate.dat"))
@@ -48,15 +50,15 @@ class FileScanServiceTest {
                 .setMaxHit(100)
                 .setSaveInterval(Duration.ofSeconds(5))
                 .createExactMatchContext();
-        fileScanService.run(context, fileCrawlService);
+        fileScanService.scanFolder(context, fileCrawlService);
         Assertions.assertTrue(true);
     }
 
     @Disabled("Performance test")
     @Test
     void testLong() throws IOException {
-        ExactMatchContext context = new ExactMatchContextBuilder()
-                .setScanFolder(new File("c:/"))
+        ExactMatchContext<File> context = new ExactMatchContextBuilder<File>()
+                .setRoot(new File("c:/"))
                 .setExactMatchFile(new File(ConstantsTest.CORPUS_SAMPLE_STRING))
                 .setFoundFile(new File("target/testLong_found.csv"))
                 .setStateFile(new File("target/testLong_state.dat"))
@@ -64,7 +66,7 @@ class FileScanServiceTest {
                 .setMaxHit(100)
                 .setSaveInterval(Duration.ofSeconds(1))
                 .createExactMatchContext();
-        fileScanService.run(context, fileCrawlService);
+        fileScanService.scanFolder(context, fileCrawlService);
         Assertions.assertTrue(true);
     }
 }

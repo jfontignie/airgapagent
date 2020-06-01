@@ -27,10 +27,10 @@ public class ExactMatchBatchConfiguration {
     private static final String MATCH_SAVE_INTERVAL = "match.saveInterval";
 
     @Bean
-    public ExactMatchContext config(
+    public ExactMatchContext<File> config(
             Environment environment) {
-        return new ExactMatchContextBuilder()
-                .setScanFolder(new File(environment.getRequiredProperty(MATCH_SCAN_FOLDER_FOLDER)))
+        return new ExactMatchContextBuilder<File>()
+                .setRoot(new File(environment.getRequiredProperty(MATCH_SCAN_FOLDER_FOLDER)))
                 .setExactMatchFile(new File(environment.getRequiredProperty(MATCH_CORPUS_FILE)))
                 .setFoundFile(new File(environment.getRequiredProperty(MATCH_FOUND_FILE)))
                 .setStateFile(new File(environment.getRequiredProperty(MATCH_STATE_FILE)))
