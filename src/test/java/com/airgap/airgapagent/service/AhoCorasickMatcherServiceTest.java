@@ -46,7 +46,7 @@ class AhoCorasickMatcherServiceTest {
     }
 
     @Test
-    public void testError() throws IOException {
+    void testError() throws IOException {
 
         CorpusBuilderService corpusBuilderService = new CorpusBuilderService();
         Set<String> set = corpusBuilderService.buildSet(ConstantsTest.CORPUS_SAMPLE);
