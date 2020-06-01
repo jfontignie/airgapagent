@@ -47,9 +47,12 @@ public class PersistentStateVisitor<T> implements Closeable {
             int visited = walkerContext.getVisited();
             String progress = "n/a";
             String estimate = "n/a";
+            String speed = "n/a";
             if (visited != 0) {
                 progress = String.valueOf(counter * 100 / visited);
                 long seconds = ChronoUnit.SECONDS.between(start, Instant.now());
+
+                speed = String.valueOf(Math.round(counter * 1.0 / seconds));
 
                 seconds = (visited - counter) * seconds / counter;
                 estimate = String.format(
@@ -57,11 +60,13 @@ public class PersistentStateVisitor<T> implements Closeable {
                         seconds / 3600,
                         (seconds % 3600) / 60,
                         seconds % 60);
+
             }
-            log.info("Running {} / {} ({} %) - estimate: {}",
+            log.info("Running {} / {} ({} %) - speed: {}/s. - estimate: {}",
                     counter,
                     visited,
                     progress,
+                    speed,
                     estimate);
             stateStore.save(walkerContext);
         });
