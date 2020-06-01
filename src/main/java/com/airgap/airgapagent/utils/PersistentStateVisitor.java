@@ -52,7 +52,9 @@ public class PersistentStateVisitor<T> implements Closeable {
                 progress = String.valueOf(counter * 100 / visited);
                 long seconds = ChronoUnit.SECONDS.between(start, Instant.now());
 
-                speed = String.valueOf(Math.round(counter * 1.0 / seconds));
+                if (seconds != 0) {
+                    speed = String.valueOf(counter / seconds);
+                }
 
                 seconds = (visited - counter) * seconds / counter;
                 estimate = String.format(
