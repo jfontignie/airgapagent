@@ -74,16 +74,9 @@ public class ExactMatchService {
                 .runOn(Schedulers.parallel())
 
                 //Init the reader and forget if empty
-                .flatMap(file -> {
-                    try {
-                        //noinspection BlockingMethodInNonBlockingContext
-                        DataReader<T> contentReader = crawlService.getContentReader(file);
-                        return Flux.just(contentReader);
-                    } catch (IOException e) {
-                        errorService.error(file, "Impossible to parse content", e);
-                        return Flux.empty();
-                    }
-                })
+                .flatMap(file -> crawlService.getContentReader(file)
+                        .map(Flux::just)
+                        .orElse(Flux.empty()))
 
                 //Parse the data to find keywords
 

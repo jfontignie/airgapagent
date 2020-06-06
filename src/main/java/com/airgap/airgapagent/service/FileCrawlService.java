@@ -10,6 +10,7 @@ import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 /**
@@ -20,14 +21,21 @@ import java.util.stream.Collectors;
 public class FileCrawlService implements CrawlService<File> {
 
     private final ContentReaderService contentReaderService;
+    private final ErrorService errorService;
 
-    public FileCrawlService(ContentReaderService contentReaderService) {
+    public FileCrawlService(ContentReaderService contentReaderService, ErrorService errorService) {
         this.contentReaderService = contentReaderService;
+        this.errorService = errorService;
     }
 
     @Override
-    public DataReader<File> getContentReader(File file) throws IOException {
-        return contentReaderService.getContent(file);
+    public Optional<DataReader<File>> getContentReader(File file) {
+        try {
+            return Optional.of(contentReaderService.getContent(file));
+        } catch (IOException e) {
+            errorService.error(file, "impossible to get content", e);
+            return Optional.empty();
+        }
     }
 
     @Override

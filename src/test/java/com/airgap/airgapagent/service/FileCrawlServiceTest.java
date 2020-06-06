@@ -6,6 +6,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
+import org.springframework.mock.env.MockEnvironment;
 
 import java.io.File;
 import java.io.IOException;
@@ -25,7 +26,8 @@ class FileCrawlServiceTest {
     void setUp() throws IOException {
         ContentReaderService contentReader = Mockito.mock(ContentReaderService.class);
         Mockito.doReturn(new DataReader<>("test", new HashMap<>(), null)).when(contentReader).getContent(Mockito.any());
-        service = new FileCrawlService(contentReader);
+        service = new FileCrawlService(contentReader, new ErrorServiceImpl(new MockEnvironment()
+                .withProperty(ErrorServiceImpl.ERROR_FILE, "target/error.dat")));
 
     }
 

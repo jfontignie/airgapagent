@@ -42,7 +42,8 @@ class FileScanServiceTest {
                 errorService
         );
 
-        fileCrawlService = new FileCrawlService(new ContentReaderService());
+        fileCrawlService = new FileCrawlService(new ContentReaderService(),
+                errorService);
     }
 
     @Test

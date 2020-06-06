@@ -5,8 +5,8 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.nio.file.NoSuchFileException;
 
 /**
  * com.airgap.airgapagent.service
@@ -17,7 +17,7 @@ class ContentReaderServiceTest {
     @Test
     void testFile() throws IOException {
         ContentReaderService contentReaderService = new ContentReaderService();
-        Assertions.assertThrows(FileNotFoundException.class, () -> contentReaderService.getContent(new File("does not exits")));
+        Assertions.assertThrows(NoSuchFileException.class, () -> contentReaderService.getContent(new File("does not exits")));
 
         DataReader<File> found = contentReaderService.getContent(new File("src/test/resources/sample/sample.txt"));
         Assertions.assertNotNull(found.getReader());

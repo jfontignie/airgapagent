@@ -42,8 +42,27 @@ public class AbstractSearchAction implements Action {
     @Parameter(
             names = "-state",
             description = "file containing the state to resume in case of error")
-    private final File stateLocation = new File("state.csv");
+    private File stateLocation = new File("state.csv");
 
+    public void setMinHit(int minHit) {
+        this.minHit = minHit;
+    }
+
+    public void setSyslog(boolean syslog) {
+        this.syslog = syslog;
+    }
+
+    public void setCorpusLocation(File corpusLocation) {
+        this.corpusLocation = corpusLocation;
+    }
+
+    public void setFolderLocation(File folderLocation) {
+        this.folderLocation = folderLocation;
+    }
+
+    public void setStateLocation(File stateLocation) {
+        this.stateLocation = stateLocation;
+    }
 
     public int getMinHit() {
         return minHit;

@@ -2,8 +2,8 @@ package com.airgap.airgapagent.service;
 
 import com.airgap.airgapagent.utils.DataReader;
 
-import java.io.IOException;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * com.airgap.airgapagent.service
@@ -12,7 +12,7 @@ import java.util.List;
 public interface CrawlService<T> {
 
 
-    DataReader<T> getContentReader(T t) throws IOException;
+    Optional<DataReader<T>> getContentReader(T t);
 
     boolean isLeaf(T current);
 

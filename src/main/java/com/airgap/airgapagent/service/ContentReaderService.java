@@ -2,11 +2,11 @@ package com.airgap.airgapagent.service;
 
 import com.airgap.airgapagent.utils.DataReader;
 import org.apache.tika.Tika;
+import org.apache.tika.io.TikaInputStream;
 import org.apache.tika.metadata.Metadata;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.Reader;
 import java.util.HashMap;
@@ -22,9 +22,8 @@ public class ContentReaderService {
     private final Tika tika = new Tika();
 
     public DataReader<File> getContent(File file) throws IOException {
-        FileInputStream fis = new FileInputStream(file);
         Metadata metadata = new Metadata();
-        Reader reader = tika.parse(fis, metadata);
+        Reader reader = tika.parse(TikaInputStream.get(file.toPath()), metadata);
         Map<String, String> map = new HashMap<>();
         for (String name : metadata.names()) {
             map.put(name, metadata.get(name));
