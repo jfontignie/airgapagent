@@ -34,7 +34,6 @@ public class AhoCorasickMatcher implements MultipleStringMatcher {
 
             state = state.getChild(car);
             for (final int patternIndex : automaton.getPatterns().get(state)) {
-
                 target.accept(new MatchingResult(textIndex + 1, automaton.getPattern(patternIndex)));
             }
             textIndex++;

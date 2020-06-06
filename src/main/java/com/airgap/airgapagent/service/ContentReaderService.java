@@ -22,15 +22,14 @@ public class ContentReaderService {
     private final Tika tika = new Tika();
 
     public DataReader<File> getContent(File file) throws IOException {
-        try (FileInputStream fis = new FileInputStream(file)) {
-            Metadata metadata = new Metadata();
-            Reader reader = tika.parse(fis, metadata);
-            Map<String, String> map = new HashMap<>();
-            for (String name : metadata.names()) {
-                map.put(name, metadata.get(name));
-            }
-            return new DataReader<>(file, map, reader);
+        FileInputStream fis = new FileInputStream(file);
+        Metadata metadata = new Metadata();
+        Reader reader = tika.parse(fis, metadata);
+        Map<String, String> map = new HashMap<>();
+        for (String name : metadata.names()) {
+            map.put(name, metadata.get(name));
         }
+        return new DataReader<>(file, map, reader);
     }
 
 }

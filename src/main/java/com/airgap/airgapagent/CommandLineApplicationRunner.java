@@ -80,7 +80,7 @@ public class CommandLineApplicationRunner implements CommandLineRunner {
     private void printHelp(JCommander commander) {
         StringBuilder stringBuilder = new StringBuilder();
         commander.getUsageFormatter().usage(stringBuilder, "\t");
-        System.out.println(stringBuilder.toString());
+        System.err.println(stringBuilder.toString());
     }
 
 }

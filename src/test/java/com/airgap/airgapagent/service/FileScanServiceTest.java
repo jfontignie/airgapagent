@@ -1,6 +1,5 @@
 package com.airgap.airgapagent.service;
 
-import com.airgap.airgapagent.batch.ExactMatchBatchConfiguration;
 import com.airgap.airgapagent.domain.ExactMatchContext;
 import com.airgap.airgapagent.domain.ExactMatchContextBuilder;
 import com.airgap.airgapagent.utils.ConstantsTest;
@@ -21,7 +20,7 @@ import java.time.Duration;
  */
 class FileScanServiceTest {
 
-    private static final int EXPECTED = 10;
+    private static final int EXPECTED = 11;
     private static final int MIN_HIT = 1;
     private FileScanService fileScanService;
     private FileCrawlService fileCrawlService;
@@ -29,7 +28,7 @@ class FileScanServiceTest {
     @BeforeEach
     public void setUp() throws IOException {
         MockEnvironment environment = new MockEnvironment()
-                .withProperty(ExactMatchBatchConfiguration.MATCH_ERROR_FILE, "target/error.dat")
+                .withProperty(ErrorServiceImpl.ERROR_FILE, "target/error.dat")
                 .withProperty(SyslogService.SYSLOG_SERVER, "127.0.0.1");
 
         ErrorServiceImpl errorService = new ErrorServiceImpl(environment);

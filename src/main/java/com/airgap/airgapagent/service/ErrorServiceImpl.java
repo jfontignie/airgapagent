@@ -1,6 +1,5 @@
 package com.airgap.airgapagent.service;
 
-import com.airgap.airgapagent.batch.ExactMatchBatchConfiguration;
 import com.airgap.airgapagent.utils.ErrorWriter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,11 +17,14 @@ import java.io.IOException;
 @Service
 public class ErrorServiceImpl implements ErrorService {
 
+    public static final String ERROR_FILE = "error.file";
+
     private static final Logger log = LoggerFactory.getLogger(ErrorServiceImpl.class);
+
     private final ErrorWriter errorWriter;
 
     public ErrorServiceImpl(Environment environment) throws IOException {
-        String requiredProperty = environment.getRequiredProperty(ExactMatchBatchConfiguration.MATCH_ERROR_FILE);
+        String requiredProperty = environment.getRequiredProperty(ERROR_FILE);
         File errorFile = new File(requiredProperty);
 
         log.info("Error file will be in {}", errorFile);

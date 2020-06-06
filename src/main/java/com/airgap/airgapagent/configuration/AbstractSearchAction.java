@@ -41,9 +41,8 @@ public class AbstractSearchAction implements Action {
 
     @Parameter(
             names = "-state",
-            description = "file containing the state to resume in case of error",
-            validateWith = FileExistsValidator.class)
-    private File stateLocation;
+            description = "file containing the state to resume in case of error")
+    private final File stateLocation = new File("state.csv");
 
 
     public int getMinHit() {
