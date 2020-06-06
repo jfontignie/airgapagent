@@ -45,7 +45,8 @@ public class FileScanService {
                 null,
                 fileCopyAction.getStateLocation(),
                 fileCopyAction.getMinHit(),
-                Duration.ofSeconds(5)
+                Duration.ofSeconds(5),
+                fileCopyAction.isSyslog()
         );
         return copyFolder(exactMatchContext, crawlService, destination);
     }
@@ -84,7 +85,8 @@ public class FileScanService {
                 fileSearchAction.getFoundLocation(),
                 fileSearchAction.getStateLocation(),
                 fileSearchAction.getMinHit(),
-                Duration.ofSeconds(5)
+                Duration.ofSeconds(5),
+                fileSearchAction.isSyslog()
         );
         return scanFolder(context, crawlService);
     }

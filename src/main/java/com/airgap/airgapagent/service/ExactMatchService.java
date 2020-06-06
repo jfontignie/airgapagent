@@ -13,6 +13,7 @@ import reactor.core.scheduler.Schedulers;
 
 import java.io.IOException;
 import java.time.Duration;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 
@@ -29,16 +30,18 @@ public class ExactMatchService {
     private final VisitorService visitorService;
     private final ErrorService errorService;
     private final AhoCorasickMatcherService ahoCorasickMatcherService;
+    private final SyslogService syslogService;
 
     public ExactMatchService(
             VisitorService visitorService,
             CorpusBuilderService corpusBuilderService,
-            ErrorService errorService) {
+            ErrorService errorService,
+            SyslogService syslogService) {
         this.corpusBuilderService = corpusBuilderService;
         this.visitorService = visitorService;
         this.errorService = errorService;
+        this.syslogService = syslogService;
         ahoCorasickMatcherService = new AhoCorasickMatcherService();
-
     }
 
     @SuppressWarnings("java:S2095")
@@ -108,19 +111,41 @@ public class ExactMatchService {
 
             IntervalRunner runner = IntervalRunner.of(Duration.ofSeconds(5), true);
 
-            Long count = buildScan(exactMatchContext,
+            Flux<ExactMatchingResult<T>> flux = buildScan(exactMatchContext,
                     crawlService,
                     stateConverter)
                     //Display the result
                     .doOnNext(exactMatchingResult -> dataWriter.save(exactMatchingResult, stateConverter))
-                    .doOnNext(tExactMatchingResult -> runner.trigger(integer -> log.info("Elements found so far: {}", integer)))
-                    .count()
+                    .doOnNext(exactMatchingResult -> runner.trigger(integer -> log.info("Elements found so far: {}", integer)));
+
+            if (exactMatchContext.isSyslog()) {
+                flux = flux.doOnNext(exactMatchingResult -> {
+                    try {
+                        sendSyslog(exactMatchingResult);
+                    } catch (IOException e) {
+                        errorService.error(exactMatchingResult.getDataSource().getSource(), "Impossible to send syslog", e);
+                    }
+                });
+            }
+
+            Long count = flux.count()
                     //Wait the last one has been handler
                     .block();
 
             log.info("Operation finished. Files found: {}", count);
             return Objects.requireNonNullElse(count, 0L);
         }
+    }
+
+    private <T extends Comparable<T>> void sendSyslog(ExactMatchingResult<T> exactMatchingResult) throws IOException {
+
+        SyslogFormatter formatter = new SyslogFormatter(Map.of(
+                "source", exactMatchingResult.getDataSource().getSource().toString(),
+                "occurrences", String.valueOf(exactMatchingResult.getOccurrences())
+        ));
+        formatter.add(exactMatchingResult.getDataSource().getMetadata());
+
+        syslogService.send(formatter.toString());
     }
 
 

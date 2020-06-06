@@ -18,6 +18,11 @@ public class AbstractSearchAction implements Action {
             validateWith = PositiveInteger.class)
     private int minHit = 5;
 
+    @Parameter(
+            names = "-syslog",
+            description = "Enable syslog to send to send, parameters must be set in application.properties"
+    )
+    private boolean syslog;
 
     @Parameter(
             names = "-corpus",
@@ -55,5 +60,9 @@ public class AbstractSearchAction implements Action {
 
     public File getStateLocation() {
         return stateLocation;
+    }
+
+    public boolean isSyslog() {
+        return syslog;
     }
 }

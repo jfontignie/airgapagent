@@ -12,6 +12,7 @@ public class ExactMatchContext<T> {
     private final File exactMatchFile;
     private final File foundFile;
     private final File stateFile;
+    private final boolean syslog;
 
     private final int minHit;
     private final Duration saveInterval;
@@ -23,13 +24,15 @@ public class ExactMatchContext<T> {
                              File foundFile,
                              File stateFile,
                              int minHit,
-                             Duration saveInterval) {
+                             Duration saveInterval,
+                             boolean syslog) {
         this.root = root;
         this.exactMatchFile = exactMatchFile;
         this.foundFile = foundFile;
         this.stateFile = stateFile;
         this.minHit = minHit;
         this.saveInterval = saveInterval;
+        this.syslog = syslog;
     }
 
     public T getRoot() {
@@ -56,4 +59,7 @@ public class ExactMatchContext<T> {
         return saveInterval;
     }
 
+    public boolean isSyslog() {
+        return syslog;
+    }
 }

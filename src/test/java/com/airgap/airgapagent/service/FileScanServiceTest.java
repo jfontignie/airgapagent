@@ -28,7 +28,9 @@ class FileScanServiceTest {
 
     @BeforeEach
     public void setUp() throws IOException {
-        MockEnvironment environment = new MockEnvironment().withProperty(ExactMatchBatchConfiguration.MATCH_ERROR_FILE, "target/error.dat");
+        MockEnvironment environment = new MockEnvironment()
+                .withProperty(ExactMatchBatchConfiguration.MATCH_ERROR_FILE, "target/error.dat")
+                .withProperty(SyslogService.SYSLOG_SERVER, "127.0.0.1");
 
         ErrorServiceImpl errorService = new ErrorServiceImpl(environment);
 
@@ -36,7 +38,8 @@ class FileScanServiceTest {
                 new ExactMatchService(
                         new VisitorService(),
                         new CorpusBuilderService(),
-                        errorService),
+                        errorService,
+                        new SyslogService(environment)),
                 errorService
         );
 

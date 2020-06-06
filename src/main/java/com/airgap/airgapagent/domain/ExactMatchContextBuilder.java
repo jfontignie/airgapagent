@@ -49,6 +49,6 @@ public class ExactMatchContextBuilder<T> {
         Objects.requireNonNull(stateFile);
         Objects.requireNonNull(minHit);
         Objects.requireNonNull(saveInterval);
-        return new ExactMatchContext<>(root, exactMatchFile, foundFile, stateFile, minHit, saveInterval);
+        return new ExactMatchContext<>(root, exactMatchFile, foundFile, stateFile, minHit, saveInterval, true);
     }
 }
