@@ -51,7 +51,6 @@ class FileScanServiceTest {
                 .setFoundFile(new File("target/run_found.csv"))
                 .setStateFile(new File("target/run_sate.dat"))
                 .setMinHit(MIN_HIT)
-                .setMaxHit(100)
                 .setSaveInterval(Duration.ofSeconds(5))
                 .createExactMatchContext();
         long count = fileScanService.scanFolder(context, fileCrawlService);
@@ -70,7 +69,6 @@ class FileScanServiceTest {
                 .setFoundFile(new File("target/run_found.csv"))
                 .setStateFile(new File("target/run_sate.dat"))
                 .setMinHit(MIN_HIT)
-                .setMaxHit(100)
                 .setSaveInterval(Duration.ofSeconds(5))
                 .createExactMatchContext();
         long count = fileScanService.copyFolder(context, fileCrawlService, destination);
@@ -88,7 +86,6 @@ class FileScanServiceTest {
                 .setFoundFile(new File("target/testLong_found.csv"))
                 .setStateFile(new File("target/testLong_state.dat"))
                 .setMinHit(50)
-                .setMaxHit(100)
                 .setSaveInterval(Duration.ofSeconds(1))
                 .createExactMatchContext();
         fileScanService.scanFolder(context, fileCrawlService);

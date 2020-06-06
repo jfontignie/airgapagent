@@ -23,7 +23,6 @@ public class ExactMatchBatchConfiguration {
     private static final String MATCH_STATE_FILE = "match.file.state";
     public static final String MATCH_ERROR_FILE = "match.file.error";
     private static final String MATCH_EXACT_MIN_HIT = "match.minHit";
-    private static final String MATCH_EXACT_MAX_HIT = "match.maxHit";
     private static final String MATCH_SAVE_INTERVAL = "match.saveInterval";
 
     @Bean
@@ -35,7 +34,6 @@ public class ExactMatchBatchConfiguration {
                 .setFoundFile(new File(environment.getRequiredProperty(MATCH_FOUND_FILE)))
                 .setStateFile(new File(environment.getRequiredProperty(MATCH_STATE_FILE)))
                 .setMinHit(environment.getRequiredProperty(MATCH_EXACT_MIN_HIT, Integer.class))
-                .setMaxHit(environment.getRequiredProperty(MATCH_EXACT_MAX_HIT, Integer.class))
                 .setSaveInterval(Duration.ofSeconds(environment.getRequiredProperty(MATCH_SAVE_INTERVAL, Integer.class)))
                 .createExactMatchContext();
     }

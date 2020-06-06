@@ -6,6 +6,7 @@ package com.airgap.airgapagent.configuration;
  */
 public class AirgapConfiguration {
 
+
     private final Action action;
     private final OutputConfiguration output;
 

@@ -1,5 +1,7 @@
 package com.airgap.airgapagent.service;
 
+import com.airgap.airgapagent.configuration.FileCopyAction;
+import com.airgap.airgapagent.configuration.FileSearchAction;
 import com.airgap.airgapagent.domain.ExactMatchContext;
 import com.airgap.airgapagent.utils.FileStateConverter;
 import com.airgap.airgapagent.utils.StateConverter;
@@ -10,6 +12,7 @@ import reactor.core.publisher.Flux;
 
 import java.io.File;
 import java.io.IOException;
+import java.time.Duration;
 import java.util.Objects;
 
 /**
@@ -32,6 +35,19 @@ public class FileScanService {
             ErrorService errorService) {
         this.exactMatchService = exactMatchService;
         this.errorService = errorService;
+    }
+
+    public long copyFolder(FileCopyAction fileCopyAction, FileCrawlService crawlService) throws IOException {
+        File destination = fileCopyAction.getTarget();
+        ExactMatchContext<File> exactMatchContext = new ExactMatchContext<>(
+                fileCopyAction.getRootLocation(),
+                fileCopyAction.getCorpusLocation(),
+                null,
+                fileCopyAction.getStateLocation(),
+                fileCopyAction.getMinHit(),
+                Duration.ofSeconds(5)
+        );
+        return copyFolder(exactMatchContext, crawlService, destination);
     }
 
     public long copyFolder(ExactMatchContext<File> exactMatchContext, FileCrawlService crawlService, File destination) throws IOException {
@@ -59,6 +75,18 @@ public class FileScanService {
 
         log.info("Operation finished. Files found: {}", count);
         return Objects.requireNonNullElse(count, 0L);
+    }
+
+    public long scanFolder(FileSearchAction fileSearchAction, FileCrawlService crawlService) throws IOException {
+        ExactMatchContext<File> context = new ExactMatchContext<>(
+                fileSearchAction.getRootLocation(),
+                fileSearchAction.getCorpusLocation(),
+                fileSearchAction.getFoundLocation(),
+                fileSearchAction.getStateLocation(),
+                fileSearchAction.getMinHit(),
+                Duration.ofSeconds(5)
+        );
+        return scanFolder(context, crawlService);
     }
 
     public long scanFolder(ExactMatchContext<File> exactMatchContext, FileCrawlService crawlService) throws IOException {

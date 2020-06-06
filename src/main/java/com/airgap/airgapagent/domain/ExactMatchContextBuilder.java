@@ -10,7 +10,6 @@ public class ExactMatchContextBuilder<T> {
     private File foundFile;
     private File stateFile;
     private Integer minHit;
-    private Integer maxHit;
     private Duration saveInterval;
 
     public ExactMatchContextBuilder<T> setRoot(T root) {
@@ -38,11 +37,6 @@ public class ExactMatchContextBuilder<T> {
         return this;
     }
 
-    public ExactMatchContextBuilder<T> setMaxHit(int maxHit) {
-        this.maxHit = maxHit;
-        return this;
-    }
-
     public ExactMatchContextBuilder<T> setSaveInterval(Duration saveInterval) {
         this.saveInterval = saveInterval;
         return this;
@@ -54,8 +48,7 @@ public class ExactMatchContextBuilder<T> {
         Objects.requireNonNull(foundFile);
         Objects.requireNonNull(stateFile);
         Objects.requireNonNull(minHit);
-        Objects.requireNonNull(maxHit);
         Objects.requireNonNull(saveInterval);
-        return new ExactMatchContext<>(root, exactMatchFile, foundFile, stateFile, minHit, maxHit, saveInterval);
+        return new ExactMatchContext<>(root, exactMatchFile, foundFile, stateFile, minHit, saveInterval);
     }
 }

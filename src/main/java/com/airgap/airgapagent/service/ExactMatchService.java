@@ -82,7 +82,6 @@ public class ExactMatchService {
                                 .doOnError(throwable -> errorService.error(dataReader.getSource(),
                                         "Impossible to parse file",
                                         throwable))
-                                .take(exactMatchContext.getMaxHit())
                                 .count()
                                 .onErrorReturn(0L)
                                 .map(counter -> new ExactMatchingResult<>(dataReader.getSource(), Math.toIntExact(counter)))

@@ -1,48 +1,59 @@
 package com.airgap.airgapagent.configuration;
 
+import com.beust.jcommander.Parameter;
+import com.beust.jcommander.validators.PositiveInteger;
+
+import java.io.File;
+
 /**
  * com.airgap.airgapagent.configuration
  * Created by Jacques Fontignie on 6/3/2020.
  */
 public class AbstractSearchAction implements Action {
 
-    private int minHit;
-    private String corpusLocation;
-    private String folderLocation;
+    @SuppressWarnings("java:S1170")
+    @Parameter(
+            names = "-minHit",
+            description = "number of minimum hits to match",
+            validateWith = PositiveInteger.class)
+    private final int minHit = 5;
 
 
-    public AbstractSearchAction(int minHit, String corpusLocation, String folderLocation) {
-        this.minHit = minHit;
-        this.corpusLocation = corpusLocation;
-        this.folderLocation = folderLocation;
-    }
+    @Parameter(
+            names = "-corpus",
+            description = "corpus file: This file must be in CSV format and needs to contain an header. " +
+                    "The algorithm used is Aho Corasick to retrieve the file",
+            required = true,
+            validateWith = FileExistsValidator.class)
+    private File corpusLocation;
 
-    int getMinHit() {
+    @Parameter(
+            names = "-folder",
+            description = "folder to scan for the specific patterns",
+            required = true,
+            validateWith = FolderExistsValidator.class)
+    private File folderLocation;
+
+    @Parameter(
+            names = "-state",
+            description = "file containing the state to resume in case of error",
+            validateWith = FileExistsValidator.class)
+    private File stateLocation;
+
+
+    public int getMinHit() {
         return minHit;
     }
 
-    public void setMinHit(int minHit) {
-        this.minHit = minHit;
-    }
-
-    String getCorpusLocation() {
+    public File getCorpusLocation() {
         return corpusLocation;
     }
 
-    public void setCorpusLocation(String corpusLocation) {
-        this.corpusLocation = corpusLocation;
-    }
-
-    String getFolderLocation() {
+    public File getRootLocation() {
         return folderLocation;
     }
 
-    public void setFolderLocation(String folderLocation) {
-        this.folderLocation = folderLocation;
-    }
-
-    @Override
-    public ActionType getType() {
-        return ActionType.SEARCH;
+    public File getStateLocation() {
+        return stateLocation;
     }
 }

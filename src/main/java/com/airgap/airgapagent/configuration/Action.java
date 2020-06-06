@@ -6,5 +6,4 @@ package com.airgap.airgapagent.configuration;
  */
 public interface Action {
 
-    ActionType getType();
 }

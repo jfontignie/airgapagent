@@ -1,36 +1,41 @@
 package com.airgap.airgapagent.configuration;
 
-import java.util.Set;
+import com.beust.jcommander.Parameter;
+import com.beust.jcommander.Parameters;
+
+import java.io.File;
+import java.util.List;
 
 /**
  * com.airgap.airgapagent.configuration
  * Created by Jacques Fontignie on 6/3/2020.
  */
+@Parameters(commandNames = FileCopyAction.COMMAND_NAME,
+        commandDescription = "Copy all the files matching a specific corpus in a target folder")
 public class FileCopyAction extends AbstractSearchAction {
 
-    private final String targetFolder;
-    private final Set<CopyOption> copyOptions;
+    public static final String COMMAND_NAME = "copy";
 
-    public FileCopyAction(int minHit, String corpusLocation,
-                          String folderLocation,
-                          String targetFolder,
-                          Set<CopyOption> copyOptions) {
-        super(minHit, corpusLocation, folderLocation);
-        this.targetFolder = targetFolder;
-        this.copyOptions = copyOptions;
+    @Parameter(
+            names = "-target",
+            description = "Target folder in which to save the files",
+            required = true,
+            validateWith = FolderExistsValidator.class
+    )
+    private File target;
+
+    @Parameter(
+            names = "-options",
+            description = "Options during copy",
+            listConverter = CopyOptionConverter.class
+    )
+    private List<CopyOption> copyOptions;
+
+    public File getTarget() {
+        return target;
     }
 
-
-    @Override
-    public ActionType getType() {
-        return ActionType.COPY;
-    }
-
-    String getTargetFolder() {
-        return targetFolder;
-    }
-
-    Set<CopyOption> getCopyOptions() {
+    List<CopyOption> getCopyOptions() {
         return copyOptions;
     }
 
