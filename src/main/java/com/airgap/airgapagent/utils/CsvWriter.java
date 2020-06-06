@@ -7,7 +7,9 @@ import java.io.Closeable;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.Map;
 import java.util.StringJoiner;
+import java.util.stream.Collectors;
 
 /**
  * com.airgap.airgapagent.service
@@ -26,6 +28,7 @@ public class CsvWriter implements Closeable {
             writer.write(new StringJoiner(CSV_SEPARATOR, "", "\n")
                     .add("File")
                     .add("Occurrences")
+                    .add("Metadatas")
                     .toString());
             writer.flush();
         }
@@ -39,12 +42,21 @@ public class CsvWriter implements Closeable {
         try {
             writer.write(
                     new StringJoiner(CSV_SEPARATOR, "", "\n")
-                            .add(converter.persist(result.getSource()))
-                            .add(String.valueOf(result.getOccurrences())).toString());
+                            .add(converter.persist(result.getDataSource().getSource()))
+                            .add(String.valueOf(result.getOccurrences()))
+                            .add(convert(result.getDataSource().getMetadata()))
+                            .toString());
             writer.flush();
         } catch (IOException e) {
             throw new IllegalStateException(e);
         }
+    }
+
+    private String convert(Map<String, String> metadata) {
+        return metadata.entrySet().stream()
+                .map(entry -> entry.getKey() + "=" + entry.getValue())
+                .collect(Collectors.joining(CSV_SEPARATOR));
+
     }
 
     @PreDestroy

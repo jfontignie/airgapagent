@@ -1,5 +1,7 @@
 package com.airgap.airgapagent.domain;
 
+import com.airgap.airgapagent.utils.DataReader;
+
 import java.util.StringJoiner;
 
 /**
@@ -7,15 +9,15 @@ import java.util.StringJoiner;
  * Created by Jacques Fontignie on 5/30/2020.
  */
 public class ExactMatchingResult<T> {
-    private final T source;
+    private final DataReader<T> source;
     private final int occurrences;
 
-    public ExactMatchingResult(T source, int occurrences) {
+    public ExactMatchingResult(DataReader<T> source, int occurrences) {
         this.source = source;
         this.occurrences = occurrences;
     }
 
-    public T getSource() {
+    public DataReader<T> getDataSource() {
         return source;
     }
 
@@ -30,4 +32,5 @@ public class ExactMatchingResult<T> {
                 .add("occurrences=" + occurrences)
                 .toString();
     }
+
 }

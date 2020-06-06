@@ -1,16 +1,15 @@
 package com.airgap.airgapagent.service;
 
+import com.airgap.airgapagent.utils.DataReader;
 import org.apache.commons.io.FileUtils;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.Reader;
 import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 /**
@@ -27,7 +26,7 @@ public class FileCrawlService implements CrawlService<File> {
     }
 
     @Override
-    public Optional<Reader> getContentReader(File file) {
+    public DataReader<File> getContentReader(File file) throws IOException {
         return contentReaderService.getContent(file);
     }
 

@@ -71,9 +71,16 @@ public class ExactMatchService {
                 .runOn(Schedulers.parallel())
 
                 //Init the reader and forget if empty
-                .flatMap(file -> crawlService.getContentReader(file)
-                        .map(reader -> Flux.just(new DataReader<>(file, reader)))
-                        .orElse(Flux.empty()))
+                .flatMap(file -> {
+                    try {
+                        //noinspection BlockingMethodInNonBlockingContext
+                        DataReader<T> contentReader = crawlService.getContentReader(file);
+                        return Flux.just(contentReader);
+                    } catch (IOException e) {
+                        errorService.error(file, "Impossible to parse content", e);
+                        return Flux.empty();
+                    }
+                })
 
                 //Parse the data to find keywords
 
@@ -84,7 +91,7 @@ public class ExactMatchService {
                                         throwable))
                                 .count()
                                 .onErrorReturn(0L)
-                                .map(counter -> new ExactMatchingResult<>(dataReader.getSource(), Math.toIntExact(counter)))
+                                .map(counter -> new ExactMatchingResult<>(dataReader, Math.toIntExact(counter)))
                                 .flux())
 
                 //Filter for the one with enough occurences found
@@ -97,7 +104,7 @@ public class ExactMatchService {
                                                CrawlService<T> crawlService,
                                                StateConverter<T> stateConverter) throws IOException {
 
-        try (CsvWriter foundWriter = new CsvWriter(exactMatchContext.getFoundFile())) {
+        try (CsvWriter dataWriter = new CsvWriter(exactMatchContext.getFoundFile())) {
 
             IntervalRunner runner = IntervalRunner.of(Duration.ofSeconds(5), true);
 
@@ -105,7 +112,7 @@ public class ExactMatchService {
                     crawlService,
                     stateConverter)
                     //Display the result
-                    .doOnNext(exactMatchingResult -> foundWriter.save(exactMatchingResult, stateConverter))
+                    .doOnNext(exactMatchingResult -> dataWriter.save(exactMatchingResult, stateConverter))
                     .doOnNext(tExactMatchingResult -> runner.trigger(integer -> log.info("Elements found so far: {}", integer)))
                     .count()
                     //Wait the last one has been handler

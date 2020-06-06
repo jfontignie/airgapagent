@@ -11,12 +11,12 @@ import java.io.File;
  */
 public class AbstractSearchAction implements Action {
 
-    @SuppressWarnings("java:S1170")
+    @SuppressWarnings("FieldMayBeFinal")
     @Parameter(
             names = "-minHit",
             description = "number of minimum hits to match",
             validateWith = PositiveInteger.class)
-    private final int minHit = 5;
+    private int minHit = 5;
 
 
     @Parameter(

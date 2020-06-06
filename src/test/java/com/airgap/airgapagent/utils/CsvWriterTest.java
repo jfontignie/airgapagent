@@ -7,6 +7,7 @@ import org.junit.jupiter.api.Test;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.util.HashMap;
 
 /**
  * com.airgap.airgapagent.service
@@ -20,7 +21,8 @@ class CsvWriterTest {
         File file = new File("target/CsvWriterTest.csv");
         Files.deleteIfExists(file.toPath());
         CsvWriter writer = CsvWriter.of(file);
-        ExactMatchingResult<Object> exactMatchingResult = new ExactMatchingResult<>(new File("teaf").toString(), 5);
+        ExactMatchingResult<Object> exactMatchingResult = new ExactMatchingResult<>(
+                new DataReader<>(new File("teaf"), new HashMap<>(), null), 5);
         writer.save(exactMatchingResult, ObjectStateConverter.of());
         Assertions.assertTrue(file.exists());
         writer.close();

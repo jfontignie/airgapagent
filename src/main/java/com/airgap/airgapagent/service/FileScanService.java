@@ -63,10 +63,10 @@ public class FileScanService {
                     try {
                         //noinspection BlockingMethodInNonBlockingContext
                         crawlService.copy(exactMatchContext.getRoot(),
-                                exactMatchingResult.getSource(), destination);
+                                exactMatchingResult.getDataSource().getSource(), destination);
                         return Flux.just(exactMatchingResult);
                     } catch (IOException e) {
-                        errorService.error(exactMatchingResult.getSource(), "Impossible to copy file", e);
+                        errorService.error(exactMatchingResult.getDataSource(), "Impossible to copy file", e);
                         return Flux.empty();
                     }
                 }).count()

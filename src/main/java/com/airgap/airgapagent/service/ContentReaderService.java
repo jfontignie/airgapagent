@@ -1,12 +1,16 @@
 package com.airgap.airgapagent.service;
 
+import com.airgap.airgapagent.utils.DataReader;
 import org.apache.tika.Tika;
+import org.apache.tika.metadata.Metadata;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.Reader;
-import java.util.Optional;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * com.airgap.airgapagent.service
@@ -15,20 +19,17 @@ import java.util.Optional;
 @Service
 public class ContentReaderService {
 
-    private final ErrorService errorService;
-
-    public ContentReaderService(ErrorService errorService) {
-        this.errorService = errorService;
-    }
-
     private final Tika tika = new Tika();
 
-    public Optional<Reader> getContent(File file) {
-        try {
-            return Optional.of(tika.parse(file));
-        } catch (IOException e) {
-            errorService.error(file.toString(), "Impossible to parse file", e);
-            return Optional.empty();
+    public DataReader<File> getContent(File file) throws IOException {
+        try (FileInputStream fis = new FileInputStream(file)) {
+            Metadata metadata = new Metadata();
+            Reader reader = tika.parse(fis, metadata);
+            Map<String, String> map = new HashMap<>();
+            for (String name : metadata.names()) {
+                map.put(name, metadata.get(name));
+            }
+            return new DataReader<>(file, map, reader);
         }
     }
 

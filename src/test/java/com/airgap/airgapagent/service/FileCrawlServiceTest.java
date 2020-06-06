@@ -1,13 +1,16 @@
 package com.airgap.airgapagent.service;
 
 import com.airgap.airgapagent.utils.ConstantsTest;
+import com.airgap.airgapagent.utils.DataReader;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.Collections;
+import java.util.HashMap;
 
 /**
  * com.airgap.airgapagent.service
@@ -19,16 +22,17 @@ class FileCrawlServiceTest {
     private FileCrawlService service;
 
     @BeforeEach
-    void setUp() {
+    void setUp() throws IOException {
         ContentReaderService contentReader = Mockito.mock(ContentReaderService.class);
+        Mockito.doReturn(new DataReader<>("test", new HashMap<>(), null)).when(contentReader).getContent(Mockito.any());
         service = new FileCrawlService(contentReader);
 
     }
 
     @Test
-    void getContentReader() {
+    void getContentReader() throws IOException {
 
-        Assertions.assertTrue(service.getContentReader(new File("aa")).isEmpty());
+        Assertions.assertNotNull(service.getContentReader(new File("aa")));
     }
 
     @Test

@@ -1,13 +1,12 @@
 package com.airgap.airgapagent.service;
 
-import com.airgap.airgapagent.utils.ConstantsTest;
+import com.airgap.airgapagent.utils.DataReader;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.Reader;
-import java.util.Optional;
 
 /**
  * com.airgap.airgapagent.service
@@ -17,13 +16,30 @@ class ContentReaderServiceTest {
 
     @Test
     void testFile() throws IOException {
-        ContentReaderService contentReaderService = new ContentReaderService(new DummyErrorService());
-        Assertions.assertTrue(contentReaderService.getContent(new File("does not exits")).isEmpty());
+        ContentReaderService contentReaderService = new ContentReaderService();
+        Assertions.assertThrows(FileNotFoundException.class, () -> contentReaderService.getContent(new File("does not exits")));
 
-        Optional<Reader> found = contentReaderService.getContent(new File("src/test/resources/sample/sample.txt"));
-        Assertions.assertTrue(found.isPresent());
-        Assertions.assertTrue(contentReaderService.getContent(ConstantsTest.SAMPLE_CSV).isPresent());
+        DataReader<File> found = contentReaderService.getContent(new File("src/test/resources/sample/sample.txt"));
+        Assertions.assertNotNull(found.getReader());
+        found.getReader().close();
+    }
 
-        found.get().close();
+
+    @Test
+    void testWord() throws IOException {
+        ContentReaderService contentReaderService = new ContentReaderService();
+
+        DataReader<File> found = contentReaderService.getContent(new File("src/test/resources/sample/sample.docx"));
+        Assertions.assertNotNull(found.getReader());
+    }
+
+
+    @Test
+    void testMail() throws IOException {
+        ContentReaderService contentReaderService = new ContentReaderService();
+
+        DataReader<File> found = contentReaderService.getContent(new File("src/test/resources/sample/sample.eml"));
+        Assertions.assertNotNull(found.getReader());
+        found.getReader().close();
     }
 }
