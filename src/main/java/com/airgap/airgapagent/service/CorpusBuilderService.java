@@ -12,7 +12,6 @@ import java.io.File;
 import java.io.IOException;
 import java.util.HashSet;
 import java.util.Set;
-import java.util.TreeSet;
 
 /**
  * com.airgap.airgapagent.service
@@ -26,12 +25,6 @@ public class CorpusBuilderService {
     public Set<String> buildSet(File file) throws IOException {
         return build(file, new HashSet<>());
     }
-
-
-    public Set<String> buildTreeSet(File file) throws IOException {
-        return build(file, new TreeSet<>());
-    }
-
 
     private Set<String> build(File file, Set<String> set) throws IOException {
         log.info("Reading list of exact matches in {}", file);

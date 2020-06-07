@@ -27,14 +27,14 @@ class CorpusBuilderServiceTest {
     @Test
     void buildTree() throws IOException {
         CorpusBuilderService service = new CorpusBuilderService();
-        Set<String> found = service.buildTreeSet(new File("src/test/resources/sample/sample.csv"));
+        Set<String> found = service.buildSet(new File("src/test/resources/sample/sample.csv"));
         Assertions.assertNotNull(found);
     }
 
     @Test
     void buildBigSample() throws IOException {
         CorpusBuilderService service = new CorpusBuilderService();
-        Set<String> found = service.buildTreeSet(ConstantsTest.CORPUS_SAMPLE);
+        Set<String> found = service.buildSet(ConstantsTest.CORPUS_SAMPLE);
         Assertions.assertNotNull(found);
         Assertions.assertEquals(65444, found.size());
 

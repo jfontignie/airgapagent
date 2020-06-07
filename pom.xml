@@ -85,6 +85,12 @@
             <version>1.78</version>
         </dependency>
 
+        <dependency>
+            <groupId>org.apache.james</groupId>
+            <artifactId>apache-mailet-base</artifactId>
+            <version>3.4.0</version>
+        </dependency>
+
 
     </dependencies>
 

@@ -2,6 +2,7 @@ package com.airgap.airgapagent.algo;
 
 import java.io.IOException;
 import java.io.Reader;
+import java.io.StringReader;
 import java.util.function.Consumer;
 
 /**
@@ -50,4 +51,8 @@ public class AhoCorasickMatcher implements MultipleStringMatcher {
     }
 
 
+    public void match(String text, Consumer<MatchingResult> consumer, Automaton automaton) throws IOException {
+        StringReader stringReader = new StringReader(text);
+        match(stringReader, consumer, automaton);
+    }
 }

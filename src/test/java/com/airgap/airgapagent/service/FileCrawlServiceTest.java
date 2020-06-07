@@ -25,15 +25,14 @@ class FileCrawlServiceTest {
     @BeforeEach
     void setUp() throws IOException {
         ContentReaderService contentReader = Mockito.mock(ContentReaderService.class);
-        Mockito.doReturn(new DataReader<>("test", new HashMap<>(), null)).when(contentReader).getContent(Mockito.any());
+        Mockito.doReturn(new DataReader<>("test", new HashMap<>(), null)).when(contentReader).getContent((File) Mockito.any());
         service = new FileCrawlService(contentReader, new ErrorServiceImpl(new MockEnvironment()
                 .withProperty(ErrorServiceImpl.ERROR_FILE, "target/error.dat")));
 
     }
 
     @Test
-    void getContentReader() throws IOException {
-
+    void getContentReader() {
         Assertions.assertNotNull(service.getContentReader(new File("aa")));
     }
 
