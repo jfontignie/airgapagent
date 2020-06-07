@@ -29,11 +29,11 @@ public class AhoCorasickMatcher implements MultipleStringMatcher {
             }
 
             while (state.getChild(car) == null) {
-                state = automaton.getFail().get(state);
+                state = state.getFail();
             }
 
             state = state.getChild(car);
-            for (final int patternIndex : automaton.getPatterns().get(state)) {
+            for (final int patternIndex : state.getPatterns()) {
                 target.accept(new MatchingResult(textIndex + 1, automaton.getPattern(patternIndex)));
             }
             textIndex++;

@@ -3,20 +3,22 @@ package com.airgap.airgapagent.algo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.*;
+import java.io.Serializable;
+import java.util.ArrayDeque;
+import java.util.Arrays;
+import java.util.Deque;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
  * com.airgap.airgapagent.algo
  * Created by Jacques Fontignie on 5/29/2020.
  */
-public class Automaton {
+public class Automaton implements Serializable {
 
     private static final Logger log = LoggerFactory.getLogger(Automaton.class);
 
     private final char[][] originalPatterns;
-    private final Map<TrieNode, TrieNode> fail = new HashMap<>();
-    private final Map<TrieNode, int[]> patterns = new HashMap<>();
     private final Set<AutomatonOption> options;
     private TrieNode root;
 
@@ -30,6 +32,7 @@ public class Automaton {
     public Automaton(Set<AutomatonOption> automatonOptions, Set<String> patterns) {
         originalPatterns = patterns.stream()
                 .map(s -> automatonOptions.contains(AutomatonOption.CASE_INSENSITIVE) ? s.toLowerCase() : s)
+                .sorted()
                 .map(String::toCharArray)
                 .collect(Collectors.toList())
                 .toArray(new char[0][0]);
@@ -53,29 +56,29 @@ public class Automaton {
 
     private void constructTrie(final char[]... patterns) {
         root = new TrieNode();
-        final int k = patterns.length;
 
-        for (int patternIndex = 0; patternIndex < k; ++patternIndex) {
+        for (int patternIndex = 0; patternIndex < patterns.length; patternIndex++) {
             TrieNode node = root;
             int charIndex = 0;
-            final int patternLength = patterns[patternIndex].length;
+            char[] currentPattern = patterns[patternIndex];
+            final int patternLength = currentPattern.length;
 
-            while (charIndex < patternLength && node.getChild(patterns[patternIndex][charIndex]) != null) {
-                node = node.getChild(patterns[patternIndex][charIndex]);
+            while (charIndex < patternLength && node.getChild(currentPattern[charIndex]) != null) {
+                node = node.getChild(currentPattern[charIndex]);
                 ++charIndex;
             }
 
             while (charIndex < patternLength) {
                 final TrieNode u = new TrieNode();
-                node.setChild(patterns[patternIndex][charIndex], u);
+                node.setChild(currentPattern[charIndex], u);
                 node = u;
                 ++charIndex;
             }
 
-            this.patterns.put(node, new int[]{patternIndex});
+            node.setPattern(patternIndex);
         }
 
-        this.patterns.put(root, new int[0]);
+        root.clearPattern();
 
     }
 
@@ -88,7 +91,7 @@ public class Automaton {
             fallbackNode.setChild(b, root);
         }
 
-        fail.put(root, fallbackNode);
+        root.setFail(fallbackNode);
         final Deque<TrieNode> queue = new ArrayDeque<>();
         queue.addLast(root);
 
@@ -101,42 +104,33 @@ public class Automaton {
                 if (head.getChild(character) != null) {
 
                     final TrieNode child = head.getChild(character);
-                    TrieNode w = fail.get(head);
+                    TrieNode w = head.getFail();
 
                     while (w.getChild(character) == null) {
-                        w = fail.get(w);
+                        w = w.getFail();
                     }
 
-                    fail.put(child, w.getChild(character));
+                    child.setFail(w.getChild(character));
 
-                    final int[] failTargets = patterns.get(fail.get(child));
+                    final int[] failTargets = child.getFail().getPatterns();
 
-                    final int[] existingList = patterns.get(child);
+                    final int[] existingList = child.getPatterns();
                     if (existingList == null) {
-                        patterns.put(child, failTargets);
+                        child.setPattern(failTargets);
                     } else {
                         final int[] extendedList = Arrays.copyOf(existingList, existingList.length + failTargets.length);
                         System.arraycopy(failTargets, 0, extendedList, existingList.length, failTargets.length);
-                        patterns.put(child, extendedList);
+                        child.setPattern(extendedList);
                     }
                     queue.addLast(child);
                 }
             }
         }
-
-        patterns.put(root, new int[0]);
+        root.clearPattern();
     }
 
     public TrieNode getRoot() {
         return root;
-    }
-
-    public Map<TrieNode, TrieNode> getFail() {
-        return fail;
-    }
-
-    public Map<TrieNode, int[]> getPatterns() {
-        return patterns;
     }
 
     public char[] getPattern(int patternIndex) {
