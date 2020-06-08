@@ -29,6 +29,7 @@ import java.util.function.Consumer;
  */
 public class ContentExactMatcherMailet extends GenericMailet {
 
+    private static final Logger log = LoggerFactory.getLogger(ContentExactMatcherMailet.class);
 
     static final String MATCHER_ATTRIBUTE = "matcher";
     static final String MIN_HIT = "minHit";
@@ -37,12 +38,19 @@ public class ContentExactMatcherMailet extends GenericMailet {
     static final Attribute MATCH_ERROR = Attribute.convertToAttribute(MATCHER_ATTRIBUTE, "ERROR");
     static final Attribute MATCH_NOT_FOUND = Attribute.convertToAttribute(MATCHER_ATTRIBUTE, "NotFound");
 
-
-    private static final Logger log = LoggerFactory.getLogger(ContentExactMatcherMailet.class);
-    private final AhoCorasickMatcher ahoCorasickMatcher = new AhoCorasickMatcher();
-    private final ContentReaderService contentReaderService = new ContentReaderService();
+    private final AhoCorasickMatcher ahoCorasickMatcher;
+    private final ContentReaderService contentReaderService;
     private Automaton automaton;
     private int minHit;
+
+    ContentExactMatcherMailet(AhoCorasickMatcher ahoCorasickMatcher, ContentReaderService contentReaderService) {
+        this.ahoCorasickMatcher = ahoCorasickMatcher;
+        this.contentReaderService = contentReaderService;
+    }
+
+    public ContentExactMatcherMailet() {
+        this(new AhoCorasickMatcher(), new ContentReaderService());
+    }
 
     @Override
     public void init() throws MessagingException {
@@ -70,6 +78,7 @@ public class ContentExactMatcherMailet extends GenericMailet {
 
     @Override
     public void service(Mail mail) throws MessagingException {
+        Attribute attribute = MATCH_NOT_FOUND;
         AtomicInteger found = new AtomicInteger();
         Consumer<MatchingResult> consumer = matchingResult -> found.incrementAndGet();
 
@@ -79,7 +88,7 @@ public class ContentExactMatcherMailet extends GenericMailet {
             ahoCorasickMatcher.match(mimeMessage.getSubject(), consumer, automaton);
         } catch (IOException e) {
             log.error("Impossible to read subject", e);
-            mail.setAttribute(MATCH_ERROR);
+            attribute = MATCH_ERROR;
         }
 
         try {
@@ -87,13 +96,13 @@ public class ContentExactMatcherMailet extends GenericMailet {
             ahoCorasickMatcher.match(dataReader.getReader(), consumer, automaton);
         } catch (IOException e) {
             log.error("Impossible to read content");
-            mail.setAttribute(MATCH_ERROR);
+            attribute = MATCH_ERROR;
         }
         if (found.get() > minHit) {
-            mail.setAttribute(MATCH_HIT);
-        } else {
-            mail.setAttribute(MATCH_NOT_FOUND);
+            attribute = MATCH_HIT;
         }
+        mail.setAttribute(attribute);
+
     }
 
     private MimeMessage getMessageFromMail(Mail mail) throws MailetException {

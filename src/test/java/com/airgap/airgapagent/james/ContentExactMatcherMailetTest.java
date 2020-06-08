@@ -1,15 +1,22 @@
 package com.airgap.airgapagent.james;
 
+import com.airgap.airgapagent.algo.AhoCorasickMatcher;
+import com.airgap.airgapagent.service.ContentReaderService;
 import com.airgap.airgapagent.utils.ConstantsTest;
+import com.airgap.airgapagent.utils.DataReader;
+import org.apache.commons.io.input.NullReader;
 import org.apache.james.core.builder.MimeMessageBuilder;
 import org.apache.mailet.*;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
 
 import javax.mail.MessagingException;
 import javax.mail.internet.MimeBodyPart;
+import javax.mail.internet.MimeMessage;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.util.Map;
 import java.util.Optional;
 
 import static com.airgap.airgapagent.utils.ConstantsTest.CORPUS_SAMPLE_STRING;
@@ -152,6 +159,82 @@ class ContentExactMatcherMailetTest {
                 .get().getValue()).isEqualTo(AttributeValue.of("HIT"));
     }
 
+    @Test
+    void shouldFailDuetoInvalidParsing() throws MessagingException, IOException {
+
+        AhoCorasickMatcher matcher = Mockito.mock(AhoCorasickMatcher.class);
+        Mockito.doThrow(new IOException("mock"))
+                .when(matcher).match(Mockito.anyString(), Mockito.any(), Mockito.any());
+
+        ContentReaderService contentReaderService = Mockito.mock(ContentReaderService.class);
+        Mockito.doReturn(new DataReader<>(new File(""), Map.of(), new NullReader(0)))
+                .when(contentReaderService).getContent((MimeMessage) Mockito.any());
+
+        ContentExactMatcherMailet mailet = new ContentExactMatcherMailet(matcher, contentReaderService);
+
+        FakeMailetConfig mailetConfig = FakeMailetConfig.builder()
+                .mailetName("Test")
+                .setProperty(ContentExactMatcherMailet.CORPUS, CORPUS_SAMPLE_STRING)
+                .setProperty(ContentExactMatcherMailet.MIN_HIT, "3")
+                .build();
+        mailet.init(mailetConfig);
+
+
+        Mail mail = FakeMail.builder()
+                .name("mail")
+                .mimeMessage(MimeMessageBuilder.mimeMessageBuilder()
+                        .setSubject("there is a password")
+                        .setMultipartWithBodyParts(MimeMessageBuilder.bodyPartBuilder()
+                                        .data("there is a password"),
+                                createAttachmentBodyPart(ConstantsTest.CORPUS_SAMPLE)
+                        ))
+                .build();
+
+        mailet.service(mail);
+
+
+        assertTrue(mail.getAttribute(AttributeName.of(ContentExactMatcherMailet.MATCHER_ATTRIBUTE)).isPresent());
+        assertThat(mail.getAttribute(AttributeName.of(ContentExactMatcherMailet.MATCHER_ATTRIBUTE))
+                .get().getValue()).isEqualTo(AttributeValue.of("ERROR"));
+    }
+
+    @Test
+    void shouldFailDueToInvalidBody() throws MessagingException, IOException {
+
+        AhoCorasickMatcher matcher = Mockito.mock(AhoCorasickMatcher.class);
+
+        ContentReaderService contentReaderService = Mockito.mock(ContentReaderService.class);
+        Mockito.doThrow(new IOException("throw"))
+                .when(contentReaderService).getContent((MimeMessage) Mockito.any());
+
+        ContentExactMatcherMailet mailet = new ContentExactMatcherMailet(matcher, contentReaderService);
+
+        FakeMailetConfig mailetConfig = FakeMailetConfig.builder()
+                .mailetName("Test")
+                .setProperty(ContentExactMatcherMailet.CORPUS, CORPUS_SAMPLE_STRING)
+                .setProperty(ContentExactMatcherMailet.MIN_HIT, "3")
+                .build();
+        mailet.init(mailetConfig);
+
+        Mail mail = FakeMail.builder()
+                .name("mail")
+                .mimeMessage(MimeMessageBuilder.mimeMessageBuilder()
+                        .setSubject("there is a password")
+                        .setMultipartWithBodyParts(MimeMessageBuilder.bodyPartBuilder()
+                                        .data("there is a password"),
+                                createAttachmentBodyPart(ConstantsTest.CORPUS_SAMPLE)
+                        ))
+                .build();
+
+        mailet.service(mail);
+
+
+        assertTrue(mail.getAttribute(AttributeName.of(ContentExactMatcherMailet.MATCHER_ATTRIBUTE)).isPresent());
+        assertThat(mail.getAttribute(AttributeName.of(ContentExactMatcherMailet.MATCHER_ATTRIBUTE))
+                .get().getValue()).isEqualTo(AttributeValue.of("ERROR"));
+    }
+
+
     private MimeMessageBuilder.BodyPartBuilder createAttachmentBodyPart(File file) throws IOException {
         byte[] array = Files.readAllBytes(file.toPath());
         return MimeMessageBuilder.bodyPartBuilder()
@@ -160,11 +243,4 @@ class ContentExactMatcherMailetTest {
                 .filename(file.getName());
     }
 
-    private MimeMessageBuilder.BodyPartBuilder createAttachmentBodyPart(String body, String fileName, MimeMessageBuilder.Header... headers) {
-        return MimeMessageBuilder.bodyPartBuilder()
-                .data(body)
-                .addHeaders(headers)
-                .disposition(MimeBodyPart.ATTACHMENT)
-                .filename(fileName);
-    }
 }
