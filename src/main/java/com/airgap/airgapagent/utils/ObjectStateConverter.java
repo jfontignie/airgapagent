@@ -9,7 +9,7 @@ public class ObjectStateConverter implements StateConverter<Object> {
     private static final ObjectStateConverter INSTANCE = new ObjectStateConverter();
 
     private ObjectStateConverter() {
-
+        //Nothing to do
     }
 
     public static ObjectStateConverter of() {

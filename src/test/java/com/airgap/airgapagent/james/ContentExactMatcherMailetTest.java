@@ -67,7 +67,7 @@ class ContentExactMatcherMailetTest {
 
         assertTrue(mail.getAttribute(AttributeName.of(ContentExactMatcherMailet.MATCHER_ATTRIBUTE)).isPresent());
         assertThat(mail.getAttribute(AttributeName.of(ContentExactMatcherMailet.MATCHER_ATTRIBUTE))
-                .get().getValue()).isEqualTo(AttributeValue.of("HIT"));
+                .get().getValue()).isEqualTo(AttributeValue.of(ContentExactMatcherMailet.HIT_STRING));
     }
 
 
@@ -117,7 +117,7 @@ class ContentExactMatcherMailetTest {
 
         assertTrue(mail.getAttribute(AttributeName.of(ContentExactMatcherMailet.MATCHER_ATTRIBUTE)).isPresent());
         assertThat(mail.getAttribute(AttributeName.of(ContentExactMatcherMailet.MATCHER_ATTRIBUTE))
-                .get().getValue()).isEqualTo(AttributeValue.of("HIT"));
+                .get().getValue()).isEqualTo(AttributeValue.of(ContentExactMatcherMailet.HIT_STRING));
     }
 
 
