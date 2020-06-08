@@ -29,11 +29,13 @@ import java.util.function.Consumer;
  */
 public class ContentExactMatcherMailet extends GenericMailet {
 
+
     static final String MATCHER_ATTRIBUTE = "matcher";
     static final String MIN_HIT = "minHit";
     static final String CORPUS = "corpus";
-    static final String HIT_STRING = "HIT";
-    private static final String ERROR_STRING = "ERROR";
+    static final Attribute MATCH_HIT = Attribute.convertToAttribute(MATCHER_ATTRIBUTE, "HIT");
+    static final Attribute MATCH_ERROR = Attribute.convertToAttribute(MATCHER_ATTRIBUTE, "ERROR");
+    static final Attribute MATCH_NOT_FOUND = Attribute.convertToAttribute(MATCHER_ATTRIBUTE, "NotFound");
 
 
     private static final Logger log = LoggerFactory.getLogger(ContentExactMatcherMailet.class);
@@ -77,7 +79,7 @@ public class ContentExactMatcherMailet extends GenericMailet {
             ahoCorasickMatcher.match(mimeMessage.getSubject(), consumer, automaton);
         } catch (IOException e) {
             log.error("Impossible to read subject", e);
-            mail.setAttribute(Attribute.convertToAttribute(MATCHER_ATTRIBUTE, ERROR_STRING));
+            mail.setAttribute(MATCH_ERROR);
         }
 
         try {
@@ -85,10 +87,12 @@ public class ContentExactMatcherMailet extends GenericMailet {
             ahoCorasickMatcher.match(dataReader.getReader(), consumer, automaton);
         } catch (IOException e) {
             log.error("Impossible to read content");
-            mail.setAttribute(Attribute.convertToAttribute(MATCHER_ATTRIBUTE, ERROR_STRING));
+            mail.setAttribute(MATCH_ERROR);
         }
         if (found.get() > minHit) {
-            mail.setAttribute(Attribute.convertToAttribute(MATCHER_ATTRIBUTE, HIT_STRING));
+            mail.setAttribute(MATCH_HIT);
+        } else {
+            mail.setAttribute(MATCH_NOT_FOUND);
         }
     }
 
