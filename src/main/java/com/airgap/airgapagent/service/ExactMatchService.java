@@ -9,6 +9,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
+import reactor.core.publisher.ParallelFlux;
 import reactor.core.scheduler.Schedulers;
 
 import java.io.IOException;
@@ -65,7 +66,7 @@ public class ExactMatchService {
         persistentStateVisitor.init();
 
 
-        return visitorService.list(crawlService, context)
+        ParallelFlux<ExactMatchingResult<T>> flux = visitorService.list(crawlService, context)
                 //Persist the state
                 .doOnNext(file -> persistentStateVisitor.persist())
 
@@ -91,8 +92,13 @@ public class ExactMatchService {
                                 .flux())
 
                 //Filter for the one with enough occurences found
-                .filter(result -> result.getOccurrences() >= exactMatchContext.getMinHit())
-                .sequential().doOnTerminate(persistentStateVisitor::close);
+                .filter(result -> result.getOccurrences() >= exactMatchContext.getMinHit());
+
+        if (exactMatchContext.isSyslog()) {
+            flux = flux.doOnNext(ExactMatchService.this::sendSyslog);
+        }
+
+        return flux.sequential().doOnTerminate(persistentStateVisitor::close);
     }
 
 
@@ -104,24 +110,14 @@ public class ExactMatchService {
 
             IntervalRunner runner = IntervalRunner.of(Duration.ofSeconds(5), true);
 
-            Flux<ExactMatchingResult<T>> flux = buildScan(exactMatchContext,
+
+            Long count = buildScan(exactMatchContext,
                     crawlService,
                     stateConverter)
                     //Display the result
                     .doOnNext(exactMatchingResult -> dataWriter.save(exactMatchingResult, stateConverter))
-                    .doOnNext(exactMatchingResult -> runner.trigger(integer -> log.info("Elements found so far: {}", integer)));
-
-            if (exactMatchContext.isSyslog()) {
-                flux = flux.doOnNext(exactMatchingResult -> {
-                    try {
-                        sendSyslog(exactMatchingResult);
-                    } catch (IOException e) {
-                        errorService.error(exactMatchingResult.getDataSource().getSource(), "Impossible to send syslog", e);
-                    }
-                });
-            }
-
-            Long count = flux.count()
+                    .doOnNext(exactMatchingResult -> runner.trigger(integer -> log.info("Elements found so far: {}", integer)))
+                    .count()
                     //Wait the last one has been handler
                     .block();
 
@@ -130,7 +126,7 @@ public class ExactMatchService {
         }
     }
 
-    private <T extends Comparable<T>> void sendSyslog(ExactMatchingResult<T> exactMatchingResult) throws IOException {
+    private <T extends Comparable<T>> void sendSyslog(ExactMatchingResult<T> exactMatchingResult) {
 
         SyslogFormatter formatter = new SyslogFormatter(Map.of(
                 "source", exactMatchingResult.getDataSource().getSource().toString(),
@@ -138,7 +134,11 @@ public class ExactMatchService {
         ));
         formatter.add(exactMatchingResult.getDataSource().getMetadata());
 
-        syslogService.send(formatter.toString());
+        try {
+            syslogService.send(formatter.toString());
+        } catch (IOException e) {
+            errorService.error(exactMatchingResult.getDataSource().getSource(), "Impossible to send syslog", e);
+        }
     }
 
 
