@@ -14,21 +14,15 @@ public class FileWalkerContext {
     private final FileWalkerFilter fileFilter;
     private final File file;
     private File reference;
-    private int visited;
 
     public FileWalkerContext(File file, FileWalkerFilter fileFilter, FileWalkerFilter directoryFilter) {
         this.file = file;
         this.fileFilter = fileFilter;
         this.directoryFilter = directoryFilter;
-        visited = 0;
     }
 
     private FileWalkerContext(File file) {
         this(file, FileWalkerService.TRUE, FileWalkerService.TRUE);
-    }
-
-    public static FileWalkerContext of(String s) {
-        return of(new File(s));
     }
 
     public static FileWalkerContext of(File file) {
@@ -59,11 +53,4 @@ public class FileWalkerContext {
         this.reference = null;
     }
 
-    public void incVisited() {
-        visited++;
-    }
-
-    public int getVisited() {
-        return visited;
-    }
 }
