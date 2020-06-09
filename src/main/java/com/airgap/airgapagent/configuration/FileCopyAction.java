@@ -4,7 +4,7 @@ import com.beust.jcommander.Parameter;
 import com.beust.jcommander.Parameters;
 
 import java.io.File;
-import java.util.EnumSet;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
@@ -39,10 +39,11 @@ public class FileCopyAction extends AbstractScanAction<File> {
             description = "Options during copy",
             listConverter = CopyOptionConverter.class
     )
-    private List<CopyOption> copyOptions;
+    private List<CopyOption> copyOptions = new ArrayList<>();
 
     public Set<CopyOption> getCopyOptions() {
-        return EnumSet.copyOf(copyOptions);
+
+        return Set.copyOf(copyOptions);
     }
 
     public File getTarget() {
