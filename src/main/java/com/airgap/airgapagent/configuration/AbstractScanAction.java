@@ -10,7 +10,7 @@ import java.time.Duration;
  * com.airgap.airgapagent.configuration
  * Created by Jacques Fontignie on 6/3/2020.
  */
-public abstract class AbstractScanAction<T> implements ScanAction<T> {
+public abstract class AbstractScanAction<T> {
 
     @Parameter(
             names = "-minHit",
@@ -51,12 +51,10 @@ public abstract class AbstractScanAction<T> implements ScanAction<T> {
         this.schedule = schedule;
     }
 
-    @Override
     public long getSchedule() {
         return schedule;
     }
 
-    @Override
     public int getMinHit() {
         return minHit;
     }
@@ -65,12 +63,10 @@ public abstract class AbstractScanAction<T> implements ScanAction<T> {
         this.minHit = minHit;
     }
 
-    @Override
     public File getCorpusLocation() {
         return corpusLocation;
     }
 
-    @Override
     public File getStateLocation() {
         return stateLocation;
     }
@@ -79,7 +75,6 @@ public abstract class AbstractScanAction<T> implements ScanAction<T> {
         this.stateLocation = stateLocation;
     }
 
-    @Override
     public boolean isSyslog() {
         return syslog;
     }
@@ -88,8 +83,9 @@ public abstract class AbstractScanAction<T> implements ScanAction<T> {
         this.syslog = syslog;
     }
 
-    @Override
     public Duration getSaveInterval() {
         return Duration.ofSeconds(schedule);
     }
+
+    public abstract T getRootLocation();
 }

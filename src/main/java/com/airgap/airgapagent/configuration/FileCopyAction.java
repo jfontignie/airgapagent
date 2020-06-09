@@ -4,7 +4,9 @@ import com.beust.jcommander.Parameter;
 import com.beust.jcommander.Parameters;
 
 import java.io.File;
+import java.util.EnumSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * com.airgap.airgapagent.configuration
@@ -39,8 +41,8 @@ public class FileCopyAction extends AbstractScanAction<File> {
     )
     private List<CopyOption> copyOptions;
 
-    List<CopyOption> getCopyOptions() {
-        return copyOptions;
+    public Set<CopyOption> getCopyOptions() {
+        return EnumSet.copyOf(copyOptions);
     }
 
     public File getTarget() {

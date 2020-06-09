@@ -1,7 +1,9 @@
 package com.airgap.airgapagent.service;
 
+import com.airgap.airgapagent.configuration.CopyOption;
 import com.airgap.airgapagent.utils.ConstantsTest;
 import com.airgap.airgapagent.utils.DataReader;
+import org.apache.cxf.helpers.FileUtils;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -12,6 +14,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.Set;
 
 /**
  * com.airgap.airgapagent.service
@@ -52,5 +55,21 @@ class FileCrawlServiceTest {
     void buildLocation() {
         File target = service.buildLocation(new File("root"), new File("root/test/a/b"), new File("target"));
         Assertions.assertEquals(new File("target/test/a/b"), target);
+    }
+
+    @Test
+    void ensureCopyWorks() throws IOException {
+        File dir = new File("target/ensureCopyWorks");
+        FileUtils.mkDir(dir);
+        File root = new File("src/test/resources/sample");
+
+        File source = new File("src/test/resources/sample/sample.7z");
+        service.copy(root, source, dir);
+        Assertions.assertTrue(new File("target/ensureCopyWorks/sample.7z").exists());
+        service.copy(root, source, dir, Set.of(CopyOption.RENAME_ON_COLLISION));
+        Assertions.assertEquals(2, dir.listFiles().length);
+
+
+        FileUtils.removeDir(dir);
     }
 }

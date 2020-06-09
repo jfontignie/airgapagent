@@ -34,7 +34,7 @@ class FileCopyActionTest {
                 "-folder", "src",
                 "-target", "src",
                 "-corpus", ConstantsTest.CORPUS_SAMPLE_STRING,
-                "-options", CopyOption.CLEAN_ON_STARTUP.toString() + "," + CopyOption.KEEP_HIERARCHY.toString());
+                "-options", CopyOption.CLEAN_ON_STARTUP.toString() + "," + CopyOption.FLAT_HIERARCHY.toString());
 
         Assertions.assertEquals(2, command.getCopyOptions().size());
 

@@ -1,9 +1,11 @@
 package com.airgap.airgapagent.service;
 
+import com.airgap.airgapagent.configuration.CopyOption;
 import com.airgap.airgapagent.configuration.FileCopyAction;
 import com.airgap.airgapagent.configuration.FileSearchAction;
 import com.airgap.airgapagent.utils.FileStateConverter;
 import com.airgap.airgapagent.utils.StateConverter;
+import org.apache.cxf.helpers.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -11,6 +13,7 @@ import reactor.core.publisher.Flux;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.util.Objects;
 
 /**
@@ -41,6 +44,10 @@ public class FileScanService {
         if (!scanFolder.exists()) {
             throw new IllegalStateException("Folder " + scanFolder + " does not exist");
         }
+        if (fileCopyAction.getCopyOptions().contains(CopyOption.CLEAN_ON_STARTUP)) {
+            FileUtils.removeDir(scanFolder);
+            Files.createDirectory(scanFolder.toPath());
+        }
         Long count = exactMatchService.buildScan(
                 fileCopyAction,
                 crawlService,
@@ -49,7 +56,9 @@ public class FileScanService {
                     try {
                         //noinspection BlockingMethodInNonBlockingContext
                         crawlService.copy(scanFolder,
-                                exactMatchingResult.getDataSource().getSource(), fileCopyAction.getTarget());
+                                exactMatchingResult.getDataSource().getSource(),
+                                fileCopyAction.getTarget(),
+                                fileCopyAction.getCopyOptions());
                         return Flux.just(exactMatchingResult);
                     } catch (IOException e) {
                         errorService.error(exactMatchingResult.getDataSource(), "Impossible to copy file", e);
