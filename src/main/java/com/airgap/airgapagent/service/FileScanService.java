@@ -2,7 +2,6 @@ package com.airgap.airgapagent.service;
 
 import com.airgap.airgapagent.configuration.FileCopyAction;
 import com.airgap.airgapagent.configuration.FileSearchAction;
-import com.airgap.airgapagent.domain.ExactMatchContext;
 import com.airgap.airgapagent.utils.FileStateConverter;
 import com.airgap.airgapagent.utils.StateConverter;
 import org.slf4j.Logger;
@@ -12,7 +11,6 @@ import reactor.core.publisher.Flux;
 
 import java.io.File;
 import java.io.IOException;
-import java.time.Duration;
 import java.util.Objects;
 
 /**
@@ -37,34 +35,21 @@ public class FileScanService {
         this.errorService = errorService;
     }
 
-    public long copyFolder(FileCopyAction fileCopyAction, FileCrawlService crawlService) throws IOException {
-        File destination = fileCopyAction.getTarget();
-        ExactMatchContext<File> exactMatchContext = new ExactMatchContext<>(
-                fileCopyAction.getRootLocation(),
-                fileCopyAction.getCorpusLocation(),
-                null,
-                fileCopyAction.getStateLocation(),
-                fileCopyAction.getMinHit(),
-                Duration.ofSeconds(5),
-                fileCopyAction.isSyslog()
-        );
-        return copyFolder(exactMatchContext, crawlService, destination);
-    }
 
-    public long copyFolder(ExactMatchContext<File> exactMatchContext, FileCrawlService crawlService, File destination) throws IOException {
-        File scanFolder = exactMatchContext.getRoot();
+    public long copyFolder(FileCopyAction fileCopyAction, FileCrawlService crawlService) throws IOException {
+        File scanFolder = fileCopyAction.getRootLocation();
         if (!scanFolder.exists()) {
             throw new IllegalStateException("Folder " + scanFolder + " does not exist");
         }
         Long count = exactMatchService.buildScan(
-                exactMatchContext,
+                fileCopyAction,
                 crawlService,
                 STATE_CONVERTER)
                 .flatMap(exactMatchingResult -> {
                     try {
                         //noinspection BlockingMethodInNonBlockingContext
-                        crawlService.copy(exactMatchContext.getRoot(),
-                                exactMatchingResult.getDataSource().getSource(), destination);
+                        crawlService.copy(scanFolder,
+                                exactMatchingResult.getDataSource().getSource(), fileCopyAction.getTarget());
                         return Flux.just(exactMatchingResult);
                     } catch (IOException e) {
                         errorService.error(exactMatchingResult.getDataSource(), "Impossible to copy file", e);
@@ -79,27 +64,15 @@ public class FileScanService {
     }
 
     public long scanFolder(FileSearchAction fileSearchAction, FileCrawlService crawlService) throws IOException {
-        ExactMatchContext<File> context = new ExactMatchContext<>(
-                fileSearchAction.getRootLocation(),
-                fileSearchAction.getCorpusLocation(),
-                fileSearchAction.getFoundLocation(),
-                fileSearchAction.getStateLocation(),
-                fileSearchAction.getMinHit(),
-                Duration.ofSeconds(5),
-                fileSearchAction.isSyslog()
-        );
-        return scanFolder(context, crawlService);
-    }
 
-    public long scanFolder(ExactMatchContext<File> exactMatchContext, FileCrawlService crawlService) throws IOException {
         log.info("Staring scan");
-        File scanFolder = exactMatchContext.getRoot();
+        File scanFolder = fileSearchAction.getRootLocation();
         if (!scanFolder.exists()) {
             throw new IllegalStateException("Folder " + scanFolder + " does not exist");
         }
 
         long count = exactMatchService.scan(
-                exactMatchContext,
+                fileSearchAction,
                 crawlService,
                 STATE_CONVERTER
         );

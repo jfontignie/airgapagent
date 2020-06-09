@@ -1,7 +1,7 @@
 package com.airgap.airgapagent.service;
 
-import com.airgap.airgapagent.domain.ExactMatchContext;
-import com.airgap.airgapagent.domain.ExactMatchContextBuilder;
+import com.airgap.airgapagent.configuration.FileCopyAction;
+import com.airgap.airgapagent.configuration.FileSearchAction;
 import com.airgap.airgapagent.utils.ConstantsTest;
 import org.apache.commons.io.FileUtils;
 import org.junit.jupiter.api.Assertions;
@@ -12,7 +12,6 @@ import org.springframework.mock.env.MockEnvironment;
 
 import java.io.File;
 import java.io.IOException;
-import java.time.Duration;
 
 /**
  * com.airgap.airgapagent.service
@@ -48,15 +47,16 @@ class FileScanServiceTest {
 
     @Test
     void run() throws IOException {
-        ExactMatchContext<File> context = new ExactMatchContextBuilder<File>()
-                .setRoot(ConstantsTest.SAMPLE_FOLDER)
-                .setExactMatchFile(new File(ConstantsTest.CORPUS_SAMPLE_STRING))
-                .setFoundFile(new File("target/run_found.csv"))
-                .setStateFile(new File("target/run_sate.dat"))
-                .setMinHit(MIN_HIT)
-                .setSaveInterval(Duration.ofSeconds(5))
-                .createExactMatchContext();
-        long count = fileScanService.scanFolder(context, fileCrawlService);
+
+        FileSearchAction action = new FileSearchAction();
+        action.setRootLocation(ConstantsTest.SAMPLE_FOLDER);
+        action.setCorpus(new File(ConstantsTest.CORPUS_SAMPLE_STRING));
+        action.setFoundLocation(new File("target/run_found.csv"));
+        action.setStateLocation(new File("target/run_sate.dat"));
+        action.setMinHit(MIN_HIT);
+        action.setInterval(5);
+
+        long count = fileScanService.scanFolder(action, fileCrawlService);
         Assertions.assertTrue(true);
         Assertions.assertEquals(EXPECTED, count);
     }
@@ -66,15 +66,15 @@ class FileScanServiceTest {
 
         File destination = new File("target/copyTest");
         FileUtils.deleteDirectory(destination);
-        ExactMatchContext<File> context = new ExactMatchContextBuilder<File>()
-                .setRoot(ConstantsTest.SAMPLE_FOLDER)
-                .setExactMatchFile(new File(ConstantsTest.CORPUS_SAMPLE_STRING))
-                .setFoundFile(new File("target/run_found.csv"))
-                .setStateFile(new File("target/run_sate.dat"))
-                .setMinHit(MIN_HIT)
-                .setSaveInterval(Duration.ofSeconds(5))
-                .createExactMatchContext();
-        long count = fileScanService.copyFolder(context, fileCrawlService, destination);
+        FileCopyAction action = new FileCopyAction();
+        action.setRoot(ConstantsTest.SAMPLE_FOLDER);
+        action.setCorpus(new File(ConstantsTest.CORPUS_SAMPLE_STRING));
+        action.setStateLocation(new File("target/run_state.dat"));
+        action.setMinHit(MIN_HIT);
+        action.setInterval(5);
+        action.setTarget(destination);
+
+        long count = fileScanService.copyFolder(action, fileCrawlService);
         Assertions.assertTrue(destination.exists());
         FileUtils.deleteDirectory(destination);
         Assertions.assertEquals(EXPECTED, count);
@@ -83,15 +83,16 @@ class FileScanServiceTest {
     @Disabled("Performance test")
     @Test
     void testLong() throws IOException {
-        ExactMatchContext<File> context = new ExactMatchContextBuilder<File>()
-                .setRoot(new File("c:/"))
-                .setExactMatchFile(new File(ConstantsTest.CORPUS_SAMPLE_STRING))
-                .setFoundFile(new File("target/testLong_found.csv"))
-                .setStateFile(new File("target/testLong_state.dat"))
-                .setMinHit(50)
-                .setSaveInterval(Duration.ofSeconds(1))
-                .createExactMatchContext();
-        fileScanService.scanFolder(context, fileCrawlService);
+
+        FileSearchAction action = new FileSearchAction();
+        action.setRootLocation(new File("c:/"));
+        action.setCorpus(new File(ConstantsTest.CORPUS_SAMPLE_STRING));
+        action.setFoundLocation(new File("target/run_found.csv"));
+        action.setStateLocation(new File("target/run_sate.dat"));
+        action.setMinHit(MIN_HIT);
+        action.setInterval(5);
+
+        fileScanService.scanFolder(action, fileCrawlService);
         Assertions.assertTrue(true);
     }
 }

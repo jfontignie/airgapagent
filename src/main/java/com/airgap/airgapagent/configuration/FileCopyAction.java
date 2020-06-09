@@ -12,9 +12,17 @@ import java.util.List;
  */
 @Parameters(commandNames = FileCopyAction.COMMAND_NAME,
         commandDescription = "Copy all the files matching a specific corpus in a target folder")
-public class FileCopyAction extends AbstractSearchAction {
+public class FileCopyAction extends AbstractScanAction<File> {
 
     public static final String COMMAND_NAME = "copy";
+
+    @Parameter(
+            names = "-folder",
+            description = "folder to scan for the specific patterns",
+            required = true,
+            validateWith = FolderExistsValidator.class)
+    private File rootLocation;
+
 
     @Parameter(
             names = "-target",
@@ -31,13 +39,27 @@ public class FileCopyAction extends AbstractSearchAction {
     )
     private List<CopyOption> copyOptions;
 
-    public File getTarget() {
-        return target;
-    }
-
     List<CopyOption> getCopyOptions() {
         return copyOptions;
     }
 
+    public File getTarget() {
+        return target;
+    }
 
+    public void setCopyOptions(List<CopyOption> copyOptions) {
+        this.copyOptions = copyOptions;
+    }
+
+    public void setRoot(File folderLocation) {
+        this.rootLocation = folderLocation;
+    }
+
+    public void setTarget(File target) {
+        this.target = target;
+    }
+
+    public File getRootLocation() {
+        return rootLocation;
+    }
 }

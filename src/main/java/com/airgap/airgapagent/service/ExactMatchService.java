@@ -2,7 +2,8 @@ package com.airgap.airgapagent.service;
 
 import com.airgap.airgapagent.algo.Automaton;
 import com.airgap.airgapagent.algo.AutomatonOption;
-import com.airgap.airgapagent.domain.ExactMatchContext;
+import com.airgap.airgapagent.configuration.AbstractScanAction;
+import com.airgap.airgapagent.configuration.AbstractSearchAction;
 import com.airgap.airgapagent.domain.ExactMatchingResult;
 import com.airgap.airgapagent.utils.*;
 import org.slf4j.Logger;
@@ -46,19 +47,19 @@ public class ExactMatchService {
     }
 
     @SuppressWarnings("java:S2095")
-    public <T extends Comparable<T>> Flux<ExactMatchingResult<T>> buildScan(ExactMatchContext<T> exactMatchContext,
+    public <T extends Comparable<T>> Flux<ExactMatchingResult<T>> buildScan(AbstractScanAction<T> exactMatchContext,
                                                                             CrawlService<T> crawlService,
                                                                             StateConverter<T> stateConverter) throws IOException {
 
 
         //noinspection BlockingMethodInNonBlockingContext
         Automaton automaton = ahoCorasickMatcherService.buildAutomaton(
-                corpusBuilderService.buildSet(exactMatchContext.getExactMatchFile()), Set.of(AutomatonOption.CASE_INSENSITIVE));
+                corpusBuilderService.buildSet(exactMatchContext.getCorpusLocation()), Set.of(AutomatonOption.CASE_INSENSITIVE));
 
 
-        WalkerContext<T> context = WalkerContext.of(exactMatchContext.getRoot());
+        WalkerContext<T> context = WalkerContext.of(exactMatchContext.getRootLocation());
         PersistentStateVisitor<T> persistentStateVisitor = new PersistentStateVisitor<>(
-                exactMatchContext.getStateFile(),
+                exactMatchContext.getStateLocation(),
                 exactMatchContext.getSaveInterval(),
                 context,
                 stateConverter
@@ -102,11 +103,11 @@ public class ExactMatchService {
     }
 
 
-    public <T extends Comparable<T>> long scan(ExactMatchContext<T> exactMatchContext,
+    public <T extends Comparable<T>> long scan(AbstractSearchAction<T> exactMatchContext,
                                                CrawlService<T> crawlService,
                                                StateConverter<T> stateConverter) throws IOException {
 
-        try (CsvWriter dataWriter = new CsvWriter(exactMatchContext.getFoundFile())) {
+        try (CsvWriter dataWriter = new CsvWriter(exactMatchContext.getFoundLocation())) {
 
             IntervalRunner runner = IntervalRunner.of(Duration.ofSeconds(5), true);
 
