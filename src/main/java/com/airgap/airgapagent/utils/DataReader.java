@@ -1,5 +1,6 @@
 package com.airgap.airgapagent.utils;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.springframework.lang.NonNull;
 
 import java.io.Reader;
@@ -14,6 +15,7 @@ public class DataReader<T> {
     private final T source;
     private final Map<String, String> metadata;
 
+    @JsonIgnore
     private final Reader reader;
 
     public DataReader(@NonNull T source, @NonNull Map<String, String> metadata, Reader reader) {
