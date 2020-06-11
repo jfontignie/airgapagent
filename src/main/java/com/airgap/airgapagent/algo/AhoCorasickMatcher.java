@@ -11,7 +11,7 @@ import java.util.function.Consumer;
  * <p>
  * https://codereview.stackexchange.com/questions/115624/aho-corasick-for-multiple-exact-string-matching-in-java
  */
-public class AhoCorasickMatcher implements MultipleStringMatcher {
+public class AhoCorasickMatcher {
 
     public void match(Reader reader, Consumer<MatchingResult> target, Automaton automaton) throws IOException {
         TrieNode state = automaton.getRoot();
@@ -39,15 +39,6 @@ public class AhoCorasickMatcher implements MultipleStringMatcher {
             }
             textIndex++;
         }
-    }
-
-    public void match(Reader reader, final Consumer<MatchingResult> target, char[]... patterns) throws IOException {
-        if (patterns.length > 0) {
-            Automaton automaton = new Automaton(patterns);
-            match(reader, target, automaton);
-
-        }
-
     }
 
 

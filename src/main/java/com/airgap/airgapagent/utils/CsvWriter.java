@@ -54,6 +54,7 @@ public class CsvWriter implements Closeable {
 
     private String convert(Map<String, String> metadata) {
         return metadata.entrySet().stream()
+                .sorted(Map.Entry.comparingByKey())
                 .map(entry -> sanitize(entry.getKey()) + "=" + sanitize(entry.getValue()))
                 .collect(Collectors.joining(CSV_SEPARATOR));
 

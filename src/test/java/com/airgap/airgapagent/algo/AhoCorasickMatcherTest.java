@@ -30,8 +30,9 @@ class AhoCorasickMatcherTest {
         List<MatchingResult> found = new ArrayList<>();
         char[][] keywords =
                 set.stream().map(String::toCharArray).collect(Collectors.toList()).toArray(new char[0][0]);
+        Automaton automaton = new Automaton(Collections.singleton(AutomatonOption.CASE_INSENSITIVE), set);
         matcher.match(new StringReader(s),
-                found::add, keywords
+                found::add, automaton
         );
         Assertions.assertEquals(3, found.size());
         System.out.println(found);

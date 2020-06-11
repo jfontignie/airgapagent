@@ -23,12 +23,6 @@ public class Automaton implements Serializable {
     private TrieNode root;
 
 
-    public Automaton(Set<AutomatonOption> automatonOptions, char[]... patterns) {
-        this(automatonOptions, Arrays.stream(patterns)
-                .map(String::valueOf)
-                .collect(Collectors.toSet()));
-    }
-
     public Automaton(Set<AutomatonOption> automatonOptions, Set<String> patterns) {
         originalPatterns = patterns.stream()
                 .map(s -> automatonOptions.contains(AutomatonOption.CASE_INSENSITIVE) ? s.toLowerCase() : s)
@@ -42,10 +36,6 @@ public class Automaton implements Serializable {
         computeFailureFunction();
     }
 
-    public Automaton(char[][] patterns) {
-        this(Set.of(AutomatonOption.CASE_INSENSITIVE), patterns);
-    }
-
     public Set<AutomatonOption> getOptions() {
         return options;
     }
@@ -54,25 +44,26 @@ public class Automaton implements Serializable {
         return (char) (0xFF & value);
     }
 
+
     private void constructTrie(final char[]... patterns) {
         root = new TrieNode();
 
         for (int patternIndex = 0; patternIndex < patterns.length; patternIndex++) {
             TrieNode node = root;
-            int charIndex = 0;
+            int charIndex;
             char[] currentPattern = patterns[patternIndex];
             final int patternLength = currentPattern.length;
 
-            while (charIndex < patternLength && node.getChild(currentPattern[charIndex]) != null) {
-                node = node.getChild(currentPattern[charIndex]);
-                ++charIndex;
+            for (charIndex = 0; charIndex < patternLength; charIndex++) {
+                char character = currentPattern[charIndex];
+                if (node.getChild(character) == null) break;
+                node = node.getChild(character);
             }
 
-            while (charIndex < patternLength) {
+            for (; charIndex < patternLength; charIndex++) {
                 final TrieNode u = new TrieNode();
                 node.setChild(currentPattern[charIndex], u);
                 node = u;
-                ++charIndex;
             }
 
             node.setPattern(patternIndex);
