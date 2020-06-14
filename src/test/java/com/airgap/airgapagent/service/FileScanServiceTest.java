@@ -37,7 +37,8 @@ class FileScanServiceTest {
                         new VisitorService(),
                         new CorpusBuilderService(),
                         errorService,
-                        new SyslogService(environment)),
+                        new SyslogService(environment),
+                        new MatcherService()),
                 errorService
         );
 

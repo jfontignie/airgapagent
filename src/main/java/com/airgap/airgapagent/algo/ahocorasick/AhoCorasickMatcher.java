@@ -1,11 +1,11 @@
 package com.airgap.airgapagent.algo.ahocorasick;
 
+import com.airgap.airgapagent.algo.MatchOption;
 import com.airgap.airgapagent.algo.Matcher;
 import com.airgap.airgapagent.algo.MatchingResult;
 
 import java.io.IOException;
 import java.io.Reader;
-import java.io.StringReader;
 import java.util.function.Consumer;
 
 /**
@@ -25,7 +25,7 @@ public class AhoCorasickMatcher implements Matcher {
     @Override
     public void match(Reader reader, Consumer<MatchingResult> target) throws IOException {
         TrieNode state = automaton.getRoot();
-        boolean isCaseInsensitive = automaton.getOptions().contains(AutomatonOption.CASE_INSENSITIVE);
+        boolean isCaseInsensitive = automaton.getOptions().contains(MatchOption.CASE_INSENSITIVE);
 
         int textIndex = 0;
         while (true) {
@@ -51,9 +51,5 @@ public class AhoCorasickMatcher implements Matcher {
         }
     }
 
-    @Override
-    public void match(String text, Consumer<MatchingResult> consumer) throws IOException {
-        StringReader stringReader = new StringReader(text);
-        match(stringReader, consumer);
-    }
+
 }

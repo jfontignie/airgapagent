@@ -1,5 +1,6 @@
 package com.airgap.airgapagent.configuration;
 
+import com.airgap.airgapagent.algo.AlgoType;
 import com.beust.jcommander.Parameter;
 import com.beust.jcommander.validators.PositiveInteger;
 
@@ -43,6 +44,12 @@ public abstract class AbstractScanAction<T> {
             description = "How many second interval between two state persistence")
     private long schedule = 5;
 
+    @Parameter(
+            names = "-algo",
+            description = "Specify the algorithm that can be used for matching patterns")
+    private AlgoType algo = AlgoType.AHO_CORASICK;
+
+
     public void setCorpus(File corpusLocation) {
         this.corpusLocation = corpusLocation;
     }
@@ -85,6 +92,14 @@ public abstract class AbstractScanAction<T> {
 
     public Duration getSaveInterval() {
         return Duration.ofSeconds(schedule);
+    }
+
+    public AlgoType getAlgo() {
+        return algo;
+    }
+
+    public void setAlgo(AlgoType algo) {
+        this.algo = algo;
     }
 
     public abstract T getRootLocation();

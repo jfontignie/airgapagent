@@ -1,8 +1,9 @@
 package com.airgap.airgapagent.service;
 
+import com.airgap.airgapagent.algo.MatchOption;
 import com.airgap.airgapagent.algo.MatchingResult;
+import com.airgap.airgapagent.algo.ahocorasick.AhoCorasickMatcher;
 import com.airgap.airgapagent.algo.ahocorasick.Automaton;
-import com.airgap.airgapagent.algo.ahocorasick.AutomatonOption;
 import com.airgap.airgapagent.utils.ConstantsTest;
 import org.apache.tika.Tika;
 import org.junit.jupiter.api.Assertions;
@@ -26,20 +27,21 @@ import java.util.regex.Pattern;
  * com.airgap.airgapagent.service
  * Created by Jacques Fontignie on 5/29/2020.
  */
-class AhoCorasickMatcherServiceTest {
+class MatcherServiceTest {
 
-    private static final Logger log = LoggerFactory.getLogger(AhoCorasickMatcherServiceTest.class);
+    private static final Logger log = LoggerFactory.getLogger(MatcherServiceTest.class);
 
     @Test
     void listMatches() throws IOException {
 
         CorpusBuilderService corpusBuilderService = new CorpusBuilderService();
         Set<String> set = corpusBuilderService.buildSet(ConstantsTest.CORPUS_SAMPLE);
-        AhoCorasickMatcherService ahoCorasickMatcherService = new AhoCorasickMatcherService();
-        Automaton automaton = ahoCorasickMatcherService.buildAutomaton(set, Set.of(AutomatonOption.CASE_INSENSITIVE));
+        MatcherService matcherService = new MatcherService();
+        Automaton automaton = new Automaton(Set.of(MatchOption.CASE_INSENSITIVE), set);
+        AhoCorasickMatcher matcher = new AhoCorasickMatcher(automaton);
 
         List<MatchingResult> found = new ArrayList<>();
-        Flux<MatchingResult> flux = ahoCorasickMatcherService.listMatches(new StringReader("603046751.7603046751.7,523650288.4"), automaton);
+        Flux<MatchingResult> flux = matcherService.listMatches(new StringReader("603046751.7603046751.7,523650288.4"), matcher);
         flux.subscribe(found::add).dispose();
 
         Assertions.assertEquals(3, found.size());
@@ -51,12 +53,14 @@ class AhoCorasickMatcherServiceTest {
 
         CorpusBuilderService corpusBuilderService = new CorpusBuilderService();
         Set<String> set = corpusBuilderService.buildSet(ConstantsTest.CORPUS_SAMPLE);
-        AhoCorasickMatcherService ahoCorasickMatcherService = new AhoCorasickMatcherService();
-        Automaton automaton = ahoCorasickMatcherService.buildAutomaton(set, Set.of());
+        MatcherService matcherService = new MatcherService();
+
+        Automaton automaton = new Automaton(Set.of(MatchOption.CASE_INSENSITIVE), set);
+        AhoCorasickMatcher matcher = new AhoCorasickMatcher(automaton);
 
         Reader reader = new ExceptionReader();
 
-        Long found = ahoCorasickMatcherService.listMatches(reader, automaton)
+        Long found = matcherService.listMatches(reader, matcher)
                 .doOnError(throwable -> log.error("e", throwable))
 
                 .take(2)
@@ -73,11 +77,13 @@ class AhoCorasickMatcherServiceTest {
     void checkCase() {
 
         Set<String> set = Set.of("Password");
-        AhoCorasickMatcherService ahoCorasickMatcherService = new AhoCorasickMatcherService();
-        Automaton automaton = ahoCorasickMatcherService.buildAutomaton(set, Set.of(AutomatonOption.CASE_INSENSITIVE));
+        MatcherService matcherService = new MatcherService();
+
+        Automaton automaton = new Automaton(Set.of(MatchOption.CASE_INSENSITIVE), set);
+        AhoCorasickMatcher matcher = new AhoCorasickMatcher(automaton);
 
         List<MatchingResult> found = new ArrayList<>();
-        Flux<MatchingResult> flux = ahoCorasickMatcherService.listMatches(new StringReader("paSsword"), automaton);
+        Flux<MatchingResult> flux = matcherService.listMatches(new StringReader("paSsword"), matcher);
         flux.subscribe(found::add).dispose();
 
         Assertions.assertEquals(1, found.size());
@@ -90,20 +96,22 @@ class AhoCorasickMatcherServiceTest {
 
         perfTestRegex();
         perfTestRegex2();
-        perfTestAhoCorasick();
+        ensureCaseSensitiveIsEnabled();
     }
 
-    private void perfTestAhoCorasick() throws IOException {
+    private void ensureCaseSensitiveIsEnabled() throws IOException {
         long start = System.currentTimeMillis();
         Set<String> set = Set.of("Password", "abcd");
-        AhoCorasickMatcherService ahoCorasickMatcherService = new AhoCorasickMatcherService();
-        Automaton automaton = ahoCorasickMatcherService.buildAutomaton(set, Set.of());
+        MatcherService matcherService = new MatcherService();
 
+
+        Automaton automaton = new Automaton(Set.of(), set);
+        AhoCorasickMatcher matcher = new AhoCorasickMatcher(automaton);
         List<MatchingResult> found = new ArrayList<>();
 
         Tika tika = new Tika();
         Reader reader = tika.parse(new File("src/test/resources/big/sample.eml"));
-        Flux<MatchingResult> flux = ahoCorasickMatcherService.listMatches(reader, automaton);
+        Flux<MatchingResult> flux = matcherService.listMatches(reader, matcher);
         flux.subscribe(found::add).dispose();
 
         Assertions.assertEquals(1, found.size());

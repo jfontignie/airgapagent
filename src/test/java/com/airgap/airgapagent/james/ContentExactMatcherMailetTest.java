@@ -5,7 +5,6 @@ import com.airgap.airgapagent.algo.ahocorasick.AhoCorasickMatcher;
 import com.airgap.airgapagent.service.ContentReaderService;
 import com.airgap.airgapagent.utils.ConstantsTest;
 import com.airgap.airgapagent.utils.DataReader;
-import org.apache.commons.io.input.NullReader;
 import org.apache.james.core.builder.MimeMessageBuilder;
 import org.apache.mailet.*;
 import org.junit.jupiter.api.Test;
@@ -16,6 +15,7 @@ import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMessage;
 import java.io.File;
 import java.io.IOException;
+import java.io.Reader;
 import java.nio.file.Files;
 import java.util.Map;
 import java.util.Optional;
@@ -163,12 +163,11 @@ class ContentExactMatcherMailetTest {
     @Test
     void shouldFailDuetoInvalidParsing() throws MessagingException, IOException {
 
-        Matcher matcher = Mockito.mock(AhoCorasickMatcher.class);
-        Mockito.doThrow(new IOException("mock"))
-                .when(matcher).match(Mockito.anyString(), Mockito.any());
-
+        Reader reader = Mockito.mock(Reader.class, invocation -> {
+            throw new IOException("error expected");
+        });
         ContentReaderService contentReaderService = Mockito.mock(ContentReaderService.class);
-        Mockito.doReturn(new DataReader<>(new File(""), Map.of(), new NullReader(0)))
+        Mockito.doReturn(new DataReader<>(new File(""), Map.of(), reader))
                 .when(contentReaderService).getContent((MimeMessage) Mockito.any());
 
         ContentExactMatcherMailet mailet = new ContentExactMatcherMailet(contentReaderService);

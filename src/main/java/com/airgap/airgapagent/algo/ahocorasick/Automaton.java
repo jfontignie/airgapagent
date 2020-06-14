@@ -1,5 +1,6 @@
 package com.airgap.airgapagent.algo.ahocorasick;
 
+import com.airgap.airgapagent.algo.MatchOption;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -19,13 +20,13 @@ public class Automaton implements Serializable {
     private static final Logger log = LoggerFactory.getLogger(Automaton.class);
 
     private final char[][] originalPatterns;
-    private final Set<AutomatonOption> options;
+    private final Set<MatchOption> options;
     private TrieNode root;
 
 
-    public Automaton(Set<AutomatonOption> automatonOptions, Set<String> patterns) {
+    public Automaton(Set<MatchOption> automatonOptions, Set<String> patterns) {
         originalPatterns = patterns.stream()
-                .map(s -> automatonOptions.contains(AutomatonOption.CASE_INSENSITIVE) ? s.toLowerCase() : s)
+                .map(s -> automatonOptions.contains(MatchOption.CASE_INSENSITIVE) ? s.toLowerCase() : s)
                 .sorted()
                 .map(String::toCharArray)
                 .collect(Collectors.toList())
@@ -36,7 +37,7 @@ public class Automaton implements Serializable {
         computeFailureFunction();
     }
 
-    public Set<AutomatonOption> getOptions() {
+    public Set<MatchOption> getOptions() {
         return options;
     }
 

@@ -1,7 +1,8 @@
 package com.airgap.airgapagent.service;
 
-import com.airgap.airgapagent.algo.ahocorasick.Automaton;
-import com.airgap.airgapagent.algo.ahocorasick.AutomatonOption;
+import com.airgap.airgapagent.algo.AlgoFactory;
+import com.airgap.airgapagent.algo.MatchOption;
+import com.airgap.airgapagent.algo.Matcher;
 import com.airgap.airgapagent.configuration.AbstractScanAction;
 import com.airgap.airgapagent.configuration.AbstractSearchAction;
 import com.airgap.airgapagent.domain.ExactMatchingResult;
@@ -31,19 +32,20 @@ public class ExactMatchService {
     private final CorpusBuilderService corpusBuilderService;
     private final VisitorService visitorService;
     private final ErrorService errorService;
-    private final AhoCorasickMatcherService ahoCorasickMatcherService;
     private final SyslogService syslogService;
+    private final MatcherService matcherService;
 
     public ExactMatchService(
             VisitorService visitorService,
             CorpusBuilderService corpusBuilderService,
             ErrorService errorService,
-            SyslogService syslogService) {
+            SyslogService syslogService,
+            MatcherService matcherService) {
         this.corpusBuilderService = corpusBuilderService;
         this.visitorService = visitorService;
         this.errorService = errorService;
         this.syslogService = syslogService;
-        ahoCorasickMatcherService = new AhoCorasickMatcherService();
+        this.matcherService = matcherService;
     }
 
     @SuppressWarnings("java:S2095")
@@ -53,9 +55,9 @@ public class ExactMatchService {
 
 
         //noinspection BlockingMethodInNonBlockingContext
-        Automaton automaton = ahoCorasickMatcherService.buildAutomaton(
-                corpusBuilderService.buildSet(exactMatchContext.getCorpusLocation()), Set.of(AutomatonOption.CASE_INSENSITIVE));
-
+        Matcher matcher = AlgoFactory.getMatcher(exactMatchContext.getAlgo(),
+                Set.of(MatchOption.CASE_INSENSITIVE),
+                corpusBuilderService.buildSet(exactMatchContext.getCorpusLocation()));
 
         WalkerContext<T> context = WalkerContext.of(exactMatchContext.getRootLocation());
         PersistentStateVisitor<T> persistentStateVisitor = new PersistentStateVisitor<>(
@@ -83,7 +85,7 @@ public class ExactMatchService {
                 //Parse the data to find keywords
 
                 .flatMap(dataReader ->
-                        ahoCorasickMatcherService.listMatches(dataReader.getReader(), automaton)
+                        matcherService.listMatches(dataReader.getReader(), matcher)
                                 .doOnError(throwable -> errorService.error(dataReader.getSource(),
                                         "Impossible to parse file",
                                         throwable))
@@ -107,7 +109,7 @@ public class ExactMatchService {
                                                CrawlService<T> crawlService,
                                                StateConverter<T> stateConverter) throws IOException {
 
-        try (CsvWriter dataWriter = new CsvWriter(exactMatchContext.getFoundLocation())) {
+        try (CsvWriter dataWriter = new CsvWriter(exactMatchContext.getFoundLocation(), exactMatchContext.getExclude())) {
 
             IntervalRunner runner = IntervalRunner.of(Duration.ofSeconds(5), true);
 

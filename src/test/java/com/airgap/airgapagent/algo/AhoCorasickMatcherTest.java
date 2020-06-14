@@ -2,7 +2,6 @@ package com.airgap.airgapagent.algo;
 
 import com.airgap.airgapagent.algo.ahocorasick.AhoCorasickMatcher;
 import com.airgap.airgapagent.algo.ahocorasick.Automaton;
-import com.airgap.airgapagent.algo.ahocorasick.AutomatonOption;
 import com.airgap.airgapagent.service.CorpusBuilderService;
 import com.airgap.airgapagent.utils.ConstantsTest;
 import org.junit.jupiter.api.Assertions;
@@ -32,7 +31,7 @@ class AhoCorasickMatcherTest {
         List<MatchingResult> found = new ArrayList<>();
         char[][] keywords =
                 set.stream().map(String::toCharArray).collect(Collectors.toList()).toArray(new char[0][0]);
-        Automaton automaton = new Automaton(Collections.singleton(AutomatonOption.CASE_INSENSITIVE), set);
+        Automaton automaton = new Automaton(Collections.singleton(MatchOption.CASE_INSENSITIVE), set);
         Matcher matcher = new AhoCorasickMatcher(automaton);
 
         matcher.match(new StringReader(s),
@@ -46,7 +45,7 @@ class AhoCorasickMatcherTest {
     void testFiles() throws IOException {
         CorpusBuilderService service = new CorpusBuilderService();
         Set<String> set = service.buildSet(ConstantsTest.CORPUS_SAMPLE);
-        Automaton automaton = new Automaton(Collections.singleton(AutomatonOption.CASE_INSENSITIVE), set);
+        Automaton automaton = new Automaton(Collections.singleton(MatchOption.CASE_INSENSITIVE), set);
         Matcher matcher = new AhoCorasickMatcher(automaton);
 
         AtomicInteger count = new AtomicInteger();
