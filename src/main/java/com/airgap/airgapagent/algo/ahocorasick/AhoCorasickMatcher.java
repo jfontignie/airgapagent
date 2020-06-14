@@ -1,4 +1,7 @@
-package com.airgap.airgapagent.algo;
+package com.airgap.airgapagent.algo.ahocorasick;
+
+import com.airgap.airgapagent.algo.Matcher;
+import com.airgap.airgapagent.algo.MatchingResult;
 
 import java.io.IOException;
 import java.io.Reader;
@@ -11,9 +14,16 @@ import java.util.function.Consumer;
  * <p>
  * https://codereview.stackexchange.com/questions/115624/aho-corasick-for-multiple-exact-string-matching-in-java
  */
-public class AhoCorasickMatcher {
+public class AhoCorasickMatcher implements Matcher {
 
-    public void match(Reader reader, Consumer<MatchingResult> target, Automaton automaton) throws IOException {
+    private final Automaton automaton;
+
+    public AhoCorasickMatcher(Automaton automaton) {
+        this.automaton = automaton;
+    }
+
+    @Override
+    public void match(Reader reader, Consumer<MatchingResult> target) throws IOException {
         TrieNode state = automaton.getRoot();
         boolean isCaseInsensitive = automaton.getOptions().contains(AutomatonOption.CASE_INSENSITIVE);
 
@@ -41,9 +51,9 @@ public class AhoCorasickMatcher {
         }
     }
 
-
-    public void match(String text, Consumer<MatchingResult> consumer, Automaton automaton) throws IOException {
+    @Override
+    public void match(String text, Consumer<MatchingResult> consumer) throws IOException {
         StringReader stringReader = new StringReader(text);
-        match(stringReader, consumer, automaton);
+        match(stringReader, consumer);
     }
 }

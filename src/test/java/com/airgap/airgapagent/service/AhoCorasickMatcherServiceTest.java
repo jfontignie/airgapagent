@@ -1,8 +1,8 @@
 package com.airgap.airgapagent.service;
 
-import com.airgap.airgapagent.algo.Automaton;
-import com.airgap.airgapagent.algo.AutomatonOption;
 import com.airgap.airgapagent.algo.MatchingResult;
+import com.airgap.airgapagent.algo.ahocorasick.Automaton;
+import com.airgap.airgapagent.algo.ahocorasick.AutomatonOption;
 import com.airgap.airgapagent.utils.ConstantsTest;
 import org.apache.tika.Tika;
 import org.junit.jupiter.api.Assertions;

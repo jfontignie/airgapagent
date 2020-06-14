@@ -1,9 +1,9 @@
 package com.airgap.airgapagent.service;
 
-import com.airgap.airgapagent.algo.AhoCorasickMatcher;
-import com.airgap.airgapagent.algo.Automaton;
-import com.airgap.airgapagent.algo.AutomatonOption;
 import com.airgap.airgapagent.algo.MatchingResult;
+import com.airgap.airgapagent.algo.ahocorasick.AhoCorasickMatcher;
+import com.airgap.airgapagent.algo.ahocorasick.Automaton;
+import com.airgap.airgapagent.algo.ahocorasick.AutomatonOption;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -22,7 +22,6 @@ public class AhoCorasickMatcherService {
 
     private static final Logger log = LoggerFactory.getLogger(AhoCorasickMatcherService.class);
 
-    private final AhoCorasickMatcher matcher = new AhoCorasickMatcher();
 
     public Automaton buildAutomaton(Set<String> patterns, Set<AutomatonOption> options) {
         return new Automaton(options, patterns);
@@ -31,7 +30,8 @@ public class AhoCorasickMatcherService {
     public Flux<MatchingResult> listMatches(Reader reader, Automaton automaton) {
         Flux<MatchingResult> flux = Flux.create(fluxSink -> {
             try {
-                matcher.match(reader, fluxSink::next, automaton);
+                AhoCorasickMatcher matcher = new AhoCorasickMatcher(automaton);
+                matcher.match(reader, fluxSink::next);
                 fluxSink.complete();
             } catch (IOException e) {
                 fluxSink.error(e);

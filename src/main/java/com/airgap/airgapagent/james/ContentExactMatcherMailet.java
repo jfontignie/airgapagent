@@ -1,9 +1,10 @@
 package com.airgap.airgapagent.james;
 
-import com.airgap.airgapagent.algo.AhoCorasickMatcher;
-import com.airgap.airgapagent.algo.Automaton;
-import com.airgap.airgapagent.algo.AutomatonOption;
+import com.airgap.airgapagent.algo.Matcher;
 import com.airgap.airgapagent.algo.MatchingResult;
+import com.airgap.airgapagent.algo.ahocorasick.AhoCorasickMatcher;
+import com.airgap.airgapagent.algo.ahocorasick.Automaton;
+import com.airgap.airgapagent.algo.ahocorasick.AutomatonOption;
 import com.airgap.airgapagent.service.ContentReaderService;
 import com.airgap.airgapagent.service.CorpusBuilderService;
 import com.airgap.airgapagent.utils.DataReader;
@@ -38,18 +39,16 @@ public class ContentExactMatcherMailet extends GenericMailet {
     static final Attribute MATCH_ERROR = Attribute.convertToAttribute(MATCHER_ATTRIBUTE, "ERROR");
     static final Attribute MATCH_NOT_FOUND = Attribute.convertToAttribute(MATCHER_ATTRIBUTE, "NotFound");
 
-    private final AhoCorasickMatcher ahoCorasickMatcher;
+    private Matcher ahoCorasickMatcher;
     private final ContentReaderService contentReaderService;
-    private Automaton automaton;
     private int minHit;
 
-    ContentExactMatcherMailet(AhoCorasickMatcher ahoCorasickMatcher, ContentReaderService contentReaderService) {
-        this.ahoCorasickMatcher = ahoCorasickMatcher;
+    ContentExactMatcherMailet(ContentReaderService contentReaderService) {
         this.contentReaderService = contentReaderService;
     }
 
     public ContentExactMatcherMailet() {
-        this(new AhoCorasickMatcher(), new ContentReaderService());
+        this(new ContentReaderService());
     }
 
     @Override
@@ -67,7 +66,9 @@ public class ContentExactMatcherMailet extends GenericMailet {
         } catch (IOException e) {
             throw new MessagingException("Impossible to build automaton", e);
         }
-        automaton = new Automaton(Collections.singleton(AutomatonOption.CASE_INSENSITIVE), set);
+        Automaton automaton = new Automaton(Collections.singleton(AutomatonOption.CASE_INSENSITIVE), set);
+        this.ahoCorasickMatcher = new AhoCorasickMatcher(automaton);
+
         log.info("Successfully loaded corpus with {} elements", set.size());
     }
 
@@ -85,7 +86,7 @@ public class ContentExactMatcherMailet extends GenericMailet {
         MimeMessage mimeMessage = getMessageFromMail(mail);
 
         try {
-            ahoCorasickMatcher.match(mimeMessage.getSubject(), consumer, automaton);
+            ahoCorasickMatcher.match(mimeMessage.getSubject(), consumer);
         } catch (IOException e) {
             log.error("Impossible to read subject", e);
             attribute = MATCH_ERROR;
@@ -93,7 +94,7 @@ public class ContentExactMatcherMailet extends GenericMailet {
 
         try {
             DataReader<MimeMessage> dataReader = contentReaderService.getContent(mimeMessage);
-            ahoCorasickMatcher.match(dataReader.getReader(), consumer, automaton);
+            ahoCorasickMatcher.match(dataReader.getReader(), consumer);
         } catch (IOException e) {
             log.error("Impossible to read content");
             attribute = MATCH_ERROR;

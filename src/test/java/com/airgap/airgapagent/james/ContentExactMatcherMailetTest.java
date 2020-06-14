@@ -1,6 +1,7 @@
 package com.airgap.airgapagent.james;
 
-import com.airgap.airgapagent.algo.AhoCorasickMatcher;
+import com.airgap.airgapagent.algo.Matcher;
+import com.airgap.airgapagent.algo.ahocorasick.AhoCorasickMatcher;
 import com.airgap.airgapagent.service.ContentReaderService;
 import com.airgap.airgapagent.utils.ConstantsTest;
 import com.airgap.airgapagent.utils.DataReader;
@@ -162,15 +163,15 @@ class ContentExactMatcherMailetTest {
     @Test
     void shouldFailDuetoInvalidParsing() throws MessagingException, IOException {
 
-        AhoCorasickMatcher matcher = Mockito.mock(AhoCorasickMatcher.class);
+        Matcher matcher = Mockito.mock(AhoCorasickMatcher.class);
         Mockito.doThrow(new IOException("mock"))
-                .when(matcher).match(Mockito.anyString(), Mockito.any(), Mockito.any());
+                .when(matcher).match(Mockito.anyString(), Mockito.any());
 
         ContentReaderService contentReaderService = Mockito.mock(ContentReaderService.class);
         Mockito.doReturn(new DataReader<>(new File(""), Map.of(), new NullReader(0)))
                 .when(contentReaderService).getContent((MimeMessage) Mockito.any());
 
-        ContentExactMatcherMailet mailet = new ContentExactMatcherMailet(matcher, contentReaderService);
+        ContentExactMatcherMailet mailet = new ContentExactMatcherMailet(contentReaderService);
 
         FakeMailetConfig mailetConfig = FakeMailetConfig.builder()
                 .mailetName("Test")
@@ -201,13 +202,13 @@ class ContentExactMatcherMailetTest {
     @Test
     void shouldFailDueToInvalidBody() throws MessagingException, IOException {
 
-        AhoCorasickMatcher matcher = Mockito.mock(AhoCorasickMatcher.class);
+        Matcher matcher = Mockito.mock(AhoCorasickMatcher.class);
 
         ContentReaderService contentReaderService = Mockito.mock(ContentReaderService.class);
         Mockito.doThrow(new IOException("throw"))
                 .when(contentReaderService).getContent((MimeMessage) Mockito.any());
 
-        ContentExactMatcherMailet mailet = new ContentExactMatcherMailet(matcher, contentReaderService);
+        ContentExactMatcherMailet mailet = new ContentExactMatcherMailet(contentReaderService);
 
         FakeMailetConfig mailetConfig = FakeMailetConfig.builder()
                 .mailetName("Test")

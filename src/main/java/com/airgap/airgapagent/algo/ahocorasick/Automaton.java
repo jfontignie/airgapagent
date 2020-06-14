@@ -1,4 +1,4 @@
-package com.airgap.airgapagent.algo;
+package com.airgap.airgapagent.algo.ahocorasick;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

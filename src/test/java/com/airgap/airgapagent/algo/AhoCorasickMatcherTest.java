@@ -1,5 +1,8 @@
 package com.airgap.airgapagent.algo;
 
+import com.airgap.airgapagent.algo.ahocorasick.AhoCorasickMatcher;
+import com.airgap.airgapagent.algo.ahocorasick.Automaton;
+import com.airgap.airgapagent.algo.ahocorasick.AutomatonOption;
 import com.airgap.airgapagent.service.CorpusBuilderService;
 import com.airgap.airgapagent.utils.ConstantsTest;
 import org.junit.jupiter.api.Assertions;
@@ -25,15 +28,15 @@ class AhoCorasickMatcherTest {
     void match() throws IOException {
         CorpusBuilderService service = new CorpusBuilderService();
         Set<String> set = service.buildSet(ConstantsTest.CORPUS_SAMPLE);
-        AhoCorasickMatcher matcher = new AhoCorasickMatcher();
         String s = "603046751.7603046751.7,523650288.4";
         List<MatchingResult> found = new ArrayList<>();
         char[][] keywords =
                 set.stream().map(String::toCharArray).collect(Collectors.toList()).toArray(new char[0][0]);
         Automaton automaton = new Automaton(Collections.singleton(AutomatonOption.CASE_INSENSITIVE), set);
+        Matcher matcher = new AhoCorasickMatcher(automaton);
+
         matcher.match(new StringReader(s),
-                found::add, automaton
-        );
+                found::add);
         Assertions.assertEquals(3, found.size());
         System.out.println(found);
 
@@ -43,12 +46,12 @@ class AhoCorasickMatcherTest {
     void testFiles() throws IOException {
         CorpusBuilderService service = new CorpusBuilderService();
         Set<String> set = service.buildSet(ConstantsTest.CORPUS_SAMPLE);
-        AhoCorasickMatcher matcher = new AhoCorasickMatcher();
         Automaton automaton = new Automaton(Collections.singleton(AutomatonOption.CASE_INSENSITIVE), set);
+        Matcher matcher = new AhoCorasickMatcher(automaton);
+
         AtomicInteger count = new AtomicInteger();
         matcher.match(new FileReader("src/test/resources/sample/sample.csv"),
-                matchingResult -> count.incrementAndGet(),
-                automaton);
+                matchingResult -> count.incrementAndGet());
         Assertions.assertTrue(count.get() > 0);
 
     }

@@ -1,7 +1,7 @@
 package com.airgap.airgapagent.service;
 
-import com.airgap.airgapagent.algo.Automaton;
-import com.airgap.airgapagent.algo.AutomatonOption;
+import com.airgap.airgapagent.algo.ahocorasick.Automaton;
+import com.airgap.airgapagent.algo.ahocorasick.AutomatonOption;
 import com.airgap.airgapagent.configuration.AbstractScanAction;
 import com.airgap.airgapagent.configuration.AbstractSearchAction;
 import com.airgap.airgapagent.domain.ExactMatchingResult;

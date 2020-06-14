@@ -1,4 +1,4 @@
-package com.airgap.airgapagent.algo;
+package com.airgap.airgapagent.algo.ahocorasick;
 
 /**
  * com.airgap.airgapagent.algo
