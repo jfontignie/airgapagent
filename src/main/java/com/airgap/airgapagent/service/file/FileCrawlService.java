@@ -1,6 +1,9 @@
-package com.airgap.airgapagent.service;
+package com.airgap.airgapagent.service.file;
 
 import com.airgap.airgapagent.configuration.CopyOption;
+import com.airgap.airgapagent.service.ErrorService;
+import com.airgap.airgapagent.service.crawl.ContentReaderService;
+import com.airgap.airgapagent.service.crawl.CrawlService;
 import com.airgap.airgapagent.utils.DataReader;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;

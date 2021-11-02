@@ -1,6 +1,6 @@
-package com.airgap.airgapagent.service;
+package com.airgap.airgapagent.service.file;
 
-import com.airgap.airgapagent.utils.FileWalkerContext;
+import com.airgap.airgapagent.utils.file.FileWalkerContext;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.FluxSink;
@@ -14,9 +14,6 @@ import java.util.Arrays;
  */
 @Service
 public class FileWalkerService {
-
-    public static final FileWalkerFilter TRUE = f -> true;
-    public static final FileWalkerFilter FALSE = f -> false;
 
     public Flux<File> listFiles(FileWalkerContext fileWalkerContext) {
         File lastFileToVisit = fileWalkerContext.getRefefenceFile();

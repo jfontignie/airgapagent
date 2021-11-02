@@ -1,10 +1,12 @@
-package com.airgap.airgapagent.service;
+package com.airgap.airgapagent.service.file;
 
 import com.airgap.airgapagent.configuration.CopyOption;
 import com.airgap.airgapagent.configuration.FileCopyAction;
 import com.airgap.airgapagent.configuration.FileSearchAction;
-import com.airgap.airgapagent.utils.FileStateConverter;
+import com.airgap.airgapagent.service.ErrorService;
+import com.airgap.airgapagent.service.ExactMatchService;
 import com.airgap.airgapagent.utils.StateConverter;
+import com.airgap.airgapagent.utils.file.FileStateConverter;
 import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

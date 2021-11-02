@@ -1,4 +1,6 @@
-package com.airgap.airgapagent.utils;
+package com.airgap.airgapagent.utils.file;
+
+import com.airgap.airgapagent.utils.StateConverter;
 
 import java.io.File;
 

@@ -1,4 +1,4 @@
-package com.airgap.airgapagent.utils;
+package com.airgap.airgapagent.utils.file;
 
 import org.apache.commons.io.FilenameUtils;
 
@@ -14,6 +14,7 @@ import java.util.Random;
 public class FileUtils {
 
     private static final int MAX_BOUND = 100;
+    private static final Random RANDOM = new Random();
 
     private FileUtils() {
         //Nothing to do
@@ -38,7 +39,8 @@ public class FileUtils {
         String path = FilenameUtils.getPath(target);
         String baseName = FilenameUtils.getBaseName(target);
         String extension = FilenameUtils.getExtension(target);
-        int random = new Random().nextInt(MAX_BOUND);
-        return Path.of(path, baseName + "_" + getTimeStamp() + "_" + random + "." + extension);
+
+        int randomValue = FileUtils.RANDOM.nextInt(MAX_BOUND);
+        return Path.of(path, baseName + "_" + getTimeStamp() + "_" + randomValue + "." + extension);
     }
 }

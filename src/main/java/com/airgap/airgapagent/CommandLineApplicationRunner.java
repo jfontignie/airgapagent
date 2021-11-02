@@ -2,8 +2,8 @@ package com.airgap.airgapagent;
 
 import com.airgap.airgapagent.configuration.FileCopyAction;
 import com.airgap.airgapagent.configuration.FileSearchAction;
-import com.airgap.airgapagent.service.FileCrawlService;
-import com.airgap.airgapagent.service.FileScanService;
+import com.airgap.airgapagent.service.file.FileCrawlService;
+import com.airgap.airgapagent.service.file.FileScanService;
 import com.beust.jcommander.JCommander;
 import com.beust.jcommander.Parameter;
 import com.beust.jcommander.ParameterException;

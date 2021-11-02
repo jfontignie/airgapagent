@@ -1,7 +1,8 @@
 package com.airgap.airgapagent.service;
 
+import com.airgap.airgapagent.service.file.FileWalkerService;
 import com.airgap.airgapagent.utils.ConstantsTest;
-import com.airgap.airgapagent.utils.FileWalkerContext;
+import com.airgap.airgapagent.utils.file.FileWalkerContext;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;

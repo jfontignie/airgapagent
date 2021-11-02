@@ -6,6 +6,7 @@ import com.airgap.airgapagent.algo.Matcher;
 import com.airgap.airgapagent.configuration.AbstractScanAction;
 import com.airgap.airgapagent.configuration.AbstractSearchAction;
 import com.airgap.airgapagent.domain.ExactMatchingResult;
+import com.airgap.airgapagent.service.crawl.CrawlService;
 import com.airgap.airgapagent.service.syslog.SyslogFormatter;
 import com.airgap.airgapagent.service.syslog.SyslogService;
 import com.airgap.airgapagent.utils.CsvWriter;

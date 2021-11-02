@@ -1,6 +1,8 @@
 package com.airgap.airgapagent.service;
 
 import com.airgap.airgapagent.configuration.CopyOption;
+import com.airgap.airgapagent.service.crawl.ContentReaderService;
+import com.airgap.airgapagent.service.file.FileCrawlService;
 import com.airgap.airgapagent.utils.ConstantsTest;
 import com.airgap.airgapagent.utils.DataReader;
 import org.apache.commons.io.FileUtils;
@@ -28,7 +30,7 @@ class FileCrawlServiceTest {
     @BeforeEach
     void setUp() throws IOException {
         ContentReaderService contentReader = Mockito.mock(ContentReaderService.class);
-        Mockito.doReturn(new DataReader<>("test", new HashMap<>(), null)).when(contentReader).getContent((File) Mockito.any());
+        Mockito.doReturn(new DataReader<>("test", new HashMap<>(), null)).when(contentReader).getContent(Mockito.any());
         service = new FileCrawlService(contentReader, new ErrorServiceImpl(new MockEnvironment()
                 .withProperty(ErrorServiceImpl.ERROR_FILE, "target/error.dat")));
 
@@ -67,7 +69,9 @@ class FileCrawlServiceTest {
         service.copy(root, source, dir);
         Assertions.assertTrue(new File("target/ensureCopyWorks/sample.7z").exists());
         service.copy(root, source, dir, Set.of(CopyOption.RENAME_ON_COLLISION));
-        Assertions.assertEquals(2, dir.listFiles().length);
+        File[] files = dir.listFiles();
+        Assertions.assertNotNull(files);
+        Assertions.assertEquals(2, files.length);
 
 
         FileUtils.deleteDirectory(dir);

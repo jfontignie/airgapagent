@@ -1,5 +1,6 @@
 package com.airgap.airgapagent.utils;
 
+import com.airgap.airgapagent.utils.file.FileStateConverter;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 

@@ -1,8 +1,8 @@
 package com.airgap.airgapagent.utils.visitor;
 
 import com.airgap.airgapagent.utils.ConstantsTest;
-import com.airgap.airgapagent.utils.FileStateConverter;
 import com.airgap.airgapagent.utils.WalkerContext;
+import com.airgap.airgapagent.utils.file.FileStateConverter;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 

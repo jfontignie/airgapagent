@@ -1,5 +1,6 @@
 package com.airgap.airgapagent.service;
 
+import com.airgap.airgapagent.service.crawl.CrawlService;
 import com.airgap.airgapagent.utils.WalkerContext;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;

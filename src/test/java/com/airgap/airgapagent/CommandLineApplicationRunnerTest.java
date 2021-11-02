@@ -1,8 +1,7 @@
 package com.airgap.airgapagent;
 
-import com.airgap.airgapagent.configuration.FileSearchAction;
-import com.airgap.airgapagent.service.FileCrawlService;
-import com.airgap.airgapagent.service.FileScanService;
+import com.airgap.airgapagent.service.file.FileCrawlService;
+import com.airgap.airgapagent.service.file.FileScanService;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -24,7 +23,7 @@ class CommandLineApplicationRunnerTest {
     void run() throws Exception {
         FileCrawlService crawler = Mockito.mock(FileCrawlService.class);
         FileScanService fileScanService = Mockito.mock(FileScanService.class);
-        Mockito.doReturn(5L).when(fileScanService).scanFolder((FileSearchAction) Mockito.any(), Mockito.any());
+        Mockito.doReturn(5L).when(fileScanService).scanFolder(Mockito.any(), Mockito.any());
         CommandLineApplicationRunner runner = new CommandLineApplicationRunner(crawler,
                 fileScanService);
 

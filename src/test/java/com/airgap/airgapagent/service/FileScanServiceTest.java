@@ -2,6 +2,9 @@ package com.airgap.airgapagent.service;
 
 import com.airgap.airgapagent.configuration.FileCopyAction;
 import com.airgap.airgapagent.configuration.FileSearchAction;
+import com.airgap.airgapagent.service.crawl.ContentReaderService;
+import com.airgap.airgapagent.service.file.FileCrawlService;
+import com.airgap.airgapagent.service.file.FileScanService;
 import com.airgap.airgapagent.service.syslog.SyslogService;
 import com.airgap.airgapagent.utils.ConstantsTest;
 import org.apache.commons.io.FileUtils;
