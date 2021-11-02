@@ -2,10 +2,15 @@ package com.airgap.airgapagent.configuration;
 
 import com.airgap.airgapagent.algo.AlgoType;
 import com.beust.jcommander.Parameter;
+import com.beust.jcommander.ParameterException;
+import com.beust.jcommander.converters.BaseConverter;
 import com.beust.jcommander.validators.PositiveInteger;
 
 import java.io.File;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.time.Duration;
+import java.util.Date;
 
 /**
  * com.airgap.airgapagent.configuration
@@ -45,9 +50,19 @@ public abstract class AbstractScanConfiguration<T> {
     private long schedule = 5;
 
     @Parameter(
+            names = "-earlierThan",
+            description = "The file must be earlier than: Format is YYYY:MM:DD hh:mm:ss",
+            converter = DateConverter.class
+    )
+    private Date earlierThan;
+
+    @Parameter(
             names = "-algo",
             description = "Specify the algorithm that can be used for matching patterns")
     private AlgoType algo = AlgoType.AHO_CORASICK;
+
+    protected AbstractScanConfiguration() {
+    }
 
 
     public void setCorpus(File corpusLocation) {
@@ -103,4 +118,23 @@ public abstract class AbstractScanConfiguration<T> {
     }
 
     public abstract T getRootLocation();
+
+    public static class DateConverter extends BaseConverter<Date> {
+        public static final String FORMAT = "yyyy:MM:dd-hh:mm:ss";
+        private final SimpleDateFormat simpleDateFormat = new SimpleDateFormat(FORMAT);
+
+        public DateConverter(String optionName) {
+            super(optionName);
+        }
+
+        @Override
+        public Date convert(String value) {
+            try {
+                return simpleDateFormat.parse(value);
+            } catch (ParseException e) {
+                throw new ParameterException(getErrorString(value, "a date. Format should be: " + FORMAT));
+            }
+        }
+
+    }
 }
