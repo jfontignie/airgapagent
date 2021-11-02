@@ -50,11 +50,11 @@ public abstract class AbstractScanConfiguration<T> {
     private long schedule = 5;
 
     @Parameter(
-            names = "-earlierThan",
-            description = "The file must be earlier than: Format is YYYY:MM:DD hh:mm:ss",
+            names = "-laterThan",
+            description = "The file must be created later than: Format is YYYY:MM:DD hh:mm:ss",
             converter = DateConverter.class
     )
-    private Date earlierThan;
+    private Date laterThan;
 
     @Parameter(
             names = "-algo",
@@ -64,6 +64,13 @@ public abstract class AbstractScanConfiguration<T> {
     protected AbstractScanConfiguration() {
     }
 
+    public Date getLaterThan() {
+        return laterThan;
+    }
+
+    public void setLaterThan(Date earlierThan) {
+        this.laterThan = earlierThan;
+    }
 
     public void setCorpus(File corpusLocation) {
         this.corpusLocation = corpusLocation;

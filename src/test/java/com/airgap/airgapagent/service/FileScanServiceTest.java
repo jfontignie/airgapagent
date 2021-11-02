@@ -16,6 +16,7 @@ import org.springframework.mock.env.MockEnvironment;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Calendar;
 
 /**
  * com.airgap.airgapagent.service
@@ -37,7 +38,7 @@ class FileScanServiceTest {
         ErrorServiceImpl errorService = new ErrorServiceImpl(environment);
 
         fileScanService = new FileScanService(
-                new ExactMatchService(
+                new SearchEngine(
                         new VisitorService(),
                         new CorpusBuilderService(),
                         errorService,
@@ -94,6 +95,28 @@ class FileScanServiceTest {
         action.setCorpus(new File(ConstantsTest.CORPUS_SAMPLE_STRING));
         action.setFoundLocation(new File("target/run_found.csv"));
         action.setStateLocation(new File("target/run_sate.dat"));
+        action.setMinHit(MIN_HIT);
+        action.setInterval(5);
+
+        fileScanService.scanFolder(action, fileCrawlService);
+        Assertions.assertTrue(true);
+    }
+
+
+    @Disabled("Performance test earlier than one day")
+    @Test
+    void testRecent() throws IOException {
+
+        FileSearchConfiguration action = new FileSearchConfiguration();
+        action.setRootLocation(new File("c:/"));
+        action.setCorpus(new File(ConstantsTest.CORPUS_SAMPLE_STRING));
+        action.setFoundLocation(new File("target/run_found.csv"));
+        action.setStateLocation(new File("target/run_sate.dat"));
+
+        Calendar calendar = Calendar.getInstance();
+        calendar.add(Calendar.DATE, -1);
+
+        action.setLaterThan(calendar.getTime());
         action.setMinHit(MIN_HIT);
         action.setInterval(5);
 

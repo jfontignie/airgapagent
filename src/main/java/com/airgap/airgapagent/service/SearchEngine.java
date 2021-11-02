@@ -35,9 +35,9 @@ import java.util.Set;
  * Created by Jacques Fontignie on 5/30/2020.
  */
 @Service
-public class ExactMatchService {
+public class SearchEngine {
 
-    private static final Logger log = LoggerFactory.getLogger(ExactMatchService.class);
+    private static final Logger log = LoggerFactory.getLogger(SearchEngine.class);
 
     private final CorpusBuilderService corpusBuilderService;
     private final VisitorService visitorService;
@@ -45,7 +45,7 @@ public class ExactMatchService {
     private final SyslogService syslogService;
     private final MatcherService matcherService;
 
-    public ExactMatchService(
+    public SearchEngine(
             VisitorService visitorService,
             CorpusBuilderService corpusBuilderService,
             ErrorService errorService,
@@ -108,7 +108,7 @@ public class ExactMatchService {
                 .filter(result -> result.getOccurrences() >= exactMatchContext.getMinHit());
 
         if (exactMatchContext.isSyslog()) {
-            flux = flux.doOnNext(ExactMatchService.this::sendSyslog);
+            flux = flux.doOnNext(SearchEngine.this::sendSyslog);
         }
 
         return flux.sequential().doOnTerminate(scheduledStateVisitor::close);
