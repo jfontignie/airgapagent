@@ -16,7 +16,7 @@ class FileSearchActionTest {
 
     private JCommander getCommander() {
         return JCommander.newBuilder()
-                .addCommand(new FileSearchAction())
+                .addCommand(new FileSearchConfiguration())
                 .build();
     }
 
@@ -25,7 +25,7 @@ class FileSearchActionTest {
     void build() {
         StringBuilder stringBuilder = new StringBuilder();
         getCommander().getUsageFormatter().usage(stringBuilder, "\t");
-        System.out.println(stringBuilder.toString());
+        System.out.println(stringBuilder);
 
 
         Assertions.assertThrows(ParameterException.class, () -> getCommander().parse("search"));
@@ -34,7 +34,7 @@ class FileSearchActionTest {
         Assertions.assertThrows(ParameterException.class, () ->
                 getCommander().parse("search", "-minHit", "5", "-folder", "src2", "-found", "file.csv"));
 
-        FileSearchAction command = new FileSearchAction();
+        FileSearchConfiguration command = new FileSearchConfiguration();
         JCommander commander = JCommander.newBuilder()
                 .addCommand(command)
                 .build();

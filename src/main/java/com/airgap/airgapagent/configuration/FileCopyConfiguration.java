@@ -12,9 +12,9 @@ import java.util.Set;
  * com.airgap.airgapagent.configuration
  * Created by Jacques Fontignie on 6/3/2020.
  */
-@Parameters(commandNames = FileCopyAction.COMMAND_NAME,
+@Parameters(commandNames = FileCopyConfiguration.COMMAND_NAME,
         commandDescription = "Copy all the files matching a specific corpus in a target folder")
-public class FileCopyAction extends AbstractScanAction<File> {
+public class FileCopyConfiguration extends AbstractScanConfiguration<File> {
 
     public static final String COMMAND_NAME = "copy";
 

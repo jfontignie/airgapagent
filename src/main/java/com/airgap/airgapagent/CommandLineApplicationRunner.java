@@ -1,7 +1,7 @@
 package com.airgap.airgapagent;
 
-import com.airgap.airgapagent.configuration.FileCopyAction;
-import com.airgap.airgapagent.configuration.FileSearchAction;
+import com.airgap.airgapagent.configuration.FileCopyConfiguration;
+import com.airgap.airgapagent.configuration.FileSearchConfiguration;
 import com.airgap.airgapagent.service.file.FileCrawlService;
 import com.airgap.airgapagent.service.file.FileScanService;
 import com.beust.jcommander.JCommander;
@@ -41,8 +41,8 @@ public class CommandLineApplicationRunner implements CommandLineRunner {
     public void run(String... args) throws Exception {
 
         help = false;
-        FileCopyAction fileCopyAction = new FileCopyAction();
-        FileSearchAction fileSearchAction = new FileSearchAction();
+        FileCopyConfiguration fileCopyAction = new FileCopyConfiguration();
+        FileSearchConfiguration fileSearchAction = new FileSearchConfiguration();
 
         JCommander commander = JCommander.newBuilder()
                 .addObject(this)
@@ -66,13 +66,13 @@ public class CommandLineApplicationRunner implements CommandLineRunner {
             printHelp(commander);
             return;
         }
-        if (commander.getParsedCommand().equals(FileSearchAction.COMMAND_NAME)) {
+        if (commander.getParsedCommand().equals(FileSearchConfiguration.COMMAND_NAME)) {
 
             long found = fileScanService.scanFolder(fileSearchAction, fileCrawlService);
             log.info("Number or elements found: {}", found);
         }
 
-        if (commander.getParsedCommand().equals(FileCopyAction.COMMAND_NAME)) {
+        if (commander.getParsedCommand().equals(FileCopyConfiguration.COMMAND_NAME)) {
             long found = fileScanService.copyFolder(fileCopyAction, fileCrawlService);
             log.info("Number or elements found: {}", found);
         }

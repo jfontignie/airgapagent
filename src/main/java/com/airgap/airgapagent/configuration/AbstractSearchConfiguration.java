@@ -10,7 +10,7 @@ import java.util.Set;
  * com.airgap.airgapagent.configuration
  * Created by Jacques Fontignie on 6/8/2020.
  */
-public abstract class AbstractSearchAction<T> extends AbstractScanAction<T> {
+public abstract class AbstractSearchConfiguration<T> extends AbstractScanConfiguration<T> {
     @Parameter(
             names = "-found",
             description = "File containing the output in a CSV format.",

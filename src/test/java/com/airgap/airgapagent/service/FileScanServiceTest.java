@@ -1,7 +1,7 @@
 package com.airgap.airgapagent.service;
 
-import com.airgap.airgapagent.configuration.FileCopyAction;
-import com.airgap.airgapagent.configuration.FileSearchAction;
+import com.airgap.airgapagent.configuration.FileCopyConfiguration;
+import com.airgap.airgapagent.configuration.FileSearchConfiguration;
 import com.airgap.airgapagent.service.crawl.ContentReaderService;
 import com.airgap.airgapagent.service.file.FileCrawlService;
 import com.airgap.airgapagent.service.file.FileScanService;
@@ -53,7 +53,7 @@ class FileScanServiceTest {
     @Test
     void run() throws IOException {
 
-        FileSearchAction action = new FileSearchAction();
+        FileSearchConfiguration action = new FileSearchConfiguration();
         action.setRootLocation(ConstantsTest.SAMPLE_FOLDER);
         action.setCorpus(new File(ConstantsTest.CORPUS_SAMPLE_STRING));
         action.setFoundLocation(new File("target/run_found.csv"));
@@ -71,7 +71,7 @@ class FileScanServiceTest {
 
         File destination = new File("target/copyTest");
         FileUtils.deleteDirectory(destination);
-        FileCopyAction action = new FileCopyAction();
+        FileCopyConfiguration action = new FileCopyConfiguration();
         action.setRoot(ConstantsTest.SAMPLE_FOLDER);
         action.setCorpus(new File(ConstantsTest.CORPUS_SAMPLE_STRING));
         action.setStateLocation(new File("target/run_state.dat"));
@@ -89,7 +89,7 @@ class FileScanServiceTest {
     @Test
     void testLong() throws IOException {
 
-        FileSearchAction action = new FileSearchAction();
+        FileSearchConfiguration action = new FileSearchConfiguration();
         action.setRootLocation(new File("c:/"));
         action.setCorpus(new File(ConstantsTest.CORPUS_SAMPLE_STRING));
         action.setFoundLocation(new File("target/run_found.csv"));

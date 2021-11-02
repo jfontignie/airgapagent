@@ -3,8 +3,8 @@ package com.airgap.airgapagent.service;
 import com.airgap.airgapagent.algo.AlgoFactory;
 import com.airgap.airgapagent.algo.MatchOption;
 import com.airgap.airgapagent.algo.Matcher;
-import com.airgap.airgapagent.configuration.AbstractScanAction;
-import com.airgap.airgapagent.configuration.AbstractSearchAction;
+import com.airgap.airgapagent.configuration.AbstractScanConfiguration;
+import com.airgap.airgapagent.configuration.AbstractSearchConfiguration;
 import com.airgap.airgapagent.domain.ExactMatchingResult;
 import com.airgap.airgapagent.service.crawl.CrawlService;
 import com.airgap.airgapagent.service.syslog.SyslogFormatter;
@@ -59,7 +59,7 @@ public class ExactMatchService {
     }
 
     @SuppressWarnings("java:S2095")
-    public <T extends Comparable<T>> Flux<ExactMatchingResult<T>> buildScan(AbstractScanAction<T> exactMatchContext,
+    public <T extends Comparable<T>> Flux<ExactMatchingResult<T>> buildScan(AbstractScanConfiguration<T> exactMatchContext,
                                                                             CrawlService<T> crawlService,
                                                                             StateConverter<T> stateConverter) throws IOException {
 
@@ -115,7 +115,7 @@ public class ExactMatchService {
     }
 
 
-    public <T extends Comparable<T>> long scan(AbstractSearchAction<T> exactMatchContext,
+    public <T extends Comparable<T>> long scan(AbstractSearchConfiguration<T> exactMatchContext,
                                                CrawlService<T> crawlService,
                                                StateConverter<T> stateConverter) throws IOException {
 

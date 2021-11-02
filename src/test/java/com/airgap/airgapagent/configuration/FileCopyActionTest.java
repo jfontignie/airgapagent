@@ -14,7 +14,7 @@ class FileCopyActionTest {
 
     private JCommander getCommander() {
         return JCommander.newBuilder()
-                .addCommand(new FileCopyAction())
+                .addCommand(new FileCopyConfiguration())
                 .build();
     }
 
@@ -24,9 +24,9 @@ class FileCopyActionTest {
     void build() {
         StringBuilder stringBuilder = new StringBuilder();
         getCommander().getUsageFormatter().usage(stringBuilder, "\t");
-        System.out.println(stringBuilder.toString());
+        System.out.println(stringBuilder);
 
-        FileCopyAction command = new FileCopyAction();
+        FileCopyConfiguration command = new FileCopyConfiguration();
         JCommander commander = JCommander.newBuilder()
                 .addCommand(command)
                 .build();
@@ -34,7 +34,7 @@ class FileCopyActionTest {
                 "-folder", "src",
                 "-target", "src",
                 "-corpus", ConstantsTest.CORPUS_SAMPLE_STRING,
-                "-options", CopyOption.CLEAN_ON_STARTUP.toString() + "," + CopyOption.FLAT_HIERARCHY.toString());
+                "-options", CopyOption.CLEAN_ON_STARTUP + "," + CopyOption.FLAT_HIERARCHY);
 
         Assertions.assertEquals(2, command.getCopyOptions().size());
 

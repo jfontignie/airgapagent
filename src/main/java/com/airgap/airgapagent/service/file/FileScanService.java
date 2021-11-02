@@ -1,8 +1,8 @@
 package com.airgap.airgapagent.service.file;
 
 import com.airgap.airgapagent.configuration.CopyOption;
-import com.airgap.airgapagent.configuration.FileCopyAction;
-import com.airgap.airgapagent.configuration.FileSearchAction;
+import com.airgap.airgapagent.configuration.FileCopyConfiguration;
+import com.airgap.airgapagent.configuration.FileSearchConfiguration;
 import com.airgap.airgapagent.service.ErrorService;
 import com.airgap.airgapagent.service.ExactMatchService;
 import com.airgap.airgapagent.utils.StateConverter;
@@ -41,7 +41,7 @@ public class FileScanService {
     }
 
 
-    public long copyFolder(FileCopyAction fileCopyAction, FileCrawlService crawlService) throws IOException {
+    public long copyFolder(FileCopyConfiguration fileCopyAction, FileCrawlService crawlService) throws IOException {
         File scanFolder = fileCopyAction.getRootLocation();
         if (!scanFolder.exists()) {
             throw new IllegalStateException("Folder " + scanFolder + " does not exist");
@@ -51,7 +51,7 @@ public class FileScanService {
             Files.createDirectory(scanFolder.toPath());
         }
         Long count = exactMatchService.buildScan(
-                fileCopyAction,
+                        fileCopyAction,
                 crawlService,
                 STATE_CONVERTER)
                 .flatMap(exactMatchingResult -> {
@@ -74,7 +74,7 @@ public class FileScanService {
         return Objects.requireNonNullElse(count, 0L);
     }
 
-    public long scanFolder(FileSearchAction fileSearchAction, FileCrawlService crawlService) throws IOException {
+    public long scanFolder(FileSearchConfiguration fileSearchAction, FileCrawlService crawlService) throws IOException {
 
         log.info("Staring scan");
         File scanFolder = fileSearchAction.getRootLocation();

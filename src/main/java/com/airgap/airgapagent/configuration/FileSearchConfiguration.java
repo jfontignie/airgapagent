@@ -9,10 +9,10 @@ import java.io.File;
  * com.airgap.airgapagent.configuration
  * Created by Jacques Fontignie on 6/4/2020.
  */
-@Parameters(commandNames = FileSearchAction.COMMAND_NAME,
+@Parameters(commandNames = FileSearchConfiguration.COMMAND_NAME,
         commandDescription = "Search for exact matches in a folder. The files will be parsed using Tika parser " +
                 "and will look for patterns defined in corpus using Aho Corasick algorithm")
-public class FileSearchAction extends AbstractSearchAction<File> {
+public class FileSearchConfiguration extends AbstractSearchConfiguration<File> {
 
     public static final String COMMAND_NAME = "search";
 

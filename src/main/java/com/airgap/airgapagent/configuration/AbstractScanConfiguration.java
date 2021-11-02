@@ -11,7 +11,7 @@ import java.time.Duration;
  * com.airgap.airgapagent.configuration
  * Created by Jacques Fontignie on 6/3/2020.
  */
-public abstract class AbstractScanAction<T> {
+public abstract class AbstractScanConfiguration<T> {
 
     @Parameter(
             names = "-minHit",
