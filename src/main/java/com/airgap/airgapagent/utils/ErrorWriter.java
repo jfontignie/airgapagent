@@ -1,5 +1,6 @@
 package com.airgap.airgapagent.utils;
 
+import com.airgap.airgapagent.utils.exceptions.ExceptionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

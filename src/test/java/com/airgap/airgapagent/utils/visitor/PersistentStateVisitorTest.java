@@ -1,12 +1,14 @@
-package com.airgap.airgapagent.utils;
+package com.airgap.airgapagent.utils.visitor;
 
+import com.airgap.airgapagent.utils.ConstantsTest;
+import com.airgap.airgapagent.utils.FileStateConverter;
+import com.airgap.airgapagent.utils.WalkerContext;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
-import java.time.Duration;
 
 /**
  * com.airgap.airgapagent.service
@@ -24,7 +26,6 @@ class PersistentStateVisitorTest {
 
         PersistentStateVisitor<File> persistentFileWalker = new PersistentStateVisitor<>(
                 stateLocation,
-                Duration.ofSeconds(1),
                 walkerContext,
                 FileStateConverter.of());
 
@@ -33,7 +34,7 @@ class PersistentStateVisitorTest {
 
         File a = new File("a");
         walkerContext.setReference(a);
-        persistentFileWalker.persist();
+        persistentFileWalker.visit(1);
 
         Assertions.assertTrue(stateLocation.exists());
         persistentFileWalker.close();

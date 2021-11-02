@@ -1,6 +1,7 @@
-package com.airgap.airgapagent.utils;
+package com.airgap.airgapagent.utils.exceptions;
 
 import java.util.StringJoiner;
+import java.util.function.Consumer;
 
 /**
  * com.airgap.airgapagent.utils
@@ -21,4 +22,14 @@ public class ExceptionUtils {
         } while (throwable != null);
         return joiner.toString();
     }
+
+    public static <T extends Exception> void run(ThrowableStatement<T> statement, Consumer<T> consumer) {
+        try {
+            statement.run();
+        } catch (Exception t) {
+            //noinspection unchecked
+            consumer.accept((T) t);
+        }
+    }
+
 }

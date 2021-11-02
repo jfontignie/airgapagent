@@ -6,7 +6,13 @@ import com.airgap.airgapagent.algo.Matcher;
 import com.airgap.airgapagent.configuration.AbstractScanAction;
 import com.airgap.airgapagent.configuration.AbstractSearchAction;
 import com.airgap.airgapagent.domain.ExactMatchingResult;
-import com.airgap.airgapagent.utils.*;
+import com.airgap.airgapagent.utils.CsvWriter;
+import com.airgap.airgapagent.utils.IntervalRunner;
+import com.airgap.airgapagent.utils.StateConverter;
+import com.airgap.airgapagent.utils.WalkerContext;
+import com.airgap.airgapagent.utils.visitor.PersistentStateVisitor;
+import com.airgap.airgapagent.utils.visitor.ProgressLogStateVisitor;
+import com.airgap.airgapagent.utils.visitor.ScheduledStateVisitor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -16,6 +22,7 @@ import reactor.core.scheduler.Schedulers;
 
 import java.io.IOException;
 import java.time.Duration;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
@@ -60,18 +67,18 @@ public class ExactMatchService {
                 corpusBuilderService.buildSet(exactMatchContext.getCorpusLocation()));
 
         WalkerContext<T> context = WalkerContext.of(exactMatchContext.getRootLocation());
-        PersistentStateVisitor<T> persistentStateVisitor = new PersistentStateVisitor<>(
-                exactMatchContext.getStateLocation(),
+        ScheduledStateVisitor scheduledStateVisitor = new ScheduledStateVisitor(
                 exactMatchContext.getSaveInterval(),
-                context,
-                stateConverter
+                List.of(
+                        new ProgressLogStateVisitor<>(context),
+                        new PersistentStateVisitor<>(exactMatchContext.getStateLocation(), context, stateConverter)
+                )
         );
-        persistentStateVisitor.init();
-
+        scheduledStateVisitor.init();
 
         ParallelFlux<ExactMatchingResult<T>> flux = visitorService.list(crawlService, context)
                 //Persist the state
-                .doOnNext(file -> persistentStateVisitor.persist())
+                .doOnNext(file -> scheduledStateVisitor.visit())
 
                 //Run on parallel
                 .parallel()
@@ -101,7 +108,7 @@ public class ExactMatchService {
             flux = flux.doOnNext(ExactMatchService.this::sendSyslog);
         }
 
-        return flux.sequential().doOnTerminate(persistentStateVisitor::close);
+        return flux.sequential().doOnTerminate(scheduledStateVisitor::close);
     }
 
 
