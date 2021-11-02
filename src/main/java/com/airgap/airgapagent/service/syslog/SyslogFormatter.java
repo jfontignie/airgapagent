@@ -1,4 +1,4 @@
-package com.airgap.airgapagent.service;
+package com.airgap.airgapagent.service.syslog;
 
 import java.util.Map;
 import java.util.StringJoiner;

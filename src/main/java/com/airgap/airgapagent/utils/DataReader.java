@@ -7,6 +7,8 @@ import java.io.Reader;
 import java.util.Map;
 
 /**
+ * An object able containing the information of something readable. In particular its metadata and its reader
+ * <p>
  * com.airgap.airgapagent.utils
  * Created by Jacques Fontignie on 5/31/2020.
  */

@@ -24,6 +24,7 @@ public class CommandLineApplicationRunner implements CommandLineRunner {
     private final FileScanService fileScanService;
     private final FileCrawlService fileCrawlService;
 
+    @SuppressWarnings("FieldCanBeLocal")
     @Parameter(names = "-help", help = true)
     private boolean help = false;
 
@@ -61,7 +62,7 @@ public class CommandLineApplicationRunner implements CommandLineRunner {
         }
 
         if (commander.getParsedCommand() == null) {
-            System.err.println("No commande specified");
+            System.err.println("No command specified");
             printHelp(commander);
             return;
         }
@@ -80,7 +81,7 @@ public class CommandLineApplicationRunner implements CommandLineRunner {
     private void printHelp(JCommander commander) {
         StringBuilder stringBuilder = new StringBuilder();
         commander.getUsageFormatter().usage(stringBuilder, "\t");
-        System.err.println(stringBuilder.toString());
+        System.err.println(stringBuilder);
     }
 
 }

@@ -1,4 +1,4 @@
-package com.airgap.airgapagent.service;
+package com.airgap.airgapagent.service.syslog;
 
 import com.cloudbees.syslog.Facility;
 import com.cloudbees.syslog.MessageFormat;

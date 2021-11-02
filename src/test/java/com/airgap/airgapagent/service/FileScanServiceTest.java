@@ -2,6 +2,7 @@ package com.airgap.airgapagent.service;
 
 import com.airgap.airgapagent.configuration.FileCopyAction;
 import com.airgap.airgapagent.configuration.FileSearchAction;
+import com.airgap.airgapagent.service.syslog.SyslogService;
 import com.airgap.airgapagent.utils.ConstantsTest;
 import org.apache.commons.io.FileUtils;
 import org.junit.jupiter.api.Assertions;
