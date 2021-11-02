@@ -2,7 +2,7 @@ package com.airgap.airgapagent.utils.visitor;
 
 import com.airgap.airgapagent.utils.IntervalRunner;
 import com.airgap.airgapagent.utils.exceptions.ExceptionUtils;
-import com.airgap.airgapagent.utils.exceptions.ThrowableStatement;
+import com.airgap.airgapagent.utils.exceptions.ThrowableAction;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -51,7 +51,7 @@ public class ScheduledStateVisitor implements Closeable {
     public void close() {
         for (StateVisitor v : visitors) {
             ExceptionUtils.run(
-                    (ThrowableStatement<Exception>) v::close, e -> log.error("Impossible to close visitor", e));
+                    (ThrowableAction<Exception>) v::close, e -> log.error("Impossible to close visitor", e));
         }
     }
 

@@ -1,7 +1,7 @@
 package com.airgap.airgapagent.utils;
 
 import com.airgap.airgapagent.utils.exceptions.ExceptionUtils;
-import com.airgap.airgapagent.utils.exceptions.ThrowableStatement;
+import com.airgap.airgapagent.utils.exceptions.ThrowableAction;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -25,12 +25,12 @@ class ExceptionUtilsTest {
     @Test
     void run() {
         AtomicBoolean called = new AtomicBoolean(false);
-        ExceptionUtils.run((ThrowableStatement<Exception>) () -> {
+        ExceptionUtils.run((ThrowableAction<Exception>) () -> {
             //
         }, e -> called.set(true));
         Assertions.assertFalse(called.get());
 
-        ExceptionUtils.run((ThrowableStatement<Exception>) () -> {
+        ExceptionUtils.run((ThrowableAction<Exception>) () -> {
             throw new RuntimeException("here");
         }, e -> called.set(true));
         Assertions.assertTrue(called.get());

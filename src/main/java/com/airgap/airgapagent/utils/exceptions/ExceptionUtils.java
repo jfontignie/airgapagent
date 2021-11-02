@@ -23,7 +23,7 @@ public class ExceptionUtils {
         return joiner.toString();
     }
 
-    public static <T extends Exception> void run(ThrowableStatement<T> statement, Consumer<T> consumer) {
+    public static <T extends Exception> void run(ThrowableAction<T> statement, Consumer<T> consumer) {
         try {
             statement.run();
         } catch (Exception t) {
