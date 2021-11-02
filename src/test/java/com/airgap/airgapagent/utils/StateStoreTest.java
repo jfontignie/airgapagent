@@ -21,7 +21,7 @@ class StateStoreTest {
         Files.deleteIfExists(stateLocation.toPath());
         FileStateConverter converter = FileStateConverter.of();
         StateStore<File> store = new StateStore<>(stateLocation, converter);
-        WalkerContext<File> context = WalkerContext.of(ConstantsTest.SAMPLE_FOLDER);
+        CrawlState<File> context = CrawlState.of(ConstantsTest.SAMPLE_FOLDER);
 
         store.load(context);
         Assertions.assertNull(context.getReference());

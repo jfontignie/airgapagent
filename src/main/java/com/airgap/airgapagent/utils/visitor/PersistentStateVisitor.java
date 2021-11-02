@@ -1,8 +1,8 @@
 package com.airgap.airgapagent.utils.visitor;
 
+import com.airgap.airgapagent.utils.CrawlState;
 import com.airgap.airgapagent.utils.StateConverter;
 import com.airgap.airgapagent.utils.StateStore;
-import com.airgap.airgapagent.utils.WalkerContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -16,26 +16,26 @@ public class PersistentStateVisitor<T> implements StateVisitor {
     private static final Logger log = LoggerFactory.getLogger(PersistentStateVisitor.class);
 
     private final File stateLocation;
-    private final WalkerContext<T> walkerContext;
+    private final CrawlState<T> crawlState;
     private final StateConverter<T> converter;
 
     private StateStore<T> stateStore;
 
-    public PersistentStateVisitor(File stateLocation, WalkerContext<T> walkerContext, StateConverter<T> converter) {
+    public PersistentStateVisitor(File stateLocation, CrawlState<T> crawlState, StateConverter<T> converter) {
         this.stateLocation = stateLocation;
-        this.walkerContext = walkerContext;
+        this.crawlState = crawlState;
         this.converter = converter;
     }
 
     public void init() {
         stateStore = new StateStore<>(stateLocation, converter);
-        stateStore.load(walkerContext);
+        stateStore.load(crawlState);
     }
 
     @Override
     public void visit(int analysed) {
         log.debug("Saving state");
-        stateStore.save(walkerContext);
+        stateStore.save(crawlState);
 
     }
 

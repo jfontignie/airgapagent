@@ -1,8 +1,8 @@
 package com.airgap.airgapagent.service.file;
 
 import com.airgap.airgapagent.configuration.CopyOption;
+import com.airgap.airgapagent.service.ContentReaderService;
 import com.airgap.airgapagent.service.ErrorService;
-import com.airgap.airgapagent.service.crawl.ContentReaderService;
 import com.airgap.airgapagent.service.crawl.CrawlService;
 import com.airgap.airgapagent.utils.DataReader;
 import org.apache.commons.io.FileUtils;
@@ -26,7 +26,8 @@ public class FileCrawlService implements CrawlService<File> {
     private final ContentReaderService contentReaderService;
     private final ErrorService errorService;
 
-    public FileCrawlService(ContentReaderService contentReaderService, ErrorService errorService) {
+    public FileCrawlService(ContentReaderService contentReaderService,
+                            ErrorService errorService) {
         this.contentReaderService = contentReaderService;
         this.errorService = errorService;
     }

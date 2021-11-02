@@ -1,7 +1,8 @@
 package com.airgap.airgapagent.service;
 
 import com.airgap.airgapagent.service.crawl.CrawlService;
-import com.airgap.airgapagent.utils.WalkerContext;
+import com.airgap.airgapagent.utils.CrawlState;
+import com.airgap.airgapagent.utils.filters.VisitorFilter;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.FluxSink;
@@ -13,36 +14,46 @@ import reactor.core.publisher.FluxSink;
 @Service
 public class VisitorService {
 
-    public <T extends Comparable<T>> Flux<T> list(CrawlService<T> crawlService,
-                                                  WalkerContext<T> walkerContext) {
-        T lastFileToVisit = walkerContext.getReference();
-
-        return Flux.<T>create(fluxSink -> visit(crawlService, walkerContext, lastFileToVisit, fluxSink, walkerContext.getRoot()))
-                .doOnNext(walkerContext::setReference);
+    public <T extends Comparable<T>> Flux<T> list(
+            VisitorFilter<T> visitorFilter,
+            CrawlService<T> crawlService,
+            CrawlState<T> crawlState) {
+        crawlState.init();
+        return Flux.<T>create(fluxSink -> visit(visitorFilter, crawlService, crawlState,
+                        fluxSink, crawlState.getRoot()))
+                .doOnNext(crawlState::setReference);
     }
 
-    private <T extends Comparable<T>> void visit(CrawlService<T> crawlService, WalkerContext<T> walkerContext, T reference, FluxSink<T> fluxSink, T root) {
-        recursiveVisit(crawlService, fluxSink, walkerContext, root, reference);
+    private <T extends Comparable<T>> void visit(VisitorFilter<T> visitorFilter,
+                                                 CrawlService<T> crawlService,
+                                                 CrawlState<T> crawlState,
+                                                 FluxSink<T> fluxSink,
+                                                 T root) {
+        recursiveVisit(visitorFilter, crawlService, fluxSink, crawlState, root);
         fluxSink.complete();
     }
 
-    private <T extends Comparable<T>> void recursiveVisit(CrawlService<T> crawlService,
+    private <T extends Comparable<T>> void recursiveVisit(VisitorFilter<T> visitorFilter,
+                                                          CrawlService<T> crawlService,
                                                           FluxSink<T> fluxSink,
-                                                          WalkerContext<T> walkerState,
-                                                          T current,
-                                                          T reference) {
+                                                          CrawlState<T> crawlState,
+                                                          T current) {
         //If the last file to visit is bigger than the file, it means we can restart where we left
+        if (!visitorFilter.accept(current)) {
+            return;
+        }
         boolean leaf = crawlService.isLeaf(current);
-        if (reference != null && leaf && reference.compareTo(current) > 0) {
+        if (crawlState.getOriginal() != null && leaf && crawlState.getOriginal().compareTo(current) > 0) {
             return;
         }
         if (leaf) {
-            walkerState.incVisited();
+
+            crawlState.incVisited();
             fluxSink.next(current);
         } else {
             crawlService.listChildren(current).stream()
                     .sorted()
-                    .forEach(t -> recursiveVisit(crawlService, fluxSink, walkerState, t, reference));
+                    .forEach(t -> recursiveVisit(visitorFilter, crawlService, fluxSink, crawlState, t));
         }
     }
 

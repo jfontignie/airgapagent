@@ -1,7 +1,7 @@
 package com.airgap.airgapagent.utils.visitor;
 
 import com.airgap.airgapagent.utils.ConstantsTest;
-import com.airgap.airgapagent.utils.WalkerContext;
+import com.airgap.airgapagent.utils.CrawlState;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -15,10 +15,10 @@ class ProgressLogStateVisitorTest {
     @Test
     void walk() {
 
-        WalkerContext<File> walkerContext = WalkerContext.of(ConstantsTest.SAMPLE_FOLDER);
+        CrawlState<File> crawlState = CrawlState.of(ConstantsTest.SAMPLE_FOLDER);
 
 
-        ProgressLogStateVisitor<File> visitor = new ProgressLogStateVisitor<>(walkerContext);
+        ProgressLogStateVisitor<File> visitor = new ProgressLogStateVisitor<>(crawlState);
 
         visitor.init();
         visitor.visit(1);

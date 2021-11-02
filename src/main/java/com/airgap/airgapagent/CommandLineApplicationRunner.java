@@ -3,7 +3,7 @@ package com.airgap.airgapagent;
 import com.airgap.airgapagent.configuration.FileCopyConfiguration;
 import com.airgap.airgapagent.configuration.FileSearchConfiguration;
 import com.airgap.airgapagent.service.file.FileCrawlService;
-import com.airgap.airgapagent.service.file.FileScanService;
+import com.airgap.airgapagent.service.file.FileSearchEngine;
 import com.beust.jcommander.JCommander;
 import com.beust.jcommander.Parameter;
 import com.beust.jcommander.ParameterException;
@@ -21,7 +21,7 @@ import org.springframework.stereotype.Component;
 public class CommandLineApplicationRunner implements CommandLineRunner {
     private static final Logger log =
             LoggerFactory.getLogger(CommandLineApplicationRunner.class);
-    private final FileScanService fileScanService;
+    private final FileSearchEngine fileSearchEngine;
     private final FileCrawlService fileCrawlService;
 
     @SuppressWarnings("FieldCanBeLocal")
@@ -30,10 +30,10 @@ public class CommandLineApplicationRunner implements CommandLineRunner {
 
     public CommandLineApplicationRunner(
             FileCrawlService fileCrawlService,
-            FileScanService fileScanService
+            FileSearchEngine fileSearchEngine
     ) {
         this.fileCrawlService = fileCrawlService;
-        this.fileScanService = fileScanService;
+        this.fileSearchEngine = fileSearchEngine;
     }
 
 
@@ -68,12 +68,12 @@ public class CommandLineApplicationRunner implements CommandLineRunner {
         }
         if (commander.getParsedCommand().equals(FileSearchConfiguration.COMMAND_NAME)) {
 
-            long found = fileScanService.scanFolder(fileSearchAction, fileCrawlService);
+            long found = fileSearchEngine.scanFolder(fileSearchAction, fileCrawlService);
             log.info("Number or elements found: {}", found);
         }
 
         if (commander.getParsedCommand().equals(FileCopyConfiguration.COMMAND_NAME)) {
-            long found = fileScanService.copyFolder(fileCopyAction, fileCrawlService);
+            long found = fileSearchEngine.copyFolder(fileCopyAction, fileCrawlService);
             log.info("Number or elements found: {}", found);
         }
     }

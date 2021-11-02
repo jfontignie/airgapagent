@@ -7,6 +7,8 @@ import com.airgap.airgapagent.service.ErrorService;
 import com.airgap.airgapagent.service.SearchEngine;
 import com.airgap.airgapagent.utils.StateConverter;
 import com.airgap.airgapagent.utils.file.FileStateConverter;
+import com.airgap.airgapagent.utils.filters.LaterThanFileVisitorFilter;
+import com.airgap.airgapagent.utils.filters.ListVisitorFilter;
 import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,9 +25,9 @@ import java.util.Objects;
  * Created by Jacques Fontignie on 5/30/2020.
  */
 @Service
-public class FileScanService {
+public class FileSearchEngine {
 
-    private static final Logger log = LoggerFactory.getLogger(FileScanService.class);
+    private static final Logger log = LoggerFactory.getLogger(FileSearchEngine.class);
 
     private static final StateConverter<File> STATE_CONVERTER = FileStateConverter.of();
 
@@ -33,7 +35,7 @@ public class FileScanService {
 
     private final ErrorService errorService;
 
-    public FileScanService(
+    public FileSearchEngine(
             SearchEngine searchEngine,
             ErrorService errorService) {
         this.searchEngine = searchEngine;
@@ -41,7 +43,8 @@ public class FileScanService {
     }
 
 
-    public long copyFolder(FileCopyConfiguration fileCopyConfiguration, FileCrawlService crawlService) throws IOException {
+    public long copyFolder(
+            FileCopyConfiguration fileCopyConfiguration, FileCrawlService crawlService) throws IOException {
         File scanFolder = fileCopyConfiguration.getRootLocation();
         if (!scanFolder.exists()) {
             throw new IllegalStateException("Folder " + scanFolder + " does not exist");
@@ -50,7 +53,13 @@ public class FileScanService {
             FileUtils.deleteDirectory(scanFolder);
             Files.createDirectory(scanFolder.toPath());
         }
+        ListVisitorFilter<File> filter = new ListVisitorFilter<>();
+        if (fileCopyConfiguration.getLaterThan() != null) {
+            filter.addFilter(new LaterThanFileVisitorFilter(fileCopyConfiguration.getLaterThan()));
+        }
+
         Long count = searchEngine.buildScan(
+                        filter,
                         fileCopyConfiguration,
                         crawlService,
                         STATE_CONVERTER)
@@ -82,7 +91,13 @@ public class FileScanService {
             throw new IllegalStateException("Folder " + scanFolder + " does not exist");
         }
 
+        ListVisitorFilter<File> visitorFilter = new ListVisitorFilter<>();
+        if (fileSearchConfiguration.getLaterThan() != null) {
+            visitorFilter.addFilter(new LaterThanFileVisitorFilter(fileSearchConfiguration.getLaterThan()));
+        }
+
         long count = searchEngine.scan(
+                visitorFilter,
                 fileSearchConfiguration,
                 crawlService,
                 STATE_CONVERTER

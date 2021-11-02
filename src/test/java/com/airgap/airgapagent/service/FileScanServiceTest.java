@@ -2,9 +2,8 @@ package com.airgap.airgapagent.service;
 
 import com.airgap.airgapagent.configuration.FileCopyConfiguration;
 import com.airgap.airgapagent.configuration.FileSearchConfiguration;
-import com.airgap.airgapagent.service.crawl.ContentReaderService;
 import com.airgap.airgapagent.service.file.FileCrawlService;
-import com.airgap.airgapagent.service.file.FileScanService;
+import com.airgap.airgapagent.service.file.FileSearchEngine;
 import com.airgap.airgapagent.service.syslog.SyslogService;
 import com.airgap.airgapagent.utils.ConstantsTest;
 import org.apache.commons.io.FileUtils;
@@ -26,7 +25,7 @@ class FileScanServiceTest {
 
     private static final int EXPECTED = 11;
     private static final int MIN_HIT = 1;
-    private FileScanService fileScanService;
+    private FileSearchEngine fileSearchEngine;
     private FileCrawlService fileCrawlService;
 
     @BeforeEach
@@ -37,7 +36,7 @@ class FileScanServiceTest {
 
         ErrorServiceImpl errorService = new ErrorServiceImpl(environment);
 
-        fileScanService = new FileScanService(
+        fileSearchEngine = new FileSearchEngine(
                 new SearchEngine(
                         new VisitorService(),
                         new CorpusBuilderService(),
@@ -62,7 +61,7 @@ class FileScanServiceTest {
         action.setMinHit(MIN_HIT);
         action.setInterval(5);
 
-        long count = fileScanService.scanFolder(action, fileCrawlService);
+        long count = fileSearchEngine.scanFolder(action, fileCrawlService);
         Assertions.assertTrue(true);
         Assertions.assertEquals(EXPECTED, count);
     }
@@ -80,7 +79,7 @@ class FileScanServiceTest {
         action.setInterval(5);
         action.setTarget(destination);
 
-        long count = fileScanService.copyFolder(action, fileCrawlService);
+        long count = fileSearchEngine.copyFolder(action, fileCrawlService);
         Assertions.assertTrue(destination.exists());
         FileUtils.deleteDirectory(destination);
         Assertions.assertEquals(EXPECTED, count);
@@ -98,7 +97,7 @@ class FileScanServiceTest {
         action.setMinHit(MIN_HIT);
         action.setInterval(5);
 
-        fileScanService.scanFolder(action, fileCrawlService);
+        fileSearchEngine.scanFolder(action, fileCrawlService);
         Assertions.assertTrue(true);
     }
 
@@ -120,7 +119,7 @@ class FileScanServiceTest {
         action.setMinHit(MIN_HIT);
         action.setInterval(5);
 
-        fileScanService.scanFolder(action, fileCrawlService);
+        fileSearchEngine.scanFolder(action, fileCrawlService);
         Assertions.assertTrue(true);
     }
 }

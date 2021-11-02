@@ -9,10 +9,11 @@ import com.airgap.airgapagent.domain.ExactMatchingResult;
 import com.airgap.airgapagent.service.crawl.CrawlService;
 import com.airgap.airgapagent.service.syslog.SyslogFormatter;
 import com.airgap.airgapagent.service.syslog.SyslogService;
+import com.airgap.airgapagent.utils.CrawlState;
 import com.airgap.airgapagent.utils.CsvWriter;
 import com.airgap.airgapagent.utils.IntervalRunner;
 import com.airgap.airgapagent.utils.StateConverter;
-import com.airgap.airgapagent.utils.WalkerContext;
+import com.airgap.airgapagent.utils.filters.VisitorFilter;
 import com.airgap.airgapagent.utils.visitor.PersistentStateVisitor;
 import com.airgap.airgapagent.utils.visitor.ProgressLogStateVisitor;
 import com.airgap.airgapagent.utils.visitor.ScheduledStateVisitor;
@@ -59,7 +60,8 @@ public class SearchEngine {
     }
 
     @SuppressWarnings("java:S2095")
-    public <T extends Comparable<T>> Flux<ExactMatchingResult<T>> buildScan(AbstractScanConfiguration<T> exactMatchContext,
+    public <T extends Comparable<T>> Flux<ExactMatchingResult<T>> buildScan(VisitorFilter<T> visitorFilter,
+                                                                            AbstractScanConfiguration<T> exactMatchContext,
                                                                             CrawlService<T> crawlService,
                                                                             StateConverter<T> stateConverter) throws IOException {
 
@@ -69,7 +71,7 @@ public class SearchEngine {
                 Set.of(MatchOption.CASE_INSENSITIVE),
                 corpusBuilderService.buildSet(exactMatchContext.getCorpusLocation()));
 
-        WalkerContext<T> context = WalkerContext.of(exactMatchContext.getRootLocation());
+        CrawlState<T> context = CrawlState.of(exactMatchContext.getRootLocation());
         ScheduledStateVisitor scheduledStateVisitor = new ScheduledStateVisitor(
                 exactMatchContext.getSaveInterval(),
                 List.of(
@@ -79,7 +81,8 @@ public class SearchEngine {
         );
         scheduledStateVisitor.init();
 
-        ParallelFlux<ExactMatchingResult<T>> flux = visitorService.list(crawlService, context)
+
+        ParallelFlux<ExactMatchingResult<T>> flux = visitorService.list(visitorFilter, crawlService, context)
                 //Persist the state
                 .doOnNext(file -> scheduledStateVisitor.visit())
 
@@ -115,7 +118,8 @@ public class SearchEngine {
     }
 
 
-    public <T extends Comparable<T>> long scan(AbstractSearchConfiguration<T> exactMatchContext,
+    public <T extends Comparable<T>> long scan(VisitorFilter<T> visitorFilter,
+                                               AbstractSearchConfiguration<T> exactMatchContext,
                                                CrawlService<T> crawlService,
                                                StateConverter<T> stateConverter) throws IOException {
 
@@ -124,7 +128,7 @@ public class SearchEngine {
             IntervalRunner runner = IntervalRunner.of(Duration.ofSeconds(5), true);
 
 
-            Long count = buildScan(exactMatchContext,
+            Long count = buildScan(visitorFilter, exactMatchContext,
                     crawlService,
                     stateConverter)
                     //Display the result

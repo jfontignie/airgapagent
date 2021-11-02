@@ -12,11 +12,11 @@ import java.util.Calendar;
  * com.airgap.airgapagent.utils.filters
  * Created by Jacques Fontignie on 11/2/2021.
  */
-class YoungerThanFileFilterTest {
+class LaterThanFileVisitorFilterTest {
 
     @Test
     void acceptYounger() throws IOException {
-        YoungerThanFileFilter filter = new YoungerThanFileFilter(Instant.now());
+        LaterThanFileVisitorFilter filter = new LaterThanFileVisitorFilter(Instant.now());
         File younger = File.createTempFile("dat", "dat");
         Assertions.assertThat(filter.accept(younger)).isTrue();
 
@@ -28,7 +28,7 @@ class YoungerThanFileFilterTest {
         File older = File.createTempFile("dat", "dat");
         Calendar calendar = Calendar.getInstance();
         calendar.add(Calendar.DATE, 1);
-        YoungerThanFileFilter filter = new YoungerThanFileFilter(calendar.toInstant());
+        LaterThanFileVisitorFilter filter = new LaterThanFileVisitorFilter(calendar.toInstant());
 
         Assertions.assertThat(filter.accept(older)).isFalse();
     }

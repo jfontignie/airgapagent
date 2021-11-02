@@ -25,7 +25,7 @@ public class StateStore<T> {
         this.converter = converter;
     }
 
-    public void load(WalkerContext<T> context) {
+    public void load(CrawlState<T> context) {
         if (stateLocation.exists()) {
             try {
                 try (Stream<String> lines = Files.lines(stateLocation.toPath())) {
@@ -44,7 +44,7 @@ public class StateStore<T> {
         }
     }
 
-    public void save(WalkerContext<T> context) {
+    public void save(CrawlState<T> context) {
         String state = converter.persist(context.getReference());
         save(state);
     }

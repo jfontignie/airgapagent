@@ -4,19 +4,20 @@ package com.airgap.airgapagent.utils;
  * com.airgap.airgapagent.service
  * Created by Jacques Fontignie on 5/24/2020.
  */
-public class WalkerContext<T> {
+public class CrawlState<T> {
 
     private final T root;
+    private T original;
     private T reference;
     private int visited;
 
-    public WalkerContext(T root) {
+    public CrawlState(T root) {
         this.root = root;
         visited = 0;
     }
 
-    public static <T> WalkerContext<T> of(T t) {
-        return new WalkerContext<>(t);
+    public static <T> CrawlState<T> of(T t) {
+        return new CrawlState<>(t);
     }
 
     public T getReference() {
@@ -41,5 +42,14 @@ public class WalkerContext<T> {
 
     public int getVisited() {
         return visited;
+    }
+
+    public T getOriginal() {
+        return original;
+    }
+
+    public T init() {
+        this.original = reference;
+        return getReference();
     }
 }

@@ -1,7 +1,8 @@
 package com.airgap.airgapagent.service;
 
 import com.airgap.airgapagent.service.crawl.CrawlService;
-import com.airgap.airgapagent.utils.WalkerContext;
+import com.airgap.airgapagent.utils.CrawlState;
+import com.airgap.airgapagent.utils.filters.AlwaysVisitorFilter;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -21,7 +22,7 @@ class VisitorServiceTest {
 
     private VisitorService visitorService;
     private CrawlService<String> crawlService;
-    private WalkerContext<String> context;
+    private CrawlState<String> context;
     private String childB;
     private String childA;
     private String root;
@@ -38,7 +39,7 @@ class VisitorServiceTest {
         Mockito.doReturn(true).when(crawlService).isLeaf(childA);
         Mockito.doReturn(true).when(crawlService).isLeaf(childB);
 
-        context = new WalkerContext<>(root);
+        context = new CrawlState<>(root);
 
     }
 
@@ -46,7 +47,8 @@ class VisitorServiceTest {
     void resumeVisit() {
         context.setReference(childB);
         List<String> found = Objects.requireNonNullElse(
-                visitorService.list(crawlService, context)
+                visitorService.list(new AlwaysVisitorFilter<>(),
+                                crawlService, context)
                         .collect(Collectors.toList())
                         .block(),
                 Collections.emptyList());
@@ -59,7 +61,8 @@ class VisitorServiceTest {
 
 
         List<String> found = Objects.requireNonNullElse(
-                visitorService.list(crawlService, context)
+                visitorService.list(new AlwaysVisitorFilter<>(),
+                                crawlService, context)
                         .collect(Collectors.toList())
                         .block(),
                 Collections.emptyList());

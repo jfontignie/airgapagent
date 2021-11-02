@@ -1,6 +1,6 @@
 package com.airgap.airgapagent.utils.visitor;
 
-import com.airgap.airgapagent.utils.WalkerContext;
+import com.airgap.airgapagent.utils.CrawlState;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -14,12 +14,12 @@ import java.time.temporal.ChronoUnit;
 public class ProgressLogStateVisitor<T> implements StateVisitor {
     private static final Logger log = LoggerFactory.getLogger(ProgressLogStateVisitor.class);
 
-    private final WalkerContext<T> walkerContext;
+    private final CrawlState<T> crawlState;
 
     private Instant start;
 
-    public ProgressLogStateVisitor(WalkerContext<T> walkerContext) {
-        this.walkerContext = walkerContext;
+    public ProgressLogStateVisitor(CrawlState<T> crawlState) {
+        this.crawlState = crawlState;
 
     }
 
@@ -30,7 +30,7 @@ public class ProgressLogStateVisitor<T> implements StateVisitor {
     @Override
     public void visit(int analysed) {
 
-        int crawled = walkerContext.getVisited();
+        int crawled = crawlState.getVisited();
         String progress = "n/a";
         String estimate = "n/a";
         String crawlspeed = "n/a";
