@@ -3,7 +3,7 @@ package com.airgap.airgapagent.service;
 import com.airgap.airgapagent.configuration.CopyOption;
 import com.airgap.airgapagent.utils.ConstantsTest;
 import com.airgap.airgapagent.utils.DataReader;
-import org.apache.cxf.helpers.FileUtils;
+import org.apache.commons.io.FileUtils;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -60,7 +60,7 @@ class FileCrawlServiceTest {
     @Test
     void ensureCopyWorks() throws IOException {
         File dir = new File("target/ensureCopyWorks");
-        FileUtils.mkDir(dir);
+        FileUtils.forceMkdir(dir);
         File root = new File("src/test/resources/sample");
 
         File source = new File("src/test/resources/sample/sample.7z");
@@ -70,6 +70,6 @@ class FileCrawlServiceTest {
         Assertions.assertEquals(2, dir.listFiles().length);
 
 
-        FileUtils.removeDir(dir);
+        FileUtils.deleteDirectory(dir);
     }
 }

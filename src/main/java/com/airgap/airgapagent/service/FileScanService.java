@@ -5,7 +5,7 @@ import com.airgap.airgapagent.configuration.FileCopyAction;
 import com.airgap.airgapagent.configuration.FileSearchAction;
 import com.airgap.airgapagent.utils.FileStateConverter;
 import com.airgap.airgapagent.utils.StateConverter;
-import org.apache.cxf.helpers.FileUtils;
+import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -45,7 +45,7 @@ public class FileScanService {
             throw new IllegalStateException("Folder " + scanFolder + " does not exist");
         }
         if (fileCopyAction.getCopyOptions().contains(CopyOption.CLEAN_ON_STARTUP)) {
-            FileUtils.removeDir(scanFolder);
+            FileUtils.deleteDirectory(scanFolder);
             Files.createDirectory(scanFolder.toPath());
         }
         Long count = exactMatchService.buildScan(

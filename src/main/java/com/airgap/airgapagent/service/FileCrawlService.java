@@ -2,8 +2,8 @@ package com.airgap.airgapagent.service;
 
 import com.airgap.airgapagent.configuration.CopyOption;
 import com.airgap.airgapagent.utils.DataReader;
-import org.apache.commons.compress.utils.FileNameUtils;
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.FilenameUtils;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
@@ -76,7 +76,7 @@ public class FileCrawlService implements CrawlService<File> {
                 return newFile;
             }
 
-            String newName = newFile.getParent() + "/" + FileNameUtils.getBaseName(filename) + "_" + getTimeStamp() + "." + FileNameUtils.getExtension(filename);
+            String newName = newFile.getParent() + "/" + FilenameUtils.getBaseName(filename) + "_" + getTimeStamp() + "." + FilenameUtils.getExtension(filename);
             newFile = new File(newName);
         }
         throw new IllegalStateException("Impossible to find a proper name");

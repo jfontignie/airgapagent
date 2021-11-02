@@ -2,7 +2,6 @@ package com.airgap.airgapagent.algo;
 
 import com.airgap.airgapagent.algo.ahocorasick.AhoCorasickMatcher;
 import com.airgap.airgapagent.algo.ahocorasick.Automaton;
-import com.airgap.airgapagent.algo.experimental.ExperimentalMatcher;
 import com.airgap.airgapagent.algo.regex.RegexMatcher;
 
 import java.util.Set;
@@ -25,7 +24,7 @@ public class AlgoFactory {
             case REGEX:
                 return new RegexMatcher(keywords);
             case EXPERIMENTAL:
-                return new ExperimentalMatcher(options, keywords);
+
             default:
                 throw new IllegalArgumentException("Invalid type: " + algoType);
         }
