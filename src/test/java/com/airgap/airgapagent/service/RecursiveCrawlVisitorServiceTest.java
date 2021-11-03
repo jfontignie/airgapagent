@@ -1,6 +1,5 @@
 package com.airgap.airgapagent.service;
 
-import com.airgap.airgapagent.service.crawl.CrawlService;
 import com.airgap.airgapagent.utils.CrawlState;
 import com.airgap.airgapagent.utils.filters.AlwaysVisitorFilter;
 import org.junit.jupiter.api.Assertions;

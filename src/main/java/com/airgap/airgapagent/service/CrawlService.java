@@ -1,4 +1,4 @@
-package com.airgap.airgapagent.service.crawl;
+package com.airgap.airgapagent.service;
 
 import com.airgap.airgapagent.utils.DataReader;
 

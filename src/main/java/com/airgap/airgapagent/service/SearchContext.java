@@ -2,7 +2,6 @@ package com.airgap.airgapagent.service;
 
 import com.airgap.airgapagent.algo.SearchAlgorithm;
 import com.airgap.airgapagent.configuration.AbstractScanConfiguration;
-import com.airgap.airgapagent.service.crawl.CrawlService;
 import com.airgap.airgapagent.utils.CrawlState;
 import com.airgap.airgapagent.utils.filters.VisitorFilter;
 import com.airgap.airgapagent.utils.visitor.SearchEventListener;
