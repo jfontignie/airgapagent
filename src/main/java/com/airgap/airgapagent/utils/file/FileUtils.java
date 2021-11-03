@@ -14,6 +14,7 @@ import java.util.Random;
 public class FileUtils {
 
     private static final int MAX_BOUND = 100;
+    @SuppressWarnings("java:S2245")
     private static final Random RANDOM = new Random();
 
     private FileUtils() {
