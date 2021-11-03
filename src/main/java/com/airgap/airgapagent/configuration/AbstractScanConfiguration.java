@@ -1,14 +1,10 @@
 package com.airgap.airgapagent.configuration;
 
-import com.airgap.airgapagent.algo.AlgoType;
+import com.airgap.airgapagent.algo.SearchAlgorithmType;
 import com.beust.jcommander.Parameter;
-import com.beust.jcommander.ParameterException;
-import com.beust.jcommander.converters.BaseConverter;
 import com.beust.jcommander.validators.PositiveInteger;
 
 import java.io.File;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.time.Duration;
 import java.util.Date;
 
@@ -59,7 +55,7 @@ public abstract class AbstractScanConfiguration<T> {
     @Parameter(
             names = "-algo",
             description = "Specify the algorithm that can be used for matching patterns")
-    private AlgoType algo = AlgoType.AHO_CORASICK;
+    private SearchAlgorithmType algo = SearchAlgorithmType.AHO_CORASICK;
 
     protected AbstractScanConfiguration() {
     }
@@ -116,32 +112,14 @@ public abstract class AbstractScanConfiguration<T> {
         return Duration.ofSeconds(schedule);
     }
 
-    public AlgoType getAlgo() {
+    public SearchAlgorithmType getAlgo() {
         return algo;
     }
 
-    public void setAlgo(AlgoType algo) {
+    public void setAlgo(SearchAlgorithmType algo) {
         this.algo = algo;
     }
 
     public abstract T getRootLocation();
 
-    public static class DateConverter extends BaseConverter<Date> {
-        public static final String FORMAT = "yyyy:MM:dd-hh:mm:ss";
-        private final SimpleDateFormat simpleDateFormat = new SimpleDateFormat(FORMAT);
-
-        public DateConverter(String optionName) {
-            super(optionName);
-        }
-
-        @Override
-        public Date convert(String value) {
-            try {
-                return simpleDateFormat.parse(value);
-            } catch (ParseException e) {
-                throw new ParameterException(getErrorString(value, "a date. Format should be: " + FORMAT));
-            }
-        }
-
-    }
 }

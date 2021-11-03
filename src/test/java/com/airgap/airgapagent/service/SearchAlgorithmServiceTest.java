@@ -1,8 +1,8 @@
 package com.airgap.airgapagent.service;
 
-import com.airgap.airgapagent.algo.MatchOption;
-import com.airgap.airgapagent.algo.MatchingResult;
-import com.airgap.airgapagent.algo.ahocorasick.AhoCorasickMatcher;
+import com.airgap.airgapagent.algo.SearchOption;
+import com.airgap.airgapagent.algo.SearchResult;
+import com.airgap.airgapagent.algo.ahocorasick.AhoCorasickSearchAlgorithm;
 import com.airgap.airgapagent.algo.ahocorasick.Automaton;
 import com.airgap.airgapagent.utils.ConstantsTest;
 import org.apache.tika.Tika;
@@ -27,9 +27,9 @@ import java.util.regex.Pattern;
  * com.airgap.airgapagent.service
  * Created by Jacques Fontignie on 5/29/2020.
  */
-class MatcherServiceTest {
+class SearchAlgorithmServiceTest {
 
-    private static final Logger log = LoggerFactory.getLogger(MatcherServiceTest.class);
+    private static final Logger log = LoggerFactory.getLogger(SearchAlgorithmServiceTest.class);
 
     @Test
     void listMatches() throws IOException {
@@ -37,11 +37,11 @@ class MatcherServiceTest {
         CorpusBuilderService corpusBuilderService = new CorpusBuilderService();
         Set<String> set = corpusBuilderService.buildSet(ConstantsTest.CORPUS_SAMPLE);
         MatcherService matcherService = new MatcherService();
-        Automaton automaton = new Automaton(Set.of(MatchOption.CASE_INSENSITIVE), set);
-        AhoCorasickMatcher matcher = new AhoCorasickMatcher(automaton);
+        Automaton automaton = new Automaton(Set.of(SearchOption.CASE_INSENSITIVE), set);
+        AhoCorasickSearchAlgorithm matcher = new AhoCorasickSearchAlgorithm(automaton);
 
-        List<MatchingResult> found = new ArrayList<>();
-        Flux<MatchingResult> flux = matcherService.listMatches(new StringReader("603046751.7603046751.7,523650288.4"), matcher);
+        List<SearchResult> found = new ArrayList<>();
+        Flux<SearchResult> flux = matcherService.listMatches(new StringReader("603046751.7603046751.7,523650288.4"), matcher);
         flux.subscribe(found::add).dispose();
 
         Assertions.assertEquals(3, found.size());
@@ -55,8 +55,8 @@ class MatcherServiceTest {
         Set<String> set = corpusBuilderService.buildSet(ConstantsTest.CORPUS_SAMPLE);
         MatcherService matcherService = new MatcherService();
 
-        Automaton automaton = new Automaton(Set.of(MatchOption.CASE_INSENSITIVE), set);
-        AhoCorasickMatcher matcher = new AhoCorasickMatcher(automaton);
+        Automaton automaton = new Automaton(Set.of(SearchOption.CASE_INSENSITIVE), set);
+        AhoCorasickSearchAlgorithm matcher = new AhoCorasickSearchAlgorithm(automaton);
 
         Reader reader = new ExceptionReader();
 
@@ -79,11 +79,11 @@ class MatcherServiceTest {
         Set<String> set = Set.of("Password");
         MatcherService matcherService = new MatcherService();
 
-        Automaton automaton = new Automaton(Set.of(MatchOption.CASE_INSENSITIVE), set);
-        AhoCorasickMatcher matcher = new AhoCorasickMatcher(automaton);
+        Automaton automaton = new Automaton(Set.of(SearchOption.CASE_INSENSITIVE), set);
+        AhoCorasickSearchAlgorithm matcher = new AhoCorasickSearchAlgorithm(automaton);
 
-        List<MatchingResult> found = new ArrayList<>();
-        Flux<MatchingResult> flux = matcherService.listMatches(new StringReader("paSsword"), matcher);
+        List<SearchResult> found = new ArrayList<>();
+        Flux<SearchResult> flux = matcherService.listMatches(new StringReader("paSsword"), matcher);
         flux.subscribe(found::add).dispose();
 
         Assertions.assertEquals(1, found.size());
@@ -106,12 +106,12 @@ class MatcherServiceTest {
 
 
         Automaton automaton = new Automaton(Set.of(), set);
-        AhoCorasickMatcher matcher = new AhoCorasickMatcher(automaton);
-        List<MatchingResult> found = new ArrayList<>();
+        AhoCorasickSearchAlgorithm matcher = new AhoCorasickSearchAlgorithm(automaton);
+        List<SearchResult> found = new ArrayList<>();
 
         Tika tika = new Tika();
         Reader reader = tika.parse(new File("src/test/resources/big/sample.eml"));
-        Flux<MatchingResult> flux = matcherService.listMatches(reader, matcher);
+        Flux<SearchResult> flux = matcherService.listMatches(reader, matcher);
         flux.subscribe(found::add).dispose();
 
         Assertions.assertEquals(1, found.size());

@@ -16,8 +16,8 @@ class AbstractScanConfigurationTest {
 
     @Test
     void convertDate() {
-        AbstractScanConfiguration.DateConverter converter =
-                new AbstractScanConfiguration.DateConverter("variable");
+        DateConverter converter =
+                new DateConverter("variable");
         Date date = converter.convert("1980:09:15-12:10:12");
         Assertions.assertThat(date).isNotNull();
     }
@@ -25,8 +25,8 @@ class AbstractScanConfigurationTest {
 
     @Test
     void convertInvalidDate() {
-        AbstractScanConfiguration.DateConverter converter =
-                new AbstractScanConfiguration.DateConverter("variable");
+        DateConverter converter =
+                new DateConverter("variable");
 
         assertThrows(ParameterException.class, () -> converter.convert("1980:09:15 12:10:12"));
 

@@ -1,8 +1,8 @@
 package com.airgap.airgapagent.service;
 
-import com.airgap.airgapagent.algo.AlgoFactory;
-import com.airgap.airgapagent.algo.MatchOption;
-import com.airgap.airgapagent.algo.Matcher;
+import com.airgap.airgapagent.algo.SearchAlgorithm;
+import com.airgap.airgapagent.algo.SearchAlgorithmFactory;
+import com.airgap.airgapagent.algo.SearchOption;
 import com.airgap.airgapagent.configuration.AbstractScanConfiguration;
 import com.airgap.airgapagent.configuration.AbstractSearchConfiguration;
 import com.airgap.airgapagent.domain.ExactMatchingResult;
@@ -67,8 +67,8 @@ public class SearchEngine {
 
 
         //noinspection BlockingMethodInNonBlockingContext
-        Matcher matcher = AlgoFactory.getMatcher(exactMatchContext.getAlgo(),
-                Set.of(MatchOption.CASE_INSENSITIVE),
+        SearchAlgorithm searchAlgorithm = SearchAlgorithmFactory.getMatcher(exactMatchContext.getAlgo(),
+                Set.of(SearchOption.CASE_INSENSITIVE),
                 corpusBuilderService.buildSet(exactMatchContext.getCorpusLocation()));
 
         CrawlState<T> context = CrawlState.of(exactMatchContext.getRootLocation());
@@ -98,7 +98,7 @@ public class SearchEngine {
                 //Parse the data to find keywords
 
                 .flatMap(dataReader ->
-                        matcherService.listMatches(dataReader.getReader(), matcher)
+                        matcherService.listMatches(dataReader.getReader(), searchAlgorithm)
                                 .doOnError(throwable -> errorService.error(dataReader.getSource(),
                                         "Impossible to parse file",
                                         throwable))

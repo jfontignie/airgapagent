@@ -5,7 +5,6 @@ import org.junit.jupiter.api.Test;
 
 import java.io.File;
 import java.io.IOException;
-import java.time.Instant;
 import java.util.Calendar;
 
 /**
@@ -16,7 +15,9 @@ class LaterThanFileVisitorFilterTest {
 
     @Test
     void acceptYounger() throws IOException {
-        LaterThanFileVisitorFilter filter = new LaterThanFileVisitorFilter(Instant.now());
+        Calendar calendar = Calendar.getInstance();
+        calendar.add(Calendar.DATE, -1);
+        LaterThanFileVisitorFilter filter = new LaterThanFileVisitorFilter(calendar.toInstant());
         File younger = File.createTempFile("dat", "dat");
         Assertions.assertThat(filter.accept(younger)).isTrue();
 

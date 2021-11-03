@@ -24,7 +24,7 @@ import java.util.Calendar;
 class FileScanServiceTest {
 
     private static final int EXPECTED = 11;
-    private static final int MIN_HIT = 1;
+    private static final int MIN_HIT = 2;
     private FileSearchEngine fileSearchEngine;
     private FileCrawlService fileCrawlService;
 
@@ -92,8 +92,8 @@ class FileScanServiceTest {
         FileSearchConfiguration action = new FileSearchConfiguration();
         action.setRootLocation(new File("c:/"));
         action.setCorpus(new File(ConstantsTest.CORPUS_SAMPLE_STRING));
-        action.setFoundLocation(new File("target/run_found.csv"));
-        action.setStateLocation(new File("target/run_sate.dat"));
+        action.setFoundLocation(new File("target/found_long.csv"));
+        action.setStateLocation(new File("target/state_long.dat"));
         action.setMinHit(MIN_HIT);
         action.setInterval(5);
 

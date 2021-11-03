@@ -1,8 +1,8 @@
 package com.airgap.airgapagent.algo.ahocorasick;
 
-import com.airgap.airgapagent.algo.MatchOption;
-import com.airgap.airgapagent.algo.Matcher;
-import com.airgap.airgapagent.algo.MatchingResult;
+import com.airgap.airgapagent.algo.SearchAlgorithm;
+import com.airgap.airgapagent.algo.SearchOption;
+import com.airgap.airgapagent.algo.SearchResult;
 
 import java.io.IOException;
 import java.io.Reader;
@@ -14,18 +14,18 @@ import java.util.function.Consumer;
  * <p>
  * https://codereview.stackexchange.com/questions/115624/aho-corasick-for-multiple-exact-string-matching-in-java
  */
-public class AhoCorasickMatcher implements Matcher {
+public class AhoCorasickSearchAlgorithm implements SearchAlgorithm {
 
     private final Automaton automaton;
 
-    public AhoCorasickMatcher(Automaton automaton) {
+    public AhoCorasickSearchAlgorithm(Automaton automaton) {
         this.automaton = automaton;
     }
 
     @Override
-    public void match(Reader reader, Consumer<MatchingResult> target) throws IOException {
+    public void match(Reader reader, Consumer<SearchResult> target) throws IOException {
         TrieNode state = automaton.getRoot();
-        boolean isCaseInsensitive = automaton.getOptions().contains(MatchOption.CASE_INSENSITIVE);
+        boolean isCaseInsensitive = automaton.getOptions().contains(SearchOption.CASE_INSENSITIVE);
 
         int textIndex = 0;
         while (true) {
@@ -45,7 +45,7 @@ public class AhoCorasickMatcher implements Matcher {
 
             state = state.getChild(car);
             for (final int patternIndex : state.getPatterns()) {
-                target.accept(new MatchingResult(textIndex + 1, automaton.getPattern(patternIndex)));
+                target.accept(new SearchResult(textIndex + 1, automaton.getPattern(patternIndex)));
             }
             textIndex++;
         }

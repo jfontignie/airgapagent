@@ -1,7 +1,7 @@
 package com.airgap.airgapagent.service;
 
-import com.airgap.airgapagent.algo.Matcher;
-import com.airgap.airgapagent.algo.MatchingResult;
+import com.airgap.airgapagent.algo.SearchAlgorithm;
+import com.airgap.airgapagent.algo.SearchResult;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -19,10 +19,10 @@ public class MatcherService {
 
     private static final Logger log = LoggerFactory.getLogger(MatcherService.class);
 
-    public Flux<MatchingResult> listMatches(Reader reader, Matcher matcher) {
-        Flux<MatchingResult> flux = Flux.create(fluxSink -> {
+    public Flux<SearchResult> listMatches(Reader reader, SearchAlgorithm searchAlgorithm) {
+        Flux<SearchResult> flux = Flux.create(fluxSink -> {
             try {
-                matcher.match(reader, fluxSink::next);
+                searchAlgorithm.match(reader, fluxSink::next);
                 fluxSink.complete();
             } catch (IOException e) {
                 fluxSink.error(e);

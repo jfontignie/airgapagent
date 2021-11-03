@@ -8,7 +8,7 @@ import java.util.StringJoiner;
  * com.airgap.airgapagent.algo
  * Created by Jacques Fontignie on 5/29/2020.
  */
-public class MatchingResult {
+public class SearchResult {
     public final int startIndex;
 
     public final int endIndex;
@@ -17,7 +17,7 @@ public class MatchingResult {
 
     public final char[] pattern;
 
-    public MatchingResult(final int endIndex, final char[] pattern) {
+    public SearchResult(final int endIndex, final char[] pattern) {
         startIndex = endIndex - pattern.length;
         this.endIndex = endIndex;
         matchLength = pattern.length;
@@ -26,7 +26,7 @@ public class MatchingResult {
 
     @Override
     public String toString() {
-        return new StringJoiner(", ", MatchingResult.class.getSimpleName() + "[", "]")
+        return new StringJoiner(", ", SearchResult.class.getSimpleName() + "[", "]")
                 .add("startIndex=" + startIndex)
                 .add("endIndex=" + endIndex)
                 .add("matchLength=" + matchLength)
@@ -37,8 +37,8 @@ public class MatchingResult {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof MatchingResult)) return false;
-        MatchingResult that = (MatchingResult) o;
+        if (!(o instanceof SearchResult)) return false;
+        SearchResult that = (SearchResult) o;
         return startIndex == that.startIndex &&
                 endIndex == that.endIndex &&
                 matchLength == that.matchLength &&
