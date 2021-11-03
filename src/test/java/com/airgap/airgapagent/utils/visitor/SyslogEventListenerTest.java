@@ -22,8 +22,8 @@ class SyslogEventListenerTest {
 
         SyslogService syslogService = Mockito.mock(SyslogService.class);
         Mockito.doAnswer(invocation -> {
-            Assertions.assertThat(invocation.getArgument(0).toString())
-                    .hasToString("\"source\"=\"file\" \"occurrences\"=\"1\"");
+            Assertions.assertThat(invocation.getArgument(0).toString()).containsSubsequence("\"source\"=\"file\"");
+            Assertions.assertThat(invocation.getArgument(0).toString()).containsSubsequence("\"occurrences\"=\"1\"");
             return null;
         }).when(syslogService).send(Mockito.any());
 
