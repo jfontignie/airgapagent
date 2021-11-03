@@ -43,7 +43,7 @@ public class PersistentStateListener<T> extends SearchEventAdapter<T> {
     }
 
     @Override
-    public void onClose() {
+    public void onClose(CrawlState<T> crawlState) {
         stateStore.clear();
     }
 

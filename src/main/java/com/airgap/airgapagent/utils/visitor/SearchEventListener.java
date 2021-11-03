@@ -18,5 +18,5 @@ public interface SearchEventListener<T> {
 
     void onError(DataReader<T> object, Throwable error);
 
-    void onClose();
+    void onClose(CrawlState<T> crawlState);
 }

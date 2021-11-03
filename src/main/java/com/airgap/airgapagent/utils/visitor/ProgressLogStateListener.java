@@ -16,6 +16,8 @@ public class ProgressLogStateListener<T> extends ScheduledSearchEventStateAdapte
     private static final Logger log = LoggerFactory.getLogger(ProgressLogStateListener.class);
 
     private Instant start;
+    private String crawlspeed = "n/a";
+    private String analysisSpeed = "n/a";
 
     public ProgressLogStateListener(int interval) {
         super(interval);
@@ -27,13 +29,11 @@ public class ProgressLogStateListener<T> extends ScheduledSearchEventStateAdapte
     }
 
     @Override
-    public void onFound(int analysed, CrawlState<T> crawlState, ExactMatchResult<T> notUsed) {
-
-        int crawled = crawlState.getVisited();
+    public void onFoundEvent(CrawlState<T> crawlState, ExactMatchResult<T> notUsed) {
+        int crawled = crawlState.getCrawled();
+        int analysed = crawlState.getVisited();
         String progress = "n/a";
         String estimate = "n/a";
-        String crawlspeed = "n/a";
-        String analysisSpeed = "n/a";
 
         long seconds = ChronoUnit.SECONDS.between(start, Instant.now());
 
@@ -53,7 +53,9 @@ public class ProgressLogStateListener<T> extends ScheduledSearchEventStateAdapte
                     seconds % 60);
 
         }
-        log.info("Running {} / {} ({} %) - crawl speed: {}/s. - analysis speed: {}/s. - estimate to completion: {}",
+        log.info("{} ... Found {} elements - analysed/crawled {} / {} ({} %) - crawl speed: {}/s. - analysis speed: {}/s. - estimate to completion: {}",
+                "Found so far.",
+                crawlState.getFound(),
                 analysed,
                 crawled,
                 progress,
@@ -64,8 +66,11 @@ public class ProgressLogStateListener<T> extends ScheduledSearchEventStateAdapte
     }
 
     @Override
-    public void onClose() {
-        log.debug("Progress log closed");
+    public void onClose(CrawlState<T> crawlState) {
+        log.info("Scan finished. Found {} elements - crawl speed: {}/s. - analysis speed: {}/s.",
+                crawlState.getFound(),
+                crawlspeed,
+                analysisSpeed);
     }
 
 

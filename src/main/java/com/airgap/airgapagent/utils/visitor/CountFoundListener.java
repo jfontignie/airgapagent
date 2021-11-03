@@ -18,7 +18,12 @@ public class CountFoundListener<T> extends ScheduledSearchEventStateAdapter<T> {
     }
 
     @Override
-    void onFound(int count, CrawlState<T> crawlState, ExactMatchResult<T> result) {
-        log.info("Elements found so far: {}", count);
+    void onFoundEvent(CrawlState<T> crawlState, ExactMatchResult<T> result) {
+        log.info("Elements found so far {}", crawlState.getFound());
+    }
+
+    @Override
+    public void onClose(CrawlState<T> crawlState) {
+        log.info("Elements found in total: {}", crawlState.getFound());
     }
 }

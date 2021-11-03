@@ -45,8 +45,7 @@ public class RecursiveCrawlVisitorService {
             return;
         }
         if (leaf) {
-
-            crawlState.incVisited();
+            crawlState.incCrawled();
             fluxSink.next(current);
         } else {
             crawlService.listChildren(current).stream()

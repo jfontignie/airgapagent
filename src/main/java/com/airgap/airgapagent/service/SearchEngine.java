@@ -2,7 +2,6 @@ package com.airgap.airgapagent.service;
 
 import com.airgap.airgapagent.domain.ExactMatchResult;
 import com.airgap.airgapagent.utils.CrawlState;
-import com.airgap.airgapagent.utils.visitor.ProgressLogStateListener;
 import com.airgap.airgapagent.utils.visitor.SearchEventListener;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -46,16 +45,21 @@ public class SearchEngine {
                 .parallel()
                 .runOn(Schedulers.parallel())
 
+                //Set the object as visited
+                .doOnNext(t -> state.incVisited())
+
                 //Init the reader and forget if empty
                 .flatMap(file -> searchContext.getCrawlService().getContentReader(file)
                         .map(Flux::just)
                         .orElse(Flux.empty()))
+
 
                 //Parse the data to find keywords
 
                 .flatMap(dataReader ->
                         matcherService.listMatches(dataReader.getReader(), searchContext.getSearchAlgorithm())
                                 .doOnError(throwable -> listeners.forEach(l -> l.onError(dataReader, throwable)))
+                                .doOnError(t -> state.incError())
                                 .count()
                                 .onErrorReturn(0L)
                                 .map(counter -> new ExactMatchResult<>(dataReader, Math.toIntExact(counter)))
@@ -63,14 +67,14 @@ public class SearchEngine {
 
                 //Filter for the one with enough occurences found
                 .filter(result -> result.getOccurrences() >= searchContext.getConfiguration().getMinHit())
+                .doOnNext(r -> state.incFound())
                 .doOnNext(result -> listeners.forEach(listener -> listener.onFound(state, result)));
 
-        return flux.sequential().doOnTerminate(() -> listeners.forEach(SearchEventListener::onClose));
+        return flux.sequential().doOnTerminate(() -> listeners.forEach(l -> l.onClose(state)));
     }
 
     public <T extends Comparable<T>> long scan(SearchContext<T> searchContext) {
         log.info("Initializing scan");
-        searchContext.addListener(new ProgressLogStateListener<>(5));
 
         Long count = buildScan(searchContext)
                 .count()

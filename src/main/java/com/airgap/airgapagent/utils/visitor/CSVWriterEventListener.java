@@ -34,7 +34,7 @@ public class CSVWriterEventListener<T> extends SearchEventAdapter<T> implements 
     }
 
     @Override
-    public void onClose() {
+    public void onClose(CrawlState<T> state) {
         this.close();
     }
 

@@ -30,7 +30,7 @@ public abstract class SearchEventAdapter<T> implements SearchEventListener<T> {
     }
 
     @Override
-    public void onClose() {
+    public void onClose(CrawlState<T> crawlState) {
         //Nothing to do
     }
 }

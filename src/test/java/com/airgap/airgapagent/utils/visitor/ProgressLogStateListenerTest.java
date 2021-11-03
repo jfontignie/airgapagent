@@ -21,10 +21,10 @@ class ProgressLogStateListenerTest {
         ProgressLogStateListener<File> visitor = new ProgressLogStateListener<>(5);
 
         visitor.onInit();
-        visitor.onFound(1, crawlState, null);
-        visitor.onFound(2, crawlState, null);
+        visitor.onFoundEvent(crawlState, null);
+        visitor.onFoundEvent(crawlState, null);
 
-        visitor.onClose();
+        visitor.onClose(crawlState);
 
         Assertions.assertTrue(true);
 
