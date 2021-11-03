@@ -7,7 +7,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
-import reactor.core.publisher.ParallelFlux;
 import reactor.core.scheduler.Schedulers;
 
 import java.util.List;
@@ -37,40 +36,41 @@ public class SearchEngine {
         List<SearchEventListener<T>> listeners = searchContext.getListeners();
         listeners.forEach(SearchEventListener::onInit);
 
-        ParallelFlux<ExactMatchResult<T>> flux = recursiveCrawlVisitorService.list(searchContext.getVisitorFilter(), searchContext.getCrawlService(), state)
-                //Persist the state
-                .doOnNext(t -> listeners.forEach(l -> l.onBefore(state, t)))
-
+        return recursiveCrawlVisitorService.list(searchContext.getVisitorFilter(), searchContext.getCrawlService(), state)
                 //Run on parallel
                 .parallel()
                 .runOn(Schedulers.parallel())
 
-                //Set the object as visited
-                .doOnNext(t -> state.incVisited())
+                .flatMap(file -> {
+                    state.incVisited();
+                    listeners.forEach(l -> l.onVisited(state, file));
 
-                //Init the reader and forget if empty
-                .flatMap(file -> searchContext.getCrawlService().getContentReader(file)
-                        .map(Flux::just)
-                        .orElse(Flux.empty()))
-
+                    //Init the reader and forget if empty
+                    return searchContext.getCrawlService().getContentReader(file)
+                            .map(Flux::just)
+                            .orElse(Flux.empty());
+                })
 
                 //Parse the data to find keywords
-
                 .flatMap(dataReader ->
                         matcherService.listMatches(dataReader.getReader(), searchContext.getSearchAlgorithm())
-                                .doOnError(throwable -> listeners.forEach(l -> l.onError(dataReader, throwable)))
-                                .doOnError(t -> state.incError())
+                                .doOnError(throwable -> {
+                                    state.incError();
+                                    listeners.forEach(l -> l.onError(dataReader, throwable));
+                                })
                                 .count()
                                 .onErrorReturn(0L)
                                 .map(counter -> new ExactMatchResult<>(dataReader, Math.toIntExact(counter)))
                                 .flux())
 
-                //Filter for the one with enough occurences found
+                //Filter for the one with enough occurrences found
                 .filter(result -> result.getOccurrences() >= searchContext.getConfiguration().getMinHit())
-                .doOnNext(r -> state.incFound())
-                .doOnNext(result -> listeners.forEach(listener -> listener.onFound(state, result)));
-
-        return flux.sequential().doOnTerminate(() -> listeners.forEach(l -> l.onClose(state)));
+                .doOnNext(result -> {
+                    state.incFound();
+                    listeners.forEach(l -> l.onFound(state, result));
+                })
+                .sequential()
+                .doOnTerminate(() -> listeners.forEach(l -> l.onClose(state)));
     }
 
     public <T extends Comparable<T>> long scan(SearchContext<T> searchContext) {

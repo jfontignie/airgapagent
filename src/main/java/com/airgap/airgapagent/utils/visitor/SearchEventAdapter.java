@@ -15,11 +15,6 @@ public abstract class SearchEventAdapter<T> implements SearchEventListener<T> {
     }
 
     @Override
-    public void onBefore(CrawlState<T> crawlState, T object) {
-        //Nothing to do
-    }
-
-    @Override
     public void onFound(CrawlState<T> crawlState, ExactMatchResult<T> result) {
         //Nothing to do
     }
@@ -31,6 +26,11 @@ public abstract class SearchEventAdapter<T> implements SearchEventListener<T> {
 
     @Override
     public void onClose(CrawlState<T> crawlState) {
+        //Nothing to do
+    }
+
+    @Override
+    public void onVisited(CrawlState<T> state, T object) {
         //Nothing to do
     }
 }

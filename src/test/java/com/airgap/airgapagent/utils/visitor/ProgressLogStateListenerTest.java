@@ -21,8 +21,8 @@ class ProgressLogStateListenerTest {
         ProgressLogStateListener<File> visitor = new ProgressLogStateListener<>(5);
 
         visitor.onInit();
-        visitor.onFoundEvent(crawlState, null);
-        visitor.onFoundEvent(crawlState, null);
+        visitor.onVisited(crawlState, null);
+        visitor.onVisited(crawlState, null);
 
         visitor.onClose(crawlState);
 

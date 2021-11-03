@@ -35,7 +35,7 @@ public class PersistentStateListener<T> extends SearchEventAdapter<T> {
     }
 
     @Override
-    public void onBefore(CrawlState<T> crawlState, T object) {
+    public void onVisited(CrawlState<T> crawlState, T object) {
         runner.trigger(c -> {
             log.debug("Saving state");
             stateStore.save(crawlState);

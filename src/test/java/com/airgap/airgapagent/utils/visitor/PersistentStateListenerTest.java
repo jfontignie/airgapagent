@@ -34,10 +34,10 @@ class PersistentStateListenerTest {
 
         File a = new File("a");
         crawlState.setReference(a);
-        persistentFileWalker.onBefore(crawlState, null);
+        persistentFileWalker.onVisited(crawlState, null);
 
         Assertions.assertTrue(stateLocation.exists());
-        persistentFileWalker.onBefore(crawlState, null);
+        persistentFileWalker.onVisited(crawlState, null);
 
         Assertions.assertTrue(stateLocation.exists());
 

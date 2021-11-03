@@ -1,10 +1,11 @@
 package com.airgap.airgapagent.utils.visitor;
 
-import com.airgap.airgapagent.domain.ExactMatchResult;
 import com.airgap.airgapagent.utils.CrawlState;
+import com.airgap.airgapagent.utils.IntervalRunner;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.time.Duration;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 
@@ -12,24 +13,31 @@ import java.time.temporal.ChronoUnit;
  * com.airgap.airgapagent.service
  * Created by Jacques Fontignie on 5/30/2020.
  */
-public class ProgressLogStateListener<T> extends ScheduledSearchEventStateAdapter<T> {
+public class ProgressLogStateListener<T> extends SearchEventAdapter<T> {
     private static final Logger log = LoggerFactory.getLogger(ProgressLogStateListener.class);
+    private final IntervalRunner runner;
 
     private Instant start;
     private String crawlspeed = "n/a";
     private String analysisSpeed = "n/a";
 
     public ProgressLogStateListener(int interval) {
-        super(interval);
+        runner = IntervalRunner.of(Duration.ofSeconds(interval), true);
     }
 
     @Override
     public void onInit() {
         start = Instant.now();
+        log.info("Initializing search engine");
     }
 
+
     @Override
-    public void onFoundEvent(CrawlState<T> crawlState, ExactMatchResult<T> notUsed) {
+    public void onVisited(CrawlState<T> crawlState, T object) {
+        runner.trigger(t -> logProgress(crawlState));
+    }
+
+    private void logProgress(CrawlState<T> crawlState) {
         int crawled = crawlState.getCrawled();
         int analysed = crawlState.getVisited();
         String progress = "n/a";
@@ -53,8 +61,7 @@ public class ProgressLogStateListener<T> extends ScheduledSearchEventStateAdapte
                     seconds % 60);
 
         }
-        log.info("{} ... Found {} elements - analysed/crawled {} / {} ({} %) - crawl speed: {}/s. - analysis speed: {}/s. - estimate to completion: {}",
-                "Found so far.",
+        log.info("Found {} elements - analysed/crawled {} / {} ({} %) - crawl speed: {}/s. - analysis speed: {}/s. - estimate to completion: {}",
                 crawlState.getFound(),
                 analysed,
                 crawled,
@@ -62,7 +69,6 @@ public class ProgressLogStateListener<T> extends ScheduledSearchEventStateAdapte
                 crawlspeed,
                 analysisSpeed,
                 estimate);
-
     }
 
     @Override

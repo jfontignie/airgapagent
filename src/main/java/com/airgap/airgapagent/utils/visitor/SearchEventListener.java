@@ -12,11 +12,11 @@ public interface SearchEventListener<T> {
 
     void onInit();
 
-    void onBefore(CrawlState<T> crawlState, T object);
-
     void onFound(CrawlState<T> crawlState, ExactMatchResult<T> result);
 
     void onError(DataReader<T> object, Throwable error);
 
     void onClose(CrawlState<T> crawlState);
+
+    void onVisited(CrawlState<T> state, T object);
 }
