@@ -1,5 +1,6 @@
 package com.airgap.airgapagent.utils.visitor;
 
+import com.airgap.airgapagent.utils.CrawlState;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -11,8 +12,8 @@ class CountFoundListenerTest {
 
     @Test
     void count() {
-        CountFoundListener<?> listener = new CountFoundListener<>(0);
-        listener.onFound(null, null);
+        CountFoundListener<String> listener = new CountFoundListener<>(0);
+        listener.onFound(CrawlState.of(""), null);
         Assertions.assertTrue(true);
     }
 
