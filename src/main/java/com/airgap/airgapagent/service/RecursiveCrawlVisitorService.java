@@ -3,7 +3,6 @@ package com.airgap.airgapagent.service;
 import com.airgap.airgapagent.service.crawl.CrawlService;
 import com.airgap.airgapagent.utils.CrawlState;
 import com.airgap.airgapagent.utils.filters.VisitorFilter;
-import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.FluxSink;
 
@@ -11,8 +10,7 @@ import reactor.core.publisher.FluxSink;
  * com.airgap.airgapagent.service
  * Created by Jacques Fontignie on 5/23/2020.
  */
-@Service
-public class VisitorService {
+public class RecursiveCrawlVisitorService {
 
     public <T extends Comparable<T>> Flux<T> list(
             VisitorFilter<T> visitorFilter,

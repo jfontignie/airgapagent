@@ -1,6 +1,6 @@
 package com.airgap.airgapagent.utils;
 
-import com.airgap.airgapagent.utils.file.FileStateConverter;
+import com.airgap.airgapagent.utils.file.FileSerializer;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -19,7 +19,7 @@ class StateStoreTest {
     void save() throws IOException {
         File stateLocation = new File("target/StateStoreTest.dat");
         Files.deleteIfExists(stateLocation.toPath());
-        FileStateConverter converter = FileStateConverter.of();
+        FileSerializer converter = FileSerializer.of();
         StateStore<File> store = new StateStore<>(stateLocation, converter);
         CrawlState<File> context = CrawlState.of(ConstantsTest.SAMPLE_FOLDER);
 

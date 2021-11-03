@@ -4,15 +4,15 @@ package com.airgap.airgapagent.utils;
  * com.airgap.airgapagent.utils
  * Created by Jacques Fontignie on 5/31/2020.
  */
-public class ObjectStateConverter implements StateConverter<Object> {
+public class ObjectSerializer implements Serializer<Object> {
 
-    private static final ObjectStateConverter INSTANCE = new ObjectStateConverter();
+    private static final ObjectSerializer INSTANCE = new ObjectSerializer();
 
-    private ObjectStateConverter() {
+    private ObjectSerializer() {
         //Nothing to do
     }
 
-    public static ObjectStateConverter of() {
+    public static ObjectSerializer of() {
         return INSTANCE;
     }
 

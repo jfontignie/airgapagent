@@ -17,10 +17,10 @@ public class StateStore<T> {
     private static final Logger log = LoggerFactory.getLogger(StateStore.class);
 
     private final File stateLocation;
-    private final StateConverter<T> converter;
+    private final Serializer<T> converter;
 
 
-    public StateStore(File stateLocation, StateConverter<T> converter) {
+    public StateStore(File stateLocation, Serializer<T> converter) {
         this.stateLocation = stateLocation;
         this.converter = converter;
     }

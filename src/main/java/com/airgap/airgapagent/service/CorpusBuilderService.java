@@ -22,6 +22,11 @@ public class CorpusBuilderService {
 
     private static final Logger log = LoggerFactory.getLogger(CorpusBuilderService.class);
 
+    public static Set<String> build(File corpusLocation) throws IOException {
+        CorpusBuilderService corpusBuilderService = new CorpusBuilderService();
+        return corpusBuilderService.buildSet(corpusLocation);
+    }
+
     public Set<String> buildSet(File file) throws IOException {
         return build(file, new HashSet<>());
     }

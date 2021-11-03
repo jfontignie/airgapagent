@@ -2,7 +2,7 @@ package com.airgap.airgapagent.utils.visitor;
 
 import com.airgap.airgapagent.utils.ConstantsTest;
 import com.airgap.airgapagent.utils.CrawlState;
-import com.airgap.airgapagent.utils.file.FileStateConverter;
+import com.airgap.airgapagent.utils.file.FileSerializer;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -14,7 +14,7 @@ import java.nio.file.Files;
  * com.airgap.airgapagent.service
  * Created by Jacques Fontignie on 5/30/2020.
  */
-class PersistentStateVisitorTest {
+class PersistentStateListenerTest {
 
     @Test
     void walk() throws IOException {
@@ -24,20 +24,20 @@ class PersistentStateVisitorTest {
         Files.deleteIfExists(stateLocation.toPath());
 
 
-        PersistentStateVisitor<File> persistentFileWalker = new PersistentStateVisitor<>(
+        PersistentStateListener<File> persistentFileWalker = new PersistentStateListener<>(
+                1,
                 stateLocation,
-                crawlState,
-                FileStateConverter.of());
+                FileSerializer.of());
 
-        persistentFileWalker.init();
+        persistentFileWalker.onInit();
         Assertions.assertFalse(stateLocation.exists());
 
         File a = new File("a");
         crawlState.setReference(a);
-        persistentFileWalker.visit(1);
+        persistentFileWalker.onBefore(crawlState, null);
 
         Assertions.assertTrue(stateLocation.exists());
-        persistentFileWalker.close();
+        persistentFileWalker.onBefore(crawlState, null);
 
         Assertions.assertTrue(stateLocation.exists());
 

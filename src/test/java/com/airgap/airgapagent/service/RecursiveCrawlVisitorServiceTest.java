@@ -18,20 +18,19 @@ import java.util.stream.Collectors;
  * com.airgap.airgapagent.service
  * Created by Jacques Fontignie on 6/1/2020.
  */
-class VisitorServiceTest {
+class RecursiveCrawlVisitorServiceTest {
 
-    private VisitorService visitorService;
+    private RecursiveCrawlVisitorService recursiveCrawlVisitorService;
     private CrawlService<String> crawlService;
     private CrawlState<String> context;
     private String childB;
     private String childA;
-    private String root;
 
     @BeforeEach
     void setUp() {
-        visitorService = new VisitorService();
+        recursiveCrawlVisitorService = new RecursiveCrawlVisitorService();
         crawlService = Mockito.mock(CrawlService.class);
-        root = "root";
+        String root = "root";
         childA = "a";
         childB = "b";
 
@@ -47,7 +46,7 @@ class VisitorServiceTest {
     void resumeVisit() {
         context.setReference(childB);
         List<String> found = Objects.requireNonNullElse(
-                visitorService.list(new AlwaysVisitorFilter<>(),
+                recursiveCrawlVisitorService.list(new AlwaysVisitorFilter<>(),
                                 crawlService, context)
                         .collect(Collectors.toList())
                         .block(),
@@ -61,7 +60,7 @@ class VisitorServiceTest {
 
 
         List<String> found = Objects.requireNonNullElse(
-                visitorService.list(new AlwaysVisitorFilter<>(),
+                recursiveCrawlVisitorService.list(new AlwaysVisitorFilter<>(),
                                 crawlService, context)
                         .collect(Collectors.toList())
                         .block(),

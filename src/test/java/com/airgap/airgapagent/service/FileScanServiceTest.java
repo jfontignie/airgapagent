@@ -37,12 +37,7 @@ class FileScanServiceTest {
         ErrorServiceImpl errorService = new ErrorServiceImpl(environment);
 
         fileSearchEngine = new FileSearchEngine(
-                new SearchEngine(
-                        new VisitorService(),
-                        new CorpusBuilderService(),
-                        errorService,
-                        new SyslogService(environment),
-                        new MatcherService()),
+                new SearchEngine(),
                 errorService
         );
 

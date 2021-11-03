@@ -1,6 +1,6 @@
 package com.airgap.airgapagent.utils;
 
-import com.airgap.airgapagent.domain.ExactMatchingResult;
+import com.airgap.airgapagent.domain.ExactMatchResult;
 
 import javax.annotation.PreDestroy;
 import java.io.Closeable;
@@ -41,7 +41,7 @@ public class CsvWriter implements Closeable {
         return new CsvWriter(file, Set.of());
     }
 
-    public <T> void save(ExactMatchingResult<T> result, StateConverter<T> converter) {
+    public <T> void save(ExactMatchResult<T> result, Serializer<T> converter) {
         try {
             writer.write(
                     new StringJoiner(CSV_SEPARATOR, "", "\n")

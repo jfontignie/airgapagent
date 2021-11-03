@@ -1,0 +1,14 @@
+{
+  "properties": [
+    {
+      "name": "syslog.server",
+      "type": "java.lang.String",
+      "description": "IP for the syslog server."
+    },
+    {
+      "name": "error.file",
+      "type": "java.lang.String",
+      "description": "file where the error will be stored."
+    }
+  ]
+}

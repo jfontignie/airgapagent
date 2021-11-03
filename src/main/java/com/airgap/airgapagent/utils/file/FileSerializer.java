@@ -1,6 +1,6 @@
 package com.airgap.airgapagent.utils.file;
 
-import com.airgap.airgapagent.utils.StateConverter;
+import com.airgap.airgapagent.utils.Serializer;
 
 import java.io.File;
 
@@ -8,15 +8,15 @@ import java.io.File;
  * com.airgap.airgapagent.utils
  * Created by Jacques Fontignie on 5/31/2020.
  */
-public class FileStateConverter implements StateConverter<File> {
+public class FileSerializer implements Serializer<File> {
 
-    private static final FileStateConverter INSTANCE = new FileStateConverter();
+    private static final FileSerializer INSTANCE = new FileSerializer();
 
-    private FileStateConverter() {
-
+    private FileSerializer() {
+        //Nothing to do
     }
 
-    public static FileStateConverter of() {
+    public static FileSerializer of() {
         return INSTANCE;
     }
 

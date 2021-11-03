@@ -1,6 +1,6 @@
 package com.airgap.airgapagent.utils;
 
-import com.airgap.airgapagent.domain.ExactMatchingResult;
+import com.airgap.airgapagent.domain.ExactMatchResult;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -21,9 +21,9 @@ class CsvWriterTest {
         File file = new File("target/CsvWriterTest.csv");
         Files.deleteIfExists(file.toPath());
         CsvWriter writer = CsvWriter.of(file);
-        ExactMatchingResult<Object> exactMatchingResult = new ExactMatchingResult<>(
+        ExactMatchResult<Object> exactMatchingResult = new ExactMatchResult<>(
                 new DataReader<>(new File("teaf"), new HashMap<>(), null), 5);
-        writer.save(exactMatchingResult, ObjectStateConverter.of());
+        writer.save(exactMatchingResult, ObjectSerializer.of());
         Assertions.assertTrue(file.exists());
         writer.close();
         Assertions.assertTrue(file.exists());

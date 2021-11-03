@@ -8,11 +8,11 @@ import java.util.StringJoiner;
  * com.airgap.airgapagent.domain
  * Created by Jacques Fontignie on 5/30/2020.
  */
-public class ExactMatchingResult<T> {
+public class ExactMatchResult<T> {
     private final DataReader<T> source;
     private final int occurrences;
 
-    public ExactMatchingResult(DataReader<T> source, int occurrences) {
+    public ExactMatchResult(DataReader<T> source, int occurrences) {
         this.source = source;
         this.occurrences = occurrences;
     }
