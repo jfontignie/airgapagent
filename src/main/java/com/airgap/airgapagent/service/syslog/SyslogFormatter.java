@@ -12,7 +12,7 @@ public class SyslogFormatter {
     private final StringJoiner stringJoiner = new StringJoiner(" ");
 
     public SyslogFormatter() {
-
+        //Nothing to do
     }
 
     public SyslogFormatter(Map<String, String> map) {
