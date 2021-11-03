@@ -8,7 +8,7 @@ public class CrawlState<T> {
 
     private final T root;
     private T original;
-    private T reference;
+    private T current;
 
     private int crawled;
     private int visited;
@@ -27,12 +27,12 @@ public class CrawlState<T> {
         return new CrawlState<>(t);
     }
 
-    public T getReference() {
-        return reference;
+    public T getCurrent() {
+        return current;
     }
 
-    public void setReference(T f) {
-        this.reference = f;
+    public void setCurrent(T f) {
+        this.current = f;
     }
 
     public T getRoot() {
@@ -40,7 +40,7 @@ public class CrawlState<T> {
     }
 
     public void reset() {
-        this.reference = null;
+        this.current = null;
     }
 
     public void incVisited() {
@@ -68,8 +68,8 @@ public class CrawlState<T> {
     }
 
     public T init() {
-        this.original = reference;
-        return getReference();
+        this.original = current;
+        return getCurrent();
     }
 
     public int getFound() {

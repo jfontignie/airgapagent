@@ -24,13 +24,13 @@ class StateStoreTest {
         CrawlState<File> context = CrawlState.of(ConstantsTest.SAMPLE_FOLDER);
 
         store.load(context);
-        Assertions.assertNull(context.getReference());
+        Assertions.assertNull(context.getCurrent());
         File abcd = new File("abcd");
-        context.setReference(abcd);
+        context.setCurrent(abcd);
         store.save(context);
         context.reset();
         store.load(context);
-        Assertions.assertEquals(abcd, context.getReference());
+        Assertions.assertEquals(abcd, context.getCurrent());
         store.save(context);
         Files.deleteIfExists(stateLocation.toPath());
 

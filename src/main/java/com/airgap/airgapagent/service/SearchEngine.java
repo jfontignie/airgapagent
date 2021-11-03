@@ -33,8 +33,9 @@ public class SearchEngine {
     public <T extends Comparable<T>> Flux<ExactMatchResult<T>> buildScan(SearchContext<T> searchContext) {
 
         CrawlState<T> state = searchContext.getCrawlState();
+
         List<SearchEventListener<T>> listeners = searchContext.getListeners();
-        listeners.forEach(SearchEventListener::onInit);
+        listeners.forEach(tSearchEventListener -> tSearchEventListener.onInit(state));
 
         return recursiveCrawlVisitorService.list(searchContext.getVisitorFilter(), searchContext.getCrawlService(), state)
                 //Run on parallel

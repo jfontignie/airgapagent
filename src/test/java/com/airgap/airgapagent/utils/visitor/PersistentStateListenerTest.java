@@ -29,12 +29,18 @@ class PersistentStateListenerTest {
                 stateLocation,
                 FileSerializer.of());
 
-        persistentFileWalker.onInit();
+        persistentFileWalker.onInit(crawlState);
         Assertions.assertFalse(stateLocation.exists());
 
         File a = new File("a");
-        crawlState.setReference(a);
+        crawlState.setCurrent(a);
         persistentFileWalker.onVisited(crawlState, null);
+
+        crawlState.setCurrent(new File("b"));
+        crawlState = CrawlState.of(ConstantsTest.SAMPLE_FOLDER);
+        persistentFileWalker.onInit(crawlState);
+
+        Assertions.assertEquals(a, crawlState.getCurrent());
 
         Assertions.assertTrue(stateLocation.exists());
         persistentFileWalker.onVisited(crawlState, null);
@@ -43,4 +49,6 @@ class PersistentStateListenerTest {
 
         Files.deleteIfExists(stateLocation.toPath());
     }
+
+
 }

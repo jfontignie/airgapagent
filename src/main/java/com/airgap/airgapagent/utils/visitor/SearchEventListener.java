@@ -10,7 +10,7 @@ import com.airgap.airgapagent.utils.DataReader;
  */
 public interface SearchEventListener<T> {
 
-    void onInit();
+    void onInit(CrawlState<T> crawlState);
 
     void onFound(CrawlState<T> crawlState, ExactMatchResult<T> result);
 

@@ -10,7 +10,7 @@ import com.airgap.airgapagent.utils.DataReader;
  */
 public abstract class SearchEventAdapter<T> implements SearchEventListener<T> {
     @Override
-    public void onInit() {
+    public void onInit(CrawlState<T> crawlState) {
         //Nothing to do
     }
 

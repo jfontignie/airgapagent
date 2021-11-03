@@ -18,7 +18,7 @@ public class RecursiveCrawlVisitorService {
         crawlState.init();
         return Flux.<T>create(fluxSink -> visit(visitorFilter, crawlService, crawlState,
                         fluxSink, crawlState.getRoot()))
-                .doOnNext(crawlState::setReference);
+                .doOnNext(crawlState::setCurrent);
     }
 
     private <T extends Comparable<T>> void visit(VisitorFilter<T> visitorFilter,

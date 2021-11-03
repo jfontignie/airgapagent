@@ -15,7 +15,10 @@ import com.airgap.airgapagent.utils.CrawlState;
 import com.airgap.airgapagent.utils.file.FileSerializer;
 import com.airgap.airgapagent.utils.filters.LaterThanFileVisitorFilter;
 import com.airgap.airgapagent.utils.filters.ListVisitorFilter;
-import com.airgap.airgapagent.utils.visitor.*;
+import com.airgap.airgapagent.utils.visitor.CSVWriterEventListener;
+import com.airgap.airgapagent.utils.visitor.ErrorStateListener;
+import com.airgap.airgapagent.utils.visitor.PersistentStateListener;
+import com.airgap.airgapagent.utils.visitor.ProgressLogStateListener;
 import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -121,7 +124,6 @@ public class FileSearchEngine {
         );
 
         searchContext.addListener(new PersistentStateListener<>(5, configuration.getStateLocation(), FileSerializer.of()));
-        searchContext.addListener(new CountFoundListener<>(5));
         searchContext.addListener(new ProgressLogStateListener<>(5));
         searchContext.addListener(new ErrorStateListener<>(errorService));
 

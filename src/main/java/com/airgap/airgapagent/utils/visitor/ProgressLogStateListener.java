@@ -26,7 +26,7 @@ public class ProgressLogStateListener<T> extends SearchEventAdapter<T> {
     }
 
     @Override
-    public void onInit() {
+    public void onInit(CrawlState<T> crawlState) {
         start = Instant.now();
         log.info("Initializing search engine");
     }

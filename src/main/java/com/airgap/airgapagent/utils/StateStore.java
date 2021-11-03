@@ -34,7 +34,7 @@ public class StateStore<T> {
                             .findFirst()
                             .ifPresent(line -> {
                                 log.info("Last state detected: {}", line);
-                                context.setReference(converter.load(line));
+                                context.setCurrent(converter.load(line));
                             });
                 }
             } catch (IOException e) {
@@ -45,7 +45,7 @@ public class StateStore<T> {
     }
 
     public void save(CrawlState<T> context) {
-        String state = converter.persist(context.getReference());
+        String state = converter.persist(context.getCurrent());
         save(state);
     }
 

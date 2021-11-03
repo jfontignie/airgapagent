@@ -43,7 +43,7 @@ class RecursiveCrawlVisitorServiceTest {
 
     @Test
     void resumeVisit() {
-        context.setReference(childB);
+        context.setCurrent(childB);
         List<String> found = Objects.requireNonNullElse(
                 recursiveCrawlVisitorService.list(new AlwaysVisitorFilter<>(),
                                 crawlService, context)
