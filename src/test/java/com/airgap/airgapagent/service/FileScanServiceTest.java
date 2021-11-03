@@ -24,7 +24,7 @@ import java.util.Calendar;
 class FileScanServiceTest {
 
     private static final int EXPECTED = 11;
-    private static final int MIN_HIT = 2;
+    private static final int MIN_HIT = 1;
     private FileSearchEngine fileSearchEngine;
     private FileCrawlService fileCrawlService;
 
