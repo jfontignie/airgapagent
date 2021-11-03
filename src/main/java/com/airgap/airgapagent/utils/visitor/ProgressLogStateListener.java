@@ -61,7 +61,7 @@ public class ProgressLogStateListener<T> extends SearchEventAdapter<T> {
                     seconds % 60);
 
         }
-        log.info("Found {} elements - analysed/crawled {} / {} ({} %) - crawl speed: {}/s. - analysis speed: {}/s. - estimate to completion: {}",
+        log.info("Found {} elements - {} / {} ({} %) - crawl speed: {}/s. - analysis speed: {}/s. - estimate to completion: {}",
                 crawlState.getFound(),
                 analysed,
                 crawled,
