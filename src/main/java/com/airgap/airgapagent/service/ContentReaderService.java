@@ -21,6 +21,7 @@ public class ContentReaderService {
 
     private final Tika tika = new Tika();
 
+
     public DataReader<File> getContent(File file) throws IOException {
         Metadata metadata = new Metadata();
         Reader reader = tika.parse(TikaInputStream.get(file.toPath()), metadata);

@@ -27,7 +27,7 @@ public class ErrorWriter implements Closeable {
 
     public void trigger(Object source, String message, Throwable t) {
         String expand = ExceptionUtils.expand(t);
-        log.error("{} - {} - {}", source, message, expand);
+        log.info("{} - {} - {}", source, message, expand);
         try {
             String str = new StringJoiner(";", "", "\n")
                     .add(Objects.requireNonNullElse(source, "").toString())
