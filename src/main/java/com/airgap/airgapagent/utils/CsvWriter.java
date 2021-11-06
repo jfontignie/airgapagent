@@ -65,7 +65,7 @@ public class CsvWriter implements Closeable {
     }
 
     private String sanitize(String value) {
-        return value.replace("\n", " ").replace(";", "");
+        return value.replace("\n", " ").replace(";", ",");
     }
 
     @PreDestroy
