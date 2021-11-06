@@ -18,7 +18,7 @@ public class ProgressLogStateListener<T> extends SearchEventAdapter<T> {
     private final IntervalRunner runner;
 
     private Instant start;
-    private String crawlspeed = "n/a";
+    private String crawlSpeed = "n/a";
     private String analysisSpeed = "n/a";
 
     public ProgressLogStateListener(long interval) {
@@ -46,7 +46,7 @@ public class ProgressLogStateListener<T> extends SearchEventAdapter<T> {
         long seconds = ChronoUnit.SECONDS.between(start, Instant.now());
 
         if (seconds != 0) {
-            crawlspeed = String.valueOf(crawled / seconds);
+            crawlSpeed = String.valueOf(crawled / seconds);
             analysisSpeed = String.valueOf(analysed / seconds);
         }
 
@@ -66,7 +66,7 @@ public class ProgressLogStateListener<T> extends SearchEventAdapter<T> {
                 analysed,
                 crawled,
                 progress,
-                crawlspeed,
+                crawlSpeed,
                 analysisSpeed,
                 estimate);
     }
@@ -75,7 +75,7 @@ public class ProgressLogStateListener<T> extends SearchEventAdapter<T> {
     public void onClose(CrawlState<T> crawlState) {
         log.info("Scan finished. Found {} elements - crawl speed: {}/s. - analysis speed: {}/s.",
                 crawlState.getFound(),
-                crawlspeed,
+                crawlSpeed,
                 analysisSpeed);
     }
 

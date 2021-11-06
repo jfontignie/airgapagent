@@ -38,7 +38,7 @@ public class SearchEngine {
         listeners.forEach(tSearchEventListener -> tSearchEventListener.onInit(state));
 
         return recursiveCrawlVisitorService.list(searchContext.getVisitorFilter(), searchContext.getCrawlService(), state)
-                //Run on parallel
+                //Run all the objects in parallel
                 .parallel()
                 .runOn(Schedulers.parallel())
 
@@ -63,6 +63,8 @@ public class SearchEngine {
                                 .onErrorReturn(0L)
                                 .map(counter -> new ExactMatchResult<>(dataReader, Math.toIntExact(counter)))
                                 .flux())
+                //When the file is analysed we can go back on the sequental flow
+                .sequential()
 
                 //Filter for the one with enough occurrences found
                 .filter(result -> result.getOccurrences() >= searchContext.getConfiguration().getMinHit())
@@ -70,7 +72,6 @@ public class SearchEngine {
                     state.incFound();
                     listeners.forEach(l -> l.onFound(state, result));
                 })
-                .sequential()
                 .doOnTerminate(() -> listeners.forEach(l -> l.onClose(state)));
     }
 
