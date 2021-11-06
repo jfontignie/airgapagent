@@ -25,6 +25,11 @@ public class SyslogService {
 
 
     public SyslogService(Environment environment) {
+        if (!environment.containsProperty(SYSLOG_SERVER)) {
+            log.error("the syslog serverURL is not specified");
+            messageSender = null;
+            return;
+        }
         messageSender = new UdpSyslogMessageSender();
         messageSender.setDefaultAppName("airgap");
         messageSender.setDefaultFacility(Facility.USER);
@@ -32,11 +37,14 @@ public class SyslogService {
         messageSender.setSyslogServerHostname(environment.getRequiredProperty(SYSLOG_SERVER));
         messageSender.setSyslogServerPort(514);
         messageSender.setMessageFormat(MessageFormat.RFC_3164); // optional, default is RFC 3164
+
     }
 
     public void send(String message) throws IOException {
-        log.info("Sending syslog: {}", message);
-        messageSender.sendMessage(message);
+        if (messageSender != null) {
+            log.info("Sending syslog: {}", message);
+            messageSender.sendMessage(message);
+        }
     }
 
 }
