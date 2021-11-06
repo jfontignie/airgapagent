@@ -21,7 +21,7 @@ public class ProgressLogStateListener<T> extends SearchEventAdapter<T> {
     private String crawlspeed = "n/a";
     private String analysisSpeed = "n/a";
 
-    public ProgressLogStateListener(int interval) {
+    public ProgressLogStateListener(long interval) {
         runner = IntervalRunner.of(Duration.ofSeconds(interval), true);
     }
 

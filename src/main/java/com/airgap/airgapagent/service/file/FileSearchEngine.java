@@ -123,8 +123,8 @@ public class FileSearchEngine {
                 CrawlState.of(configuration.getRootLocation())
         );
 
-        searchContext.addListener(new PersistentStateListener<>(5, configuration.getStateLocation(), FileSerializer.of()));
-        searchContext.addListener(new ProgressLogStateListener<>(5));
+        searchContext.addListener(new PersistentStateListener<>(configuration.getSaveInterval().toSeconds(), configuration.getStateLocation(), FileSerializer.of()));
+        searchContext.addListener(new ProgressLogStateListener<>(configuration.getSaveInterval().toSeconds()));
         searchContext.addListener(new ErrorStateListener<>(errorService));
 
         return searchContext;

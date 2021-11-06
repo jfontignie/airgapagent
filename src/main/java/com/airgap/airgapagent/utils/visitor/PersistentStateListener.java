@@ -23,7 +23,7 @@ public class PersistentStateListener<T> extends SearchEventAdapter<T> {
 
     private StateStore<T> stateStore;
 
-    public PersistentStateListener(int interval, File stateLocation, Serializer<T> converter) {
+    public PersistentStateListener(long interval, File stateLocation, Serializer<T> converter) {
         runner = IntervalRunner.of(Duration.ofSeconds(interval), true);
         this.stateLocation = stateLocation;
         this.converter = converter;
