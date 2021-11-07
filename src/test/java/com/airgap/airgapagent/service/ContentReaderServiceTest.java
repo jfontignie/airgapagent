@@ -42,4 +42,11 @@ class ContentReaderServiceTest {
         Assertions.assertNotNull(found.getReader());
         found.getReader().close();
     }
+
+    @Test
+    void buildConfig() throws IOException {
+        ContentReaderService readerService = new ContentReaderService();
+        Assertions.assertNull(readerService.buildConfig("dummy string"));
+
+    }
 }

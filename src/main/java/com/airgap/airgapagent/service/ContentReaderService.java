@@ -27,7 +27,7 @@ public class ContentReaderService {
 
     private static final Logger log = LoggerFactory.getLogger(ContentReaderService.class);
 
-    private static final String CONFIG = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" +
+    private static final String DEFAULT_CONFIG = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" +
             "<properties>\n" +
             "    <parsers>\n" +
             "        <parser class=\"org.apache.tika.parser.DefaultParser\">\n" +
@@ -49,9 +49,13 @@ public class ContentReaderService {
     }
 
     private TikaConfig buildConfig() throws IOException {
+        return buildConfig(DEFAULT_CONFIG);
+    }
+
+    TikaConfig buildConfig(String conf) throws IOException {
         TikaConfig config = null;
         try {
-            config = new TikaConfig(new ByteArrayInputStream(CONFIG.getBytes()));
+            config = new TikaConfig(new ByteArrayInputStream(conf.getBytes()));
         } catch (TikaException | SAXException e) {
             log.error("Impossible to build config, creating temporary config", e);
         }
