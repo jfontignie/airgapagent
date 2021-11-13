@@ -1,5 +1,6 @@
 package com.airgap.airgapagent;
 
+import com.airgap.airgapagent.configuration.AbstractScanConfiguration;
 import com.airgap.airgapagent.configuration.FileCopyConfiguration;
 import com.airgap.airgapagent.configuration.FileSearchConfiguration;
 import com.airgap.airgapagent.service.file.FileCrawlService;
@@ -11,6 +12,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.function.Consumer;
 
 /**
  * com.airgap.airgapagent
@@ -66,16 +71,45 @@ public class CommandLineApplicationRunner implements CommandLineRunner {
             printHelp(commander);
             return;
         }
-        if (commander.getParsedCommand().equals(FileSearchConfiguration.COMMAND_NAME)) {
 
-            long found = fileSearchEngine.scanFolder(fileSearchAction, fileCrawlService);
-            log.info("Number or elements found: {}", found);
+        AbstractScanConfiguration<File> configuration = null;
+        Consumer<AbstractScanConfiguration<File>> action = null;
+
+        if (commander.getParsedCommand().equals(FileSearchConfiguration.COMMAND_NAME)) {
+            configuration = fileSearchAction;
+            action = config -> {
+                long found;
+                try {
+                    found = fileSearchEngine.scanFolder(fileSearchAction, fileCrawlService);
+                } catch (IOException e) {
+                    throw new IllegalStateException(e);
+                }
+                log.info("Number or elements found: {}", found);
+            };
         }
+
 
         if (commander.getParsedCommand().equals(FileCopyConfiguration.COMMAND_NAME)) {
-            long found = fileSearchEngine.copyFolder(fileCopyAction, fileCrawlService);
-            log.info("Number or elements found: {}", found);
+            configuration = fileCopyAction;
+            action = config -> {
+                long found;
+                try {
+                    found = fileSearchEngine.copyFolder(fileCopyAction, fileCrawlService);
+                } catch (IOException e) {
+                    throw new IllegalStateException(e);
+                }
+                log.info("Number or elements found: {}", found);
+            };
         }
+
+        if (configuration == null) {
+            throw new IllegalStateException("Action has not been set");
+        }
+
+        Runner<File> runner = configuration.isContinuous() ?
+                new ContinuousRunner<>() : new SimpleRunner<>();
+        runner.run(configuration, action);
+
     }
 
     private void printHelp(JCommander commander) {

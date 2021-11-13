@@ -96,7 +96,6 @@ class FileScanServiceTest {
         Assertions.assertTrue(true);
     }
 
-
     @Disabled("Performance test earlier than one day")
     @Test
     void testRecent() throws IOException {

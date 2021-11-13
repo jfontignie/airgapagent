@@ -37,4 +37,5 @@ public abstract class AbstractSearchConfiguration<T> extends AbstractScanConfigu
     public void setExclude(Set<String> exclude) {
         this.exclude = exclude;
     }
+
 }

@@ -57,6 +57,13 @@ public abstract class AbstractScanConfiguration<T> {
             description = "Specify the algorithm that can be used for matching patterns")
     private SearchAlgorithmType algo = SearchAlgorithmType.AHO_CORASICK;
 
+    @Parameter(
+            names = "-continuous",
+            description = "The scan is continuous and restarts when finished"
+    )
+    private boolean continuous = false;
+
+
     protected AbstractScanConfiguration() {
     }
 
@@ -122,4 +129,11 @@ public abstract class AbstractScanConfiguration<T> {
 
     public abstract T getRootLocation();
 
+    public boolean isContinuous() {
+        return continuous;
+    }
+
+    public void setContinuous(boolean continuous) {
+        this.continuous = continuous;
+    }
 }

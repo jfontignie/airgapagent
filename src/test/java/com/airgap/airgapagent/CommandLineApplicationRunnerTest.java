@@ -33,4 +33,29 @@ class CommandLineApplicationRunnerTest {
                         "-corpus src/test/resources/sample/bigsample.csv").split(" "));
         Assertions.assertTrue(true);
     }
+
+    @Test
+    void runContinuous() throws Exception {
+        FileCrawlService crawler = Mockito.mock(FileCrawlService.class);
+        FileSearchEngine fileSearchEngine = Mockito.mock(FileSearchEngine.class);
+        Mockito.doReturn(5L).when(fileSearchEngine).scanFolder(Mockito.any(), Mockito.any());
+        CommandLineApplicationRunner runner = new CommandLineApplicationRunner(crawler,
+                fileSearchEngine);
+
+        Runnable runnable = () -> {
+            try {
+                runner.run(
+                        ("search -continuous -minHit 5 -folder src/test/resources/sample " +
+                                "-found target/search.csv " +
+                                "-corpus src/test/resources/sample/bigsample.csv").split(" "));
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+        };
+        Thread t = new Thread(runnable);
+        t.start();
+        Assertions.assertTrue(true);
+        t.interrupt();
+    }
 }
