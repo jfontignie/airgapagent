@@ -26,7 +26,7 @@ public class SyslogService {
 
     public SyslogService(Environment environment) {
         if (!environment.containsProperty(SYSLOG_SERVER)) {
-            log.error("the syslog serverURL is not specified");
+            log.warn("the syslog serverURL is not specified");
             messageSender = null;
             return;
         }

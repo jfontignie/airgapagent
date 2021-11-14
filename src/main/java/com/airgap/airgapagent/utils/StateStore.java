@@ -5,8 +5,6 @@ import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.util.stream.Stream;
 
 /**
  * com.airgap.airgapagent.service
@@ -15,6 +13,7 @@ import java.util.stream.Stream;
 public class StateStore<T> {
 
     private static final Logger log = LoggerFactory.getLogger(StateStore.class);
+    public static final String CRAWL_STATE = "crawl_state";
 
     private final File stateLocation;
     private final Serializer<T> converter;
@@ -26,21 +25,10 @@ public class StateStore<T> {
     }
 
     public void load(CrawlState<T> context) {
-        if (stateLocation.exists()) {
-            try {
-                try (Stream<String> lines = Files.lines(stateLocation.toPath())) {
-                    lines
-                            .filter(line -> !line.isBlank())
-                            .findFirst()
-                            .ifPresent(line -> {
-                                log.info("Last state detected: {}", line);
-                                context.setCurrent(converter.load(line));
-                            });
-                }
-            } catch (IOException e) {
-                log.error("Impossible to read the state file", e);
-            }
-
+        String value = StateSaver.get(stateLocation, CRAWL_STATE);
+        if (value != null) {
+            log.info("Last state detected: {}", value);
+            context.setCurrent(converter.load(value));
         }
     }
 
@@ -51,14 +39,14 @@ public class StateStore<T> {
 
     private void save(String state) {
         try {
-            Files.writeString(stateLocation.toPath(), state);
+            StateSaver.set(stateLocation, CRAWL_STATE, state);
         } catch (IOException e) {
             log.error("Impossible to save state", e);
         }
     }
 
     public void clear() {
-        save("");
+        save((String) null);
     }
 
 }

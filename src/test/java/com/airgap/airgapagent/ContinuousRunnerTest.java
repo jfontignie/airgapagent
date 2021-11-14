@@ -1,10 +1,19 @@
 package com.airgap.airgapagent;
 
 import com.airgap.airgapagent.configuration.FileSearchConfiguration;
+import com.airgap.airgapagent.service.ContentReaderService;
+import com.airgap.airgapagent.service.ErrorServiceImpl;
+import com.airgap.airgapagent.service.SearchEngine;
+import com.airgap.airgapagent.service.file.FileCrawlService;
+import com.airgap.airgapagent.service.file.FileSearchEngine;
+import com.airgap.airgapagent.service.syslog.SyslogService;
 import org.assertj.core.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.mock.env.MockEnvironment;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
@@ -12,6 +21,26 @@ import java.util.concurrent.atomic.AtomicInteger;
  * Created by Jacques Fontignie on 11/13/2021.
  */
 class ContinuousRunnerTest {
+
+    private FileSearchEngine fileSearchEngine;
+    private FileCrawlService fileCrawlService;
+
+    @BeforeEach
+    public void setUp() throws IOException {
+        MockEnvironment environment = new MockEnvironment()
+                .withProperty(ErrorServiceImpl.ERROR_FILE, "target/error.dat")
+                .withProperty(SyslogService.SYSLOG_SERVER, "127.0.0.1");
+
+        ErrorServiceImpl errorService = new ErrorServiceImpl(environment);
+
+        fileSearchEngine = new FileSearchEngine(
+                new SearchEngine(),
+                errorService
+        );
+
+        fileCrawlService = new FileCrawlService(new ContentReaderService(),
+                errorService);
+    }
 
     @Test
     void run() {

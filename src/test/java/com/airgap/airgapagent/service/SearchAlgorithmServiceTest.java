@@ -61,7 +61,7 @@ class SearchAlgorithmServiceTest {
         Reader reader = new ExceptionReader();
 
         Long found = matcherService.listMatches(reader, matcher)
-                .doOnError(throwable -> log.error("e", throwable))
+                .doOnError(throwable -> log.warn("e", throwable))
 
                 .take(2)
                 .count()
