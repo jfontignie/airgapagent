@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import java.io.File;
 import java.io.IOException;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -22,13 +23,26 @@ public class CorpusBuilderService {
 
     private static final Logger log = LoggerFactory.getLogger(CorpusBuilderService.class);
 
-    public static Set<String> build(File corpusLocation) throws IOException {
+    public static Set<String> build(List<File> corpusLocation) throws IOException {
         CorpusBuilderService corpusBuilderService = new CorpusBuilderService();
         return corpusBuilderService.buildSet(corpusLocation);
     }
 
+    public static Set<String> build(File corpusLocation) throws IOException {
+        return build(List.of(corpusLocation));
+    }
+
+
     public Set<String> buildSet(File file) throws IOException {
-        return build(file, new HashSet<>());
+        return buildSet(List.of(file));
+    }
+
+    public Set<String> buildSet(List<File> files) throws IOException {
+        Set<String> set = new HashSet<>();
+        for (File file : files) {
+            build(file, set);
+        }
+        return set;
     }
 
     private Set<String> build(File file, Set<String> set) throws IOException {

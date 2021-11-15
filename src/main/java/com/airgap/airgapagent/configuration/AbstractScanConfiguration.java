@@ -6,7 +6,9 @@ import com.beust.jcommander.validators.PositiveInteger;
 
 import java.io.File;
 import java.time.Duration;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 /**
  * com.airgap.airgapagent.configuration
@@ -32,8 +34,7 @@ public abstract class AbstractScanConfiguration<T> {
                     "The algorithm used is Aho Corasick to retrieve the file",
             required = true,
             validateWith = FileExistsValidator.class)
-    private File corpusLocation;
-
+    private List<File> corpusLocation = new ArrayList<>();
 
     @Parameter(
             names = "-state",
@@ -75,8 +76,12 @@ public abstract class AbstractScanConfiguration<T> {
         this.laterThan = earlierThan;
     }
 
-    public void setCorpus(File corpusLocation) {
-        this.corpusLocation = corpusLocation;
+    public void addCorpus(File corpusLocation) {
+        this.corpusLocation.add(corpusLocation);
+    }
+
+    public List<File> getCorpusLocation() {
+        return corpusLocation;
     }
 
     public void setInterval(long schedule) {
@@ -95,8 +100,8 @@ public abstract class AbstractScanConfiguration<T> {
         this.minHit = minHit;
     }
 
-    public File getCorpusLocation() {
-        return corpusLocation;
+    public void setCorpusLocation(List<File> corpusLocation) {
+        this.corpusLocation = corpusLocation;
     }
 
     public File getStateLocation() {

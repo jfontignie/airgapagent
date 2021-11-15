@@ -50,7 +50,7 @@ class FileScanServiceTest {
 
         FileSearchConfiguration action = new FileSearchConfiguration();
         action.setRootLocation(ConstantsTest.SAMPLE_FOLDER);
-        action.setCorpus(new File(ConstantsTest.CORPUS_SAMPLE_STRING));
+        action.addCorpus(new File(ConstantsTest.CORPUS_SAMPLE_STRING));
         action.setFoundLocation(new File("target/run_found.csv"));
         action.setStateLocation(new File("target/run_sate.dat"));
         action.setMinHit(MIN_HIT);
@@ -68,7 +68,7 @@ class FileScanServiceTest {
         FileUtils.deleteDirectory(destination);
         FileCopyConfiguration action = new FileCopyConfiguration();
         action.setRoot(ConstantsTest.SAMPLE_FOLDER);
-        action.setCorpus(new File(ConstantsTest.CORPUS_SAMPLE_STRING));
+        action.addCorpus(new File(ConstantsTest.CORPUS_SAMPLE_STRING));
         action.setStateLocation(new File("target/run_state.dat"));
         action.setMinHit(MIN_HIT);
         action.setInterval(5);
@@ -86,7 +86,7 @@ class FileScanServiceTest {
 
         FileSearchConfiguration action = new FileSearchConfiguration();
         action.setRootLocation(new File("c:/"));
-        action.setCorpus(new File(ConstantsTest.CORPUS_SAMPLE_STRING));
+        action.addCorpus(new File(ConstantsTest.CORPUS_SAMPLE_STRING));
         action.setFoundLocation(new File("target/found_long.csv"));
         action.setStateLocation(new File("target/state_long.dat"));
         action.setMinHit(MIN_HIT);
@@ -102,7 +102,7 @@ class FileScanServiceTest {
 
         FileSearchConfiguration action = new FileSearchConfiguration();
         action.setRootLocation(new File("c:/"));
-        action.setCorpus(new File(ConstantsTest.CORPUS_SAMPLE_STRING));
+        action.addCorpus(new File(ConstantsTest.CORPUS_SAMPLE_STRING));
         action.setFoundLocation(new File("target/run_found.csv"));
         action.setStateLocation(new File("target/run_sate.dat"));
 
